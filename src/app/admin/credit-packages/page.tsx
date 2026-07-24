@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { PackageForm } from "./PackageForm";
 import { ToggleActiveButton } from "./ToggleActiveButton";
@@ -51,7 +52,13 @@ export default async function CreditPackagesPage() {
                     <span className="text-slate-400">Pasif</span>
                   )}
                 </td>
-                <td className="px-4 py-2">
+                <td className="px-4 py-2 space-x-3">
+                  <Link
+                    href={`/admin/credit-packages/${p.id}/edit`}
+                    className="text-slate-600 underline hover:text-slate-900"
+                  >
+                    Düzenle
+                  </Link>
                   <ToggleActiveButton id={p.id} isActive={p.isActive} />
                 </td>
               </tr>
