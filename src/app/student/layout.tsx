@@ -3,7 +3,6 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { SignOutButton } from "@/components/SignOutButton";
 import { Logo } from "@/components/Logo";
-import { ClassmatesCard } from "./ClassmatesCard";
 import { prisma } from "@/lib/prisma";
 
 export default async function StudentLayout({
@@ -73,12 +72,7 @@ export default async function StudentLayout({
         </div>
         <SignOutButton />
       </header>
-      <main className="mx-auto grid max-w-5xl gap-6 px-6 py-8 md:grid-cols-[1fr_260px]">
-        <div>{children}</div>
-        <aside>
-          <ClassmatesCard currentUserId={session.user.id} />
-        </aside>
-      </main>
+      <main className="mx-auto max-w-5xl px-6 py-8">{children}</main>
     </div>
   );
 }
