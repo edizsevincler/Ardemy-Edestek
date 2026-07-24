@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
+  --background: #f7f6fb;
   --foreground: #171717;
 }
 
@@ -10,13 +10,25 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  /* Ardemy marka tonları — logodaki indigo/mordan türetildi */
+  --color-brand-950: #1c1147;
+  --color-brand-900: #241a5e;
+  --color-brand-800: #2f2178;
+  --color-brand-700: #3c2996;
+  --color-brand-600: #4b32b3;
+  --color-brand-500: #5c3fce;
+  --color-brand-400: #7c62db;
+  --color-brand-200: #cfc4f2;
+  --color-brand-100: #e7e1fa;
+  --color-brand-50: #f4f1fc;
+
+  /* Satın almayı öne çıkaran altın vurgu */
+  --color-gold-600: #b4841a;
+  --color-gold-500: #d4a72c;
+  --color-gold-400: #e8c25a;
+  --color-gold-300: #f1d98a;
+  --color-gold-50: #fbf3e0;
 }
 
 body {

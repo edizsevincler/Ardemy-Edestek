@@ -39,3 +39,19 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/src/generated/prisma
+
+# öğrenci/kullanıcı şifrelerini içeren dosyalar
+ogrenci-hesaplari.txt
+
+# yüklenen ödev/ders dosyaları (yerel geliştirme)
+/uploads
+
+# yerel Claude Code izin ayarları (makineye özel)
+.claude/settings.local.json
+
+# Prisma init tarafından kurulan AI asistan yardım dosyaları (proje kodu değil)
+/.agents
+/.windsurf
+/.claude/skills

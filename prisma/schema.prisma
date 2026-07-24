@@ -1,0 +1,189 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum Role {
+  ADMIN
+  STUDENT
+  GUEST
+}
+
+enum PurchaseStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum SessionType {
+  PACKAGE         // sayılı oturum paketi (sessionsRemaining kullanılır)
+  UNLIMITED       // sınırsız
+  PAY_PER_SESSION // günlük/derste ödemeli, paket takibi yok
+}
+
+model User {
+  id                String      @id @default(cuid())
+  username          String?     @unique
+  email             String?     @unique
+  passwordHash      String
+  name              String
+  role              Role        @default(STUDENT)
+  createdAt         DateTime    @default(now())
+  lastLoginAt       DateTime?
+  sessionType       SessionType @default(PACKAGE)
+  sessionsRemaining Int         @default(0)
+  credits           Int         @default(0)
+
+  assignments           Assignment[]
+  assignmentSubmissions AssignmentSubmission[]
+  lessonFiles           LessonFile[]
+  messages              Message[]
+  creditPurchases       CreditPurchase[]
+  unlockedQuestions     QuestionUnlock[]
+  questionAnswers       QuestionAnswer[]
+}
+
+model Assignment {
+  id          String    @id @default(cuid())
+  title       String
+  description String?
+  fileUrl     String?
+  fileName    String?
+  dueDate     DateTime?
+  createdAt   DateTime  @default(now())
+
+  studentId String
+  student   User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+
+  submissions AssignmentSubmission[]
+}
+
+model AssignmentSubmission {
+  id          String   @id @default(cuid())
+  fileUrl     String
+  fileName    String
+  note        String?
+  submittedAt DateTime @default(now())
+
+  assignmentId String
+  assignment   Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+
+  studentId String
+  student   User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+model LessonFile {
+  id         String    @id @default(cuid())
+  title      String
+  fileUrl    String
+  fileName   String
+  lessonDate DateTime?
+  uploadedAt DateTime  @default(now())
+
+  studentId String
+  student   User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+// Bir öğrencinin eğitmenle olan tüm sohbeti tek `studentId` altında tutulur
+// (eğitmen tek kişi olduğu için ayrı bir "konuşma" tablosuna gerek yok).
+// `senderRole` mesajı kimin yazdığını, `read` ise karşı tarafın okuyup
+// okumadığını belirtir.
+model Message {
+  id         String   @id @default(cuid())
+  body       String
+  senderRole Role
+  read       Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  studentId String
+  student   User   @relation(fields: [studentId], references: [id], onDelete: Cascade)
+}
+
+// `subject` is a free-form string (not an enum) on purpose: the tutor plans to
+// add subjects beyond ENGLISH/RUSSIAN later without needing a schema migration.
+model Question {
+  id          String   @id @default(cuid())
+  title       String
+  subject     String
+  body        String?
+  fileUrl     String?
+  fileName    String?
+  creditCost  Int      @default(1)
+  isPublished Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  unlocks QuestionUnlock[]
+  answers QuestionAnswer[]
+}
+
+// Bir kullanıcının açtığı soruya verdiği cevap. Tekrar göndermeye izin
+// verilir (dil pratiği için deneme-yanılma doğaldır) — yeni gönderim eski
+// geri bildirimi geçersiz kılar, bu yüzden tek kayıt üstüne yazılır (unique).
+model QuestionAnswer {
+  id          String    @id @default(cuid())
+  body        String?
+  fileUrl     String?
+  fileName    String?
+  submittedAt DateTime  @default(now())
+  feedback    String?
+  gradedAt    DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+}
+
+// Bir kullanıcının kredisiyle açtığı (kilidini kaldırdığı) soru — ödeme değil,
+// kredi harcama kaydıdır. Aynı soruyu iki kez açamasın diye unique.
+model QuestionUnlock {
+  id         String   @id @default(cuid())
+  unlockedAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+}
+
+model CreditPackage {
+  id        String   @id @default(cuid())
+  name      String
+  credits   Int
+  priceTRY  Decimal  @db.Decimal(10, 2)
+  isActive  Boolean  @default(true)
+  createdAt DateTime @default(now())
+
+  purchases CreditPurchase[]
+}
+
+// Gerçek para karşılığında kredi satın alma kaydı (iyzico burada devreye
+// girecek). `credits`/`amount` satın alma anındaki paket değerinin
+// anlık görüntüsüdür — paket sonradan değişse bile geçmiş kayıt bozulmaz.
+model CreditPurchase {
+  id              String         @id @default(cuid())
+  credits         Int
+  amount          Decimal        @db.Decimal(10, 2)
+  status          PurchaseStatus @default(PENDING)
+  iyzicoPaymentId String?
+  createdAt       DateTime       @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  packageId String
+  package   CreditPackage @relation(fields: [packageId], references: [id])
+}
