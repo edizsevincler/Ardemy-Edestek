@@ -124,3 +124,20 @@ export async function resetStudentPassword(studentId: string) {
 
   return { password };
 }
+
+// Öğrenciler de kredi biriktirip soru bankasını kullanabilir — admin bu
+// butonla ödül/hediye olarak kredi ekleyebilir.
+export async function giftCredits(studentId: string, amount: number) {
+  if (!Number.isFinite(amount) || amount <= 0) return;
+
+  const updated = await prisma.user.update({
+    where: { id: studentId },
+    data: { credits: { increment: Math.round(amount) } },
+  });
+
+  revalidatePath("/admin/students");
+  revalidatePath("/student");
+  revalidatePath("/guest");
+
+  return { credits: updated.credits };
+}

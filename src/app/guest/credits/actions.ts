@@ -15,7 +15,10 @@ export async function buyCreditPackage(
   formData: FormData
 ): Promise<BuyState> {
   const session = await auth();
-  if (!session?.user || session.user.role !== "GUEST") {
+  if (
+    !session?.user ||
+    (session.user.role !== "GUEST" && session.user.role !== "STUDENT")
+  ) {
     return { status: "error", message: "Oturum bulunamadı." };
   }
 

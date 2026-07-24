@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { StudentForm } from "./StudentForm";
 import { SessionControls } from "./SessionControls";
 import { ResetPasswordButton } from "./ResetPasswordButton";
+import { GiftCreditsControl } from "./GiftCreditsControl";
 
 export default async function StudentsPage() {
   const students = await prisma.user.findMany({
@@ -25,13 +26,14 @@ export default async function StudentsPage() {
               <th className="px-4 py-2 font-medium">Kayıt Tarihi</th>
               <th className="px-4 py-2 font-medium">Son Giriş</th>
               <th className="px-4 py-2 font-medium">Oturum</th>
+              <th className="px-4 py-2 font-medium">Kredi</th>
               <th className="px-4 py-2 font-medium"></th>
             </tr>
           </thead>
           <tbody>
             {students.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-slate-400">
+                <td colSpan={7} className="px-4 py-6 text-center text-slate-400">
                   Henüz öğrenci eklenmedi.
                 </td>
               </tr>
@@ -56,6 +58,13 @@ export default async function StudentsPage() {
                     studentName={student.name}
                     sessionType={student.sessionType}
                     sessionsRemaining={student.sessionsRemaining}
+                  />
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap">
+                  <GiftCreditsControl
+                    studentId={student.id}
+                    studentName={student.name}
+                    credits={student.credits}
                   />
                 </td>
                 <td className="px-4 py-2 space-x-3 whitespace-nowrap">

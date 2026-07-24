@@ -16,9 +16,15 @@ export default async function StudentLayout({
     redirect("/login");
   }
 
-  const unreadCount = await prisma.message.count({
-    where: { studentId: session.user.id, senderRole: "ADMIN", read: false },
-  });
+  const [unreadCount, me] = await Promise.all([
+    prisma.message.count({
+      where: { studentId: session.user.id, senderRole: "ADMIN", read: false },
+    }),
+    prisma.user.findUnique({
+      where: { id: session.user.id },
+      select: { credits: true },
+    }),
+  ]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -48,6 +54,21 @@ export default async function StudentLayout({
                 </span>
               )}
             </Link>
+            <Link
+              href="/guest/questions"
+              className="transition hover:text-gold-400"
+            >
+              Soru Bankası
+            </Link>
+            <Link
+              href="/guest/credits"
+              className="transition hover:text-gold-400"
+            >
+              Kredi Satın Al
+            </Link>
+            <span className="rounded-full bg-gold-500/20 px-2.5 py-1 text-xs font-medium text-gold-400">
+              {me?.credits ?? 0} kredi
+            </span>
           </nav>
         </div>
         <SignOutButton />

@@ -11,9 +11,14 @@ export default async function GuestLayout({
   children: React.ReactNode;
 }) {
   const session = await auth();
-  if (!session?.user || session.user.role !== "GUEST") {
+  if (
+    !session?.user ||
+    (session.user.role !== "GUEST" && session.user.role !== "STUDENT")
+  ) {
     redirect("/login");
   }
+
+  const isStudent = session.user.role === "STUDENT";
 
   const me = await prisma.user.findUnique({
     where: { id: session.user.id },
@@ -34,6 +39,14 @@ export default async function GuestLayout({
             </div>
           </div>
           <nav className="flex items-center gap-4 text-sm text-brand-100">
+            {isStudent && (
+              <Link
+                href="/student"
+                className="transition hover:text-gold-400"
+              >
+                ← Öğrenci Paneli
+              </Link>
+            )}
             <Link href="/guest" className="transition hover:text-gold-400">
               Panel
             </Link>

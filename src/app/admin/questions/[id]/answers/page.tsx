@@ -18,7 +18,7 @@ export default async function QuestionAnswersPage({
   const answers = await prisma.questionAnswer.findMany({
     where: { questionId: id },
     orderBy: { submittedAt: "desc" },
-    include: { user: { select: { name: true, email: true } } },
+    include: { user: { select: { name: true, email: true, username: true, role: true } } },
   });
 
   return (
@@ -48,7 +48,10 @@ export default async function QuestionAnswersPage({
                 <p className="font-medium text-brand-950">
                   {a.user.name}{" "}
                   <span className="font-normal text-slate-400">
-                    ({a.user.email})
+                    ({a.user.email ?? a.user.username})
+                  </span>{" "}
+                  <span className="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-normal text-slate-500">
+                    {a.user.role === "STUDENT" ? "Öğrenci" : "Misafir"}
                   </span>
                 </p>
                 <p className="text-xs text-slate-400">

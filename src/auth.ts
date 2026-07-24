@@ -56,7 +56,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         return isLoggedIn && auth.user.role === "STUDENT";
       }
       if (pathname.startsWith("/guest")) {
-        return isLoggedIn && auth.user.role === "GUEST";
+        return (
+          isLoggedIn &&
+          (auth.user.role === "GUEST" || auth.user.role === "STUDENT")
+        );
       }
       return true;
     },
