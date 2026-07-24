@@ -15,9 +15,12 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  const unreadCount = await prisma.message.count({
-    where: { senderRole: "STUDENT", read: false },
-  });
+  const [unreadCount, pendingPaymentsCount] = await Promise.all([
+    prisma.message.count({
+      where: { senderRole: "STUDENT", read: false },
+    }),
+    prisma.creditPurchase.count({ where: { status: "PENDING" } }),
+  ]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -53,6 +56,17 @@ export default async function AdminLayout({
             </Link>
             <Link href="/admin/credit-packages" className="transition hover:text-gold-400">
               Kredi Paketleri
+            </Link>
+            <Link
+              href="/admin/pending-payments"
+              className="flex items-center gap-1.5 transition hover:text-gold-400"
+            >
+              Bekleyen Ödemeler
+              {pendingPaymentsCount > 0 && (
+                <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-medium text-white">
+                  {pendingPaymentsCount}
+                </span>
+              )}
             </Link>
             <Link
               href="/admin/messages"

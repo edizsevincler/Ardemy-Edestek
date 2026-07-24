@@ -2,15 +2,17 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { chargeCard } from "@/lib/payment";
 import { revalidatePath } from "next/cache";
 
 type BuyState =
   | { status: "idle" }
   | { status: "error"; message: string }
-  | { status: "success"; credits: number };
+  | { status: "success" };
 
-export async function buyCreditPackage(
+// iyzico henüz kurulmadığı için satın alma anında kredi vermiyoruz — kayıt
+// PENDING olarak açılır, kullanıcı havaleyi gönderir, admin dekontu görüp
+// /admin/pending-payments üzerinden onaylayınca kredi hesaba işlenir.
+export async function requestCreditPurchase(
   _prevState: BuyState,
   formData: FormData
 ): Promise<BuyState> {
@@ -28,30 +30,19 @@ export async function buyCreditPackage(
     return { status: "error", message: "Bu paket artık satışta değil." };
   }
 
-  const payment = await chargeCard(Number(pkg.priceTRY));
-
   await prisma.creditPurchase.create({
     data: {
       userId: session.user.id,
       packageId: pkg.id,
       credits: pkg.credits,
       amount: pkg.priceTRY,
-      status: payment.success ? "PAID" : "FAILED",
-      iyzicoPaymentId: payment.iyzicoPaymentId,
+      status: "PENDING",
     },
   });
 
-  if (!payment.success) {
-    return { status: "error", message: "Ödeme başarısız oldu." };
-  }
-
-  const updated = await prisma.user.update({
-    where: { id: session.user.id },
-    data: { credits: { increment: pkg.credits } },
-  });
-
-  revalidatePath("/guest");
   revalidatePath("/guest/credits");
+  revalidatePath("/guest/history");
+  revalidatePath("/admin/pending-payments");
 
-  return { status: "success", credits: updated.credits };
+  return { status: "success" };
 }

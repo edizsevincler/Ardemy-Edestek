@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { buyCreditPackage } from "./actions";
+import { requestCreditPurchase } from "./actions";
 
 const initialState = { status: "idle" } as const;
 
@@ -17,7 +17,7 @@ export function PackageCard({
   priceTRY: number;
 }) {
   const [state, formAction, isPending] = useActionState(
-    buyCreditPackage,
+    requestCreditPurchase,
     initialState
   );
 
@@ -47,13 +47,19 @@ export function PackageCard({
           className="w-full rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 py-2.5 text-sm font-semibold text-brand-950 shadow-sm shadow-gold-600/30 transition hover:from-gold-400 hover:to-gold-300 disabled:opacity-60"
         >
           {isPending
-            ? "İşleniyor..."
+            ? "Gönderiliyor..."
             : state.status === "success"
-              ? "Satın Alındı ✓"
-              : "Satın Al (Test Modu)"}
+              ? "Onay Bekliyor ✓"
+              : "Havaleyi Gönderdim"}
         </button>
         {state.status === "error" && (
           <p className="mt-2 text-sm text-red-600">{state.message}</p>
+        )}
+        {state.status === "success" && (
+          <p className="mt-2 text-xs text-slate-500">
+            Talebiniz alındı. Onaylandığında kredi hesabınıza otomatik
+            eklenecek.
+          </p>
         )}
       </form>
     </div>

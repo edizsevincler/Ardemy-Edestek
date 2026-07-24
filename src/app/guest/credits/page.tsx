@@ -1,7 +1,10 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PackageCard } from "./PackageCard";
-import { PAYMENT_TEST_MODE } from "@/lib/payment";
+
+const BANK_TRANSFER_INFO =
+  process.env.BANK_TRANSFER_INFO ??
+  "Havale bilgileri henüz eklenmedi. (Admin: Vercel'de BANK_TRANSFER_INFO ortam değişkenini ekleyin.)";
 
 export default async function GuestCreditsPage() {
   const session = await auth();
@@ -29,12 +32,17 @@ export default async function GuestCreditsPage() {
         </div>
       </div>
 
-      {PAYMENT_TEST_MODE && (
-        <div className="rounded-lg border border-gold-400 bg-gold-50 px-4 py-3 text-sm text-gold-600">
-          <strong>Test Modu:</strong> Ödeme sistemi henüz gerçek para almıyor,
-          "satın alma" işlemleri anında kredi olarak yansır.
-        </div>
-      )}
+      <div className="space-y-1 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-brand-800">
+        <p className="font-medium">Ödeme: Banka Havalesi / EFT</p>
+        <p className="whitespace-pre-line text-brand-700">
+          {BANK_TRANSFER_INFO}
+        </p>
+        <p className="text-brand-600">
+          Almak istediğiniz paket için havaleyi gönderdikten sonra aşağıdan
+          "Havaleyi Gönderdim" butonuna basın; dekontu tarafımıza iletin
+          (mesaj/WhatsApp). Onaylandığında kredi hesabınıza otomatik eklenir.
+        </p>
+      </div>
 
       {packages.length === 0 ? (
         <p className="text-sm text-slate-500">
