@@ -51,7 +51,7 @@ export default async function GuestLayout({
               Panel
             </Link>
             <Link href="/guest/questions" className="transition hover:text-gold-400">
-              Sorular
+              İçerikler
             </Link>
             <Link href="/guest/credits" className="transition hover:text-gold-400">
               Kredi Satın Al
