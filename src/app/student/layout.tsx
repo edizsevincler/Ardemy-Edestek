@@ -38,7 +38,7 @@ export default async function StudentLayout({
               <p className="font-medium text-white">{session.user.name}</p>
             </div>
           </div>
-          <nav className="flex gap-4 text-sm text-brand-100">
+          <nav className="flex items-center gap-4 text-sm text-brand-100">
             <Link href="/student" className="transition hover:text-gold-400">
               Panel
             </Link>
@@ -57,7 +57,7 @@ export default async function StudentLayout({
               href="/guest/questions"
               className="transition hover:text-gold-400"
             >
-              Soru Bankası
+              İçerikler
             </Link>
             <Link
               href="/guest/credits"
