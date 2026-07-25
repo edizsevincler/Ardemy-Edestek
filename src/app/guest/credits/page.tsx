@@ -6,6 +6,15 @@ const BANK_TRANSFER_INFO =
   process.env.BANK_TRANSFER_INFO ??
   "Havale bilgileri henüz eklenmedi. (Admin: Vercel'de BANK_TRANSFER_INFO ortam değişkenini ekleyin.)";
 
+// wa.me linki sadece rakam ister (boşluk, + ve parantez kaldırılır).
+const WHATSAPP_NUMBER = process.env.WHATSAPP_NUMBER;
+const WHATSAPP_DIGITS = WHATSAPP_NUMBER?.replace(/[^0-9]/g, "");
+const WHATSAPP_LINK = WHATSAPP_DIGITS
+  ? `https://wa.me/${WHATSAPP_DIGITS}?text=${encodeURIComponent(
+      "Merhaba, kredi paketi için dekontumu iletiyorum:"
+    )}`
+  : null;
+
 export default async function GuestCreditsPage() {
   const session = await auth();
 
@@ -40,7 +49,24 @@ export default async function GuestCreditsPage() {
         <p className="text-brand-600">
           Almak istediğiniz paket için havaleyi gönderdikten sonra aşağıdan
           "Havaleyi Gönderdim" butonuna basın; dekontu tarafımıza iletin
-          (mesaj/WhatsApp). Onaylandığında kredi hesabınıza otomatik eklenir.
+          {WHATSAPP_LINK ? (
+            <>
+              {" "}
+              (
+              <a
+                href={WHATSAPP_LINK}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-medium underline hover:text-brand-800"
+              >
+                WhatsApp: {WHATSAPP_NUMBER}
+              </a>
+              )
+            </>
+          ) : (
+            " (mesaj/WhatsApp)"
+          )}
+          . Onaylandığında kredi hesabınıza otomatik eklenir.
         </p>
       </div>
 
