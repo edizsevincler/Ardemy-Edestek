@@ -1,13 +1,14 @@
 "use server";
 
+import { randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
-import { signIn } from "@/auth";
-import { AuthError } from "next-auth";
+import { sendVerificationEmail } from "@/lib/email";
 
 type RegisterState =
   | { status: "idle" }
-  | { status: "error"; message: string };
+  | { status: "error"; message: string }
+  | { status: "success" };
 
 export async function registerGuest(
   _prevState: RegisterState,
@@ -42,25 +43,20 @@ export async function registerGuest(
   }
 
   const passwordHash = await hashPassword(password);
-  await prisma.user.create({
+  const user = await prisma.user.create({
     data: { name, email, passwordHash, role: "GUEST" },
   });
 
-  try {
-    await signIn("credentials", {
-      username: email,
-      password,
-      redirectTo: "/",
-    });
-  } catch (error) {
-    if (error instanceof AuthError) {
-      return {
-        status: "error",
-        message: "Hesap oluşturuldu ama giriş başarısız oldu, lütfen giriş yapın.",
-      };
-    }
-    throw error;
-  }
+  const token = randomBytes(32).toString("hex");
+  await prisma.verificationToken.create({
+    data: {
+      token,
+      userId: user.id,
+      expiresAt: new Date(Date.now() + 24 * 60 * 60 * 1000),
+    },
+  });
 
-  return { status: "idle" };
+  await sendVerificationEmail(email, name, token);
+
+  return { status: "success" };
 }
