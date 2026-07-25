@@ -21,6 +21,7 @@ export default async function EditQuestionPage({
       </h1>
       <EditQuestionForm
         id={question.id}
+        type={question.type}
         title={question.title}
         subject={question.subject}
         body={question.body ?? ""}

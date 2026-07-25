@@ -23,6 +23,18 @@ export function QuestionForm() {
       <h2 className="font-medium text-brand-950">Yeni Soru Ekle</h2>
       <form ref={formRef} action={formAction} className="mt-3 space-y-3">
         <div>
+          <label className="text-sm font-medium text-slate-700">Tür</label>
+          <select
+            name="type"
+            defaultValue="QUESTION"
+            className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+          >
+            <option value="QUESTION">Soru</option>
+            <option value="TOPIC">Konu Anlatımı</option>
+          </select>
+        </div>
+
+        <div>
           <label className="text-sm font-medium text-slate-700">Başlık</label>
           <input
             name="title"

@@ -19,6 +19,7 @@ export default async function AdminQuestionsPage() {
         <table className="w-full text-sm">
           <thead>
             <tr className="border-b border-slate-100 text-left text-slate-500">
+              <th className="px-4 py-2 font-medium">Tür</th>
               <th className="px-4 py-2 font-medium">Başlık</th>
               <th className="px-4 py-2 font-medium">Konu</th>
               <th className="px-4 py-2 font-medium">Kredi</th>
@@ -31,13 +32,16 @@ export default async function AdminQuestionsPage() {
           <tbody>
             {questions.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-6 text-center text-slate-400">
+                <td colSpan={8} className="px-4 py-6 text-center text-slate-400">
                   Henüz soru eklenmedi.
                 </td>
               </tr>
             )}
             {questions.map((q) => (
               <tr key={q.id} className="border-b border-slate-50 last:border-0">
+                <td className="px-4 py-2 text-slate-600">
+                  {q.type === "TOPIC" ? "Konu Anlatımı" : "Soru"}
+                </td>
                 <td className="px-4 py-2 text-slate-900">{q.title}</td>
                 <td className="px-4 py-2 text-slate-600">{q.subject}</td>
                 <td className="px-4 py-2 text-slate-600">{q.creditCost}</td>

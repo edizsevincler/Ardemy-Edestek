@@ -8,6 +8,7 @@ const initialState = { status: "idle" } as const;
 
 export function EditQuestionForm({
   id,
+  type,
   title,
   subject,
   body,
@@ -16,6 +17,7 @@ export function EditQuestionForm({
   currentFileName,
 }: {
   id: string;
+  type: string;
   title: string;
   subject: string;
   body: string;
@@ -41,6 +43,18 @@ export function EditQuestionForm({
       className="space-y-4 rounded-xl border border-brand-100 bg-white p-5 shadow-sm"
     >
       <input type="hidden" name="id" value={id} />
+
+      <div>
+        <label className="text-sm font-medium text-slate-700">Tür</label>
+        <select
+          name="type"
+          defaultValue={type}
+          className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+        >
+          <option value="QUESTION">Soru</option>
+          <option value="TOPIC">Konu Anlatımı</option>
+        </select>
+      </div>
 
       <div>
         <label className="text-sm font-medium text-slate-700">Başlık</label>

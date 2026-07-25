@@ -67,7 +67,9 @@ export default async function GuestQuestionDetailPage({
         </div>
       </ProtectedContent>
 
-      <AnswerForm questionId={question.id} answer={answer} />
+      {question.type !== "TOPIC" && (
+        <AnswerForm questionId={question.id} answer={answer} />
+      )}
     </div>
   );
 }

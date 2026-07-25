@@ -13,6 +13,7 @@ export async function createQuestion(
   _prevState: CreateQuestionState,
   formData: FormData
 ): Promise<CreateQuestionState> {
+  const type = formData.get("type") === "TOPIC" ? "TOPIC" : "QUESTION";
   const title = String(formData.get("title") ?? "").trim();
   const subject = String(formData.get("subject") ?? "").trim();
   const body = String(formData.get("body") ?? "").trim();
@@ -37,6 +38,7 @@ export async function createQuestion(
 
   await prisma.question.create({
     data: {
+      type,
       title,
       subject,
       body: body || null,
@@ -62,6 +64,7 @@ export async function editQuestion(
   formData: FormData
 ): Promise<EditQuestionState> {
   const id = String(formData.get("id") ?? "");
+  const type = formData.get("type") === "TOPIC" ? "TOPIC" : "QUESTION";
   const title = String(formData.get("title") ?? "").trim();
   const subject = String(formData.get("subject") ?? "").trim();
   const body = String(formData.get("body") ?? "").trim();
@@ -89,6 +92,7 @@ export async function editQuestion(
   await prisma.question.update({
     where: { id },
     data: {
+      type,
       title,
       subject,
       body: body || null,

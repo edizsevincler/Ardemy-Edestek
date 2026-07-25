@@ -22,6 +22,11 @@ enum PurchaseStatus {
   FAILED
 }
 
+enum QuestionType {
+  TOPIC    // Konu anlatımı
+  QUESTION // Soru
+}
+
 enum SessionType {
   PACKAGE         // sayılı oturum paketi (sessionsRemaining kullanılır)
   UNLIMITED       // sınırsız
@@ -123,7 +128,8 @@ model Message {
 // `subject` is a free-form string (not an enum) on purpose: the tutor plans to
 // add subjects beyond ENGLISH/RUSSIAN later without needing a schema migration.
 model Question {
-  id          String   @id @default(cuid())
+  id          String       @id @default(cuid())
+  type        QuestionType @default(QUESTION)
   title       String
   subject     String
   body        String?
