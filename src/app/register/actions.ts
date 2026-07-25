@@ -56,7 +56,18 @@ export async function registerGuest(
     },
   });
 
-  await sendVerificationEmail(email, name, token);
+  try {
+    await sendVerificationEmail(email, name, token);
+  } catch (error) {
+    // Mail gönderilemezse hesabı yarım bırakmayalım — kullanıcı aynı
+    // e-postayla tekrar deneyebilsin diye kaydı geri alıyoruz.
+    await prisma.user.delete({ where: { id: user.id } });
+    console.error("Doğrulama e-postası gönderilemedi:", error);
+    return {
+      status: "error",
+      message: "Onay e-postası gönderilemedi. Lütfen birazdan tekrar deneyin.",
+    };
+  }
 
   return { status: "success" };
 }
