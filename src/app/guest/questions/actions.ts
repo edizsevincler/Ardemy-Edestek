@@ -2,6 +2,7 @@
 
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { Prisma } from "@/generated/prisma/client";
 import { revalidatePath } from "next/cache";
 
 type UnlockState =
@@ -38,25 +39,35 @@ export async function unlockQuestion(
 
   try {
     await prisma.$transaction(async (tx) => {
-      const user = await tx.user.findUniqueOrThrow({
-        where: { id: session.user.id },
+      // `updateMany` ile şart (credits >= cost) tek bir atomik UPDATE
+      // içinde kontrol ediliyor — aynı hesaptan eşzamanlı (çift tık, iki
+      // sekme) istekler gelse bile kredi negatife düşemez, çünkü Postgres
+      // satırı ilk isteğe kilitler ve ikinci istek güncel bakiyeyi görür.
+      const result = await tx.user.updateMany({
+        where: { id: session.user.id, credits: { gte: question.creditCost } },
+        data: { credits: { decrement: question.creditCost } },
       });
-      if (user.credits < question.creditCost) {
+      if (result.count === 0) {
         throw new Error("INSUFFICIENT_CREDITS");
       }
 
-      await tx.user.update({
-        where: { id: user.id },
-        data: { credits: { decrement: question.creditCost } },
-      });
-
       await tx.questionUnlock.create({
-        data: { userId: user.id, questionId },
+        data: { userId: session.user.id, questionId },
       });
     });
   } catch (error) {
     if (error instanceof Error && error.message === "INSUFFICIENT_CREDITS") {
       return { status: "error", message: "Yeterli krediniz yok." };
+    }
+    // Aynı soruyu eşzamanlı iki istek açmaya çalışırsa (çift tık, iki
+    // sekme) ikinci istek burada unique constraint'e takılır — kredi zaten
+    // güvenli şekilde geri alınmış olur (transaction rollback), kullanıcıya
+    // hata göstermek yerine zaten açılmış say.
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === "P2002"
+    ) {
+      return { status: "success" };
     }
     throw error;
   }
