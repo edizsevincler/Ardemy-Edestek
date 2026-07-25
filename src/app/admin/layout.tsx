@@ -83,7 +83,7 @@ export default async function AdminLayout({
         </div>
         <SignOutButton />
       </header>
-      <main className="mx-auto max-w-5xl px-6 py-8">{children}</main>
+      <main className="mx-auto max-w-5xl px-6 py-8 animate-fade-in">{children}</main>
     </div>
   );
 }

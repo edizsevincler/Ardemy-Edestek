@@ -51,7 +51,7 @@ function QuestionSection({
                 return (
                   <div
                     key={q.id}
-                    className="flex items-center justify-between gap-4 rounded-xl border border-brand-100 bg-white p-4 shadow-sm"
+                    className="flex items-center justify-between gap-4 rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-4 shadow-sm"
                   >
                     <p className="font-medium text-brand-950">
                       {isUnlocked ? q.title : "🔒 " + q.title}
@@ -59,7 +59,7 @@ function QuestionSection({
                     {isUnlocked ? (
                       <Link
                         href={`/guest/questions/${q.id}`}
-                        className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:from-brand-500 hover:to-brand-400"
+                        className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95"
                       >
                         Görüntüle
                       </Link>

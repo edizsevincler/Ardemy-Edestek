@@ -42,7 +42,7 @@ export default async function GuestQuestionDetailPage({
       </Link>
 
       <ProtectedContent watermarkText={watermarkText}>
-        <div className="rounded-xl border border-brand-100 bg-white p-6 shadow-sm">
+        <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-6 shadow-sm">
           <p className="text-xs font-medium uppercase tracking-wide text-brand-500">
             {question.subject}
           </p>
@@ -69,7 +69,7 @@ export default async function GuestQuestionDetailPage({
               href={`/api/questions/${question.id}/file`}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-4 inline-block rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:from-brand-500 hover:to-brand-400"
+              className="mt-4 inline-block rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95"
             >
               Dosyayı Görüntüle
             </a>

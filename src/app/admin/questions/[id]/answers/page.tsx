@@ -42,7 +42,7 @@ export default async function QuestionAnswersPage({
           {answers.map((a) => (
             <div
               key={a.id}
-              className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm"
+              className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm"
             >
               <div className="flex items-center justify-between">
                 <p className="font-medium text-brand-950">

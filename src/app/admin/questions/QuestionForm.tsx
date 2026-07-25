@@ -19,7 +19,7 @@ export function QuestionForm() {
   }, [state]);
 
   return (
-    <div className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm">
+    <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
       <h2 className="font-medium text-brand-950">Yeni Soru Ekle</h2>
       <form ref={formRef} action={formAction} className="mt-3 space-y-3">
         <div>
@@ -96,7 +96,7 @@ export function QuestionForm() {
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-brand-900/20 transition hover:from-brand-500 hover:to-brand-400 disabled:opacity-60"
+          className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-brand-900/20 transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
         >
           {isPending ? "Ekleniyor..." : "Soruyu Ekle"}
         </button>

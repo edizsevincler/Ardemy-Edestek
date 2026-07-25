@@ -30,7 +30,7 @@ export default async function PendingPaymentsPage() {
           {pending.map((p) => (
             <div
               key={p.id}
-              className="flex flex-col gap-3 rounded-xl border border-brand-100 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
+              className="flex flex-col gap-3 rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between"
             >
               <div>
                 <p className="font-medium text-brand-950">

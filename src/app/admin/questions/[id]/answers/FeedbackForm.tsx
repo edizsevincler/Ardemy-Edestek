@@ -34,7 +34,7 @@ export function FeedbackForm({
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:from-brand-500 hover:to-brand-400 disabled:opacity-60"
+        className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
       >
         {isPending ? "Kaydediliyor..." : currentFeedback ? "Güncelle" : "Geri Bildirim Gönder"}
       </button>

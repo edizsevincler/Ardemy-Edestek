@@ -35,7 +35,7 @@ export default async function GuestCreditsPage() {
         <h1 className="text-2xl font-semibold text-brand-950">
           Kredi Satın Al
         </h1>
-        <div className="rounded-lg border border-brand-100 bg-white px-4 py-2 text-sm">
+        <div className="rounded-lg border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md px-4 py-2 text-sm">
           <span className="text-slate-500">Bakiyeniz: </span>
           <span className="font-medium text-brand-950">{me?.credits ?? 0} kredi</span>
         </div>

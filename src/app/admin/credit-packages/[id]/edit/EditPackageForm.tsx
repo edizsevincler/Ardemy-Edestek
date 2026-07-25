@@ -32,7 +32,7 @@ export function EditPackageForm({
   return (
     <form
       action={formAction}
-      className="space-y-4 rounded-xl border border-brand-100 bg-white p-5 shadow-sm"
+      className="space-y-4 rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm"
     >
       <input type="hidden" name="id" value={id} />
 
@@ -83,7 +83,7 @@ export function EditPackageForm({
         <button
           type="submit"
           disabled={isPending}
-          className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-brand-900/20 transition hover:from-brand-500 hover:to-brand-400 disabled:opacity-60"
+          className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-brand-900/20 transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
         >
           {isPending ? "Kaydediliyor..." : "Kaydet"}
         </button>

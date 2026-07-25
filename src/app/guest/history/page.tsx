@@ -35,7 +35,7 @@ export default async function GuestHistoryPage() {
         <h2 className="text-lg font-medium text-brand-950">
           Kredi Satın Alımlarım
         </h2>
-        <div className="overflow-x-auto rounded-xl border border-brand-100 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md shadow-sm">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-left text-slate-500">
@@ -79,7 +79,7 @@ export default async function GuestHistoryPage() {
 
       <section className="space-y-3">
         <h2 className="text-lg font-medium text-brand-950">Açtığım Sorular</h2>
-        <div className="overflow-x-auto rounded-xl border border-brand-100 bg-white shadow-sm">
+        <div className="overflow-x-auto rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md shadow-sm">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-left text-slate-500">

@@ -79,19 +79,19 @@ export default async function AdminHomePage() {
       <h1 className="text-2xl font-semibold text-brand-950">Hoş geldiniz</h1>
 
       <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
           <p className="text-sm text-slate-500">Öğrenci sayısı</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">
             {studentCount}
           </p>
         </div>
-        <div className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
           <p className="text-sm text-slate-500">Misafir sayısı</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">
             {guestCount}
           </p>
         </div>
-        <div className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
           <p className="text-sm text-slate-500">Toplam kredi satışı</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">
             {Number(revenue._sum.amount ?? 0).toLocaleString("tr-TR", {
@@ -103,7 +103,7 @@ export default async function AdminHomePage() {
       </div>
 
       <div className="grid gap-4 lg:grid-cols-3">
-        <div className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
           <h2 className="font-medium text-brand-950">En çok açılan sorular</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {topQuestions.length === 0 && (
@@ -120,7 +120,7 @@ export default async function AdminHomePage() {
           </ul>
         </div>
 
-        <div className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
           <h2 className="font-medium text-brand-950">Son kayıt olan misafirler</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {recentGuests.length === 0 && (
@@ -137,7 +137,7 @@ export default async function AdminHomePage() {
           </ul>
         </div>
 
-        <div className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm">
+        <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
           <h2 className="font-medium text-brand-950">Son ödev teslimleri</h2>
           <ul className="mt-3 space-y-2 text-sm">
             {recentSubmissions.length === 0 && (
@@ -159,7 +159,7 @@ export default async function AdminHomePage() {
       <div className="grid gap-4 sm:grid-cols-3">
         {sections.map((s) => (
           <Link key={s.title} href={s.href}>
-            <div className="h-full rounded-xl border border-brand-100 bg-white p-5 shadow-sm transition hover:border-brand-300">
+            <div className="h-full rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm transition hover:border-brand-300">
               <h2 className="font-medium text-brand-950">{s.title}</h2>
               <p className="mt-1 text-sm text-slate-500">{s.description}</p>
             </div>

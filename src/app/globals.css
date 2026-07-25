@@ -36,3 +36,36 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+@layer utilities {
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  .animate-fade-in {
+    animation: fade-in-up 0.45s ease-out;
+  }
+
+  @keyframes float-slow {
+    0%,
+    100% {
+      transform: translateY(0) scale(1);
+    }
+    50% {
+      transform: translateY(-16px) scale(1.04);
+    }
+  }
+  .animate-float-slow {
+    animation: float-slow 9s ease-in-out infinite;
+  }
+  .animate-float-slow-delayed {
+    animation: float-slow 9s ease-in-out infinite;
+    animation-delay: -4.5s;
+  }
+}

@@ -32,7 +32,7 @@ export function UnlockButton({
       <button
         type="submit"
         disabled={isPending}
-        className="rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 px-3 py-1.5 text-sm font-semibold text-brand-950 shadow-sm shadow-gold-600/30 transition hover:from-gold-400 hover:to-gold-300 disabled:opacity-60"
+        className="rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 px-3 py-1.5 text-sm font-semibold text-brand-950 shadow-sm shadow-gold-600/30 transition-all duration-200 hover:from-gold-400 hover:to-gold-300 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
       >
         {isPending ? "Açılıyor..." : `${creditCost} kredi ile aç`}
       </button>

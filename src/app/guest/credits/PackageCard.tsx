@@ -22,7 +22,7 @@ export function PackageCard({
   );
 
   return (
-    <div className="flex flex-col justify-between rounded-xl border border-brand-100 bg-white p-6 text-center shadow-sm">
+    <div className="flex flex-col justify-between rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-6 text-center shadow-sm">
       <div>
         <p className="text-sm font-medium text-brand-600">{name}</p>
         <p className="mt-2 text-3xl font-semibold text-brand-950">
@@ -44,7 +44,7 @@ export function PackageCard({
         <button
           type="submit"
           disabled={isPending || state.status === "success"}
-          className="w-full rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 py-2.5 text-sm font-semibold text-brand-950 shadow-sm shadow-gold-600/30 transition hover:from-gold-400 hover:to-gold-300 disabled:opacity-60"
+          className="w-full rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 py-2.5 text-sm font-semibold text-brand-950 shadow-sm shadow-gold-600/30 transition-all duration-200 hover:from-gold-400 hover:to-gold-300 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
         >
           {isPending
             ? "Gönderiliyor..."
