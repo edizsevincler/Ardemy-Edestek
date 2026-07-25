@@ -1,6 +1,6 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { fileDownloadResponse } from "@/lib/fileResponse";
+import { fileInlineResponse } from "@/lib/fileResponse";
 
 export async function GET(
   _request: Request,
@@ -18,7 +18,7 @@ export async function GET(
   }
 
   if (session.user.role === "ADMIN") {
-    return fileDownloadResponse(question.fileUrl, question.fileName);
+    return fileInlineResponse(question.fileUrl, question.fileName);
   }
 
   const unlock = await prisma.questionUnlock.findUnique({
@@ -30,5 +30,5 @@ export async function GET(
     return new Response("Forbidden", { status: 403 });
   }
 
-  return fileDownloadResponse(question.fileUrl, question.fileName);
+  return fileInlineResponse(question.fileUrl, question.fileName);
 }

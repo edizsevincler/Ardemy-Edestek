@@ -10,6 +10,16 @@ type QuestionItem = {
   creditCost: number;
 };
 
+function groupBySubject(items: QuestionItem[]) {
+  const groups = new Map<string, QuestionItem[]>();
+  for (const item of items) {
+    const list = groups.get(item.subject) ?? [];
+    list.push(item);
+    groups.set(item.subject, list);
+  }
+  return Array.from(groups.entries());
+}
+
 function QuestionSection({
   title,
   items,
@@ -21,38 +31,47 @@ function QuestionSection({
 }) {
   if (items.length === 0) return null;
 
+  const groups = groupBySubject(items);
+
   return (
-    <section className="space-y-3">
+    <section className="space-y-4">
       <h2 className="text-lg font-medium text-brand-950">{title}</h2>
-      <div className="space-y-3">
-        {items.map((q) => {
-          const isUnlocked = unlockedIds.has(q.id);
-          return (
-            <div
-              key={q.id}
-              className="flex items-center justify-between gap-4 rounded-xl border border-brand-100 bg-white p-4 shadow-sm"
-            >
-              <div>
-                <p className="text-xs font-medium uppercase tracking-wide text-brand-500">
-                  {q.subject}
-                </p>
-                <p className="font-medium text-brand-950">
-                  {isUnlocked ? q.title : "🔒 " + q.title}
-                </p>
-              </div>
-              {isUnlocked ? (
-                <Link
-                  href={`/guest/questions/${q.id}`}
-                  className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:from-brand-500 hover:to-brand-400"
-                >
-                  Görüntüle
-                </Link>
-              ) : (
-                <UnlockButton questionId={q.id} creditCost={q.creditCost} />
-              )}
+      <div className="space-y-6">
+        {groups.map(([subject, groupItems]) => (
+          <div
+            key={subject}
+            className="space-y-3 rounded-xl border border-brand-200 bg-brand-50/40 p-4"
+          >
+            <h3 className="text-xs font-semibold uppercase tracking-wide text-brand-600">
+              {subject}
+            </h3>
+            <div className="space-y-3">
+              {groupItems.map((q) => {
+                const isUnlocked = unlockedIds.has(q.id);
+                return (
+                  <div
+                    key={q.id}
+                    className="flex items-center justify-between gap-4 rounded-xl border border-brand-100 bg-white p-4 shadow-sm"
+                  >
+                    <p className="font-medium text-brand-950">
+                      {isUnlocked ? q.title : "🔒 " + q.title}
+                    </p>
+                    {isUnlocked ? (
+                      <Link
+                        href={`/guest/questions/${q.id}`}
+                        className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition hover:from-brand-500 hover:to-brand-400"
+                      >
+                        Görüntüle
+                      </Link>
+                    ) : (
+                      <UnlockButton questionId={q.id} creditCost={q.creditCost} />
+                    )}
+                  </div>
+                );
+              })}
             </div>
-          );
-        })}
+          </div>
+        ))}
       </div>
     </section>
   );

@@ -56,12 +56,22 @@ export default async function GuestQuestionDetailPage({
             </p>
           )}
 
-          {question.fileUrl && (
+          {question.fileUrl && question.fileName?.toLowerCase().endsWith(".pdf") && (
+            <iframe
+              src={`/api/questions/${question.id}/file`}
+              className="mt-4 h-[75vh] w-full rounded-lg border border-slate-200"
+              title={question.title}
+            />
+          )}
+
+          {question.fileUrl && !question.fileName?.toLowerCase().endsWith(".pdf") && (
             <a
               href={`/api/questions/${question.id}/file`}
+              target="_blank"
+              rel="noopener noreferrer"
               className="mt-4 inline-block rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition hover:from-brand-500 hover:to-brand-400"
             >
-              Dosyayı İndir
+              Dosyayı Görüntüle
             </a>
           )}
         </div>
