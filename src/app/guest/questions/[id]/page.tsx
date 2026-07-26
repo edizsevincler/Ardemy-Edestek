@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ProtectedContent } from "@/components/ProtectedContent";
 import { AnswerForm } from "./AnswerForm";
+import { QuizForm } from "./QuizForm";
 import { slugify } from "@/lib/slugify";
 
 export default async function GuestQuestionDetailPage({
@@ -27,12 +28,71 @@ export default async function GuestQuestionDetailPage({
     redirect("/guest/questions");
   }
 
+  const watermarkText = `${session!.user.email ?? session!.user.name} • ${new Date().toLocaleString("tr-TR")}`;
+  const language = question.subject.split(" - ")[0].trim();
+
+  if (question.type === "QUIZ") {
+    const [items, submission] = await Promise.all([
+      prisma.quizItem.findMany({
+        where: { questionId: id },
+        orderBy: { order: "asc" },
+        select: {
+          id: true,
+          order: true,
+          prompt: true,
+          optionA: true,
+          optionB: true,
+          optionC: true,
+          optionD: true,
+        },
+      }),
+      prisma.quizSubmission.findUnique({
+        where: { userId_questionId: { userId, questionId: id } },
+      }),
+    ]);
+
+    return (
+      <div className="space-y-4">
+        <Link
+          href={`/guest/questions/list/${slugify(language)}`}
+          className="text-sm text-slate-500 hover:text-brand-700"
+        >
+          ← {language}
+        </Link>
+
+        <div>
+          <p className="text-xs font-medium uppercase tracking-wide text-brand-500">
+            {question.subject}
+          </p>
+          <h1 className="mt-1 text-xl font-semibold text-brand-950">
+            {question.title}
+          </h1>
+        </div>
+
+        <QuizForm
+          questionId={question.id}
+          items={items}
+          existingSubmission={
+            submission
+              ? {
+                  score: submission.score,
+                  total: submission.total,
+                  answers: submission.answers as {
+                    itemId: string;
+                    selected: "A" | "B" | "C" | "D";
+                    correct: boolean;
+                  }[],
+                }
+              : null
+          }
+        />
+      </div>
+    );
+  }
+
   const answer = await prisma.questionAnswer.findUnique({
     where: { userId_questionId: { userId, questionId: id } },
   });
-
-  const watermarkText = `${session!.user.email ?? session!.user.name} • ${new Date().toLocaleString("tr-TR")}`;
-  const language = question.subject.split(" - ")[0].trim();
 
   return (
     <div className="space-y-4">

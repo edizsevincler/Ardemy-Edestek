@@ -3,6 +3,12 @@
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile, getPdfPageCount } from "@/lib/storage";
 import { revalidatePath } from "next/cache";
+import type { QuestionType } from "@/generated/prisma/client";
+
+function parseQuestionType(value: FormDataEntryValue | null): QuestionType {
+  if (value === "TOPIC" || value === "QUIZ") return value;
+  return "QUESTION";
+}
 
 type CreateQuestionState =
   | { status: "idle" }
@@ -13,7 +19,7 @@ export async function createQuestion(
   _prevState: CreateQuestionState,
   formData: FormData
 ): Promise<CreateQuestionState> {
-  const type = formData.get("type") === "TOPIC" ? "TOPIC" : "QUESTION";
+  const type = parseQuestionType(formData.get("type"));
   const title = String(formData.get("title") ?? "").trim();
   const subject = String(formData.get("subject") ?? "").trim();
   const body = String(formData.get("body") ?? "").trim();
@@ -67,7 +73,7 @@ export async function editQuestion(
   formData: FormData
 ): Promise<EditQuestionState> {
   const id = String(formData.get("id") ?? "");
-  const type = formData.get("type") === "TOPIC" ? "TOPIC" : "QUESTION";
+  const type = parseQuestionType(formData.get("type"));
   const title = String(formData.get("title") ?? "").trim();
   const subject = String(formData.get("subject") ?? "").trim();
   const body = String(formData.get("body") ?? "").trim();

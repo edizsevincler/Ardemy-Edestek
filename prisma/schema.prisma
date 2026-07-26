@@ -24,7 +24,15 @@ enum PurchaseStatus {
 
 enum QuestionType {
   TOPIC    // Konu anlatımı
-  QUESTION // Soru
+  QUESTION // Soru (açık uçlu)
+  QUIZ     // Çoktan seçmeli test (20 soruluk)
+}
+
+enum QuizOption {
+  A
+  B
+  C
+  D
 }
 
 enum SessionType {
@@ -54,6 +62,7 @@ model User {
   creditPurchases       CreditPurchase[]
   unlockedQuestions     QuestionUnlock[]
   questionAnswers       QuestionAnswer[]
+  quizSubmissions       QuizSubmission[]
   verificationTokens    VerificationToken[]
 }
 
@@ -140,8 +149,47 @@ model Question {
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
 
-  unlocks QuestionUnlock[]
-  answers QuestionAnswer[]
+  unlocks         QuestionUnlock[]
+  answers         QuestionAnswer[]
+  quizItems       QuizItem[]
+  quizSubmissions QuizSubmission[]
+}
+
+// Bir QUIZ tipi Question'a bağlı tek bir çoktan seçmeli soru.
+model QuizItem {
+  id      String     @id @default(cuid())
+  order   Int
+  prompt  String
+  optionA String
+  optionB String
+  optionC String
+  optionD String
+  correct QuizOption
+
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, order])
+}
+
+// Bir kullanıcının bir QUIZ'i tamamlamasının sonucu. `answers` her maddenin
+// seçilen şıkkını ve doğru olup olmadığını tutar (ör: [{"itemId":"...",
+// "selected":"B","correct":true}, ...]) — tekrar çözmeye izin verilir, yeni
+// gönderim eskisinin üzerine yazılır (unique).
+model QuizSubmission {
+  id          String   @id @default(cuid())
+  score       Int
+  total       Int
+  answers     Json
+  submittedAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
 }
 
 // Bir kullanıcının açtığı soruya verdiği cevap. Tekrar göndermeye izin

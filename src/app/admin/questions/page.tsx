@@ -40,7 +40,11 @@ export default async function AdminQuestionsPage() {
             {questions.map((q) => (
               <tr key={q.id} className="border-b border-slate-50 last:border-0">
                 <td className="px-4 py-2 text-slate-600">
-                  {q.type === "TOPIC" ? "Konu Anlatımı" : "Soru"}
+                  {q.type === "TOPIC"
+                    ? "Konu Anlatımı"
+                    : q.type === "QUIZ"
+                      ? "Test"
+                      : "Soru"}
                 </td>
                 <td className="px-4 py-2 text-slate-900">{q.title}</td>
                 <td className="px-4 py-2 text-slate-600">{q.subject}</td>
@@ -70,6 +74,14 @@ export default async function AdminQuestionsPage() {
                   >
                     Düzenle
                   </Link>
+                  {q.type === "QUIZ" && (
+                    <Link
+                      href={`/admin/questions/${q.id}/quiz`}
+                      className="text-brand-600 underline hover:text-brand-800"
+                    >
+                      Test Soruları
+                    </Link>
+                  )}
                   <DeleteButton id={q.id} />
                 </td>
               </tr>

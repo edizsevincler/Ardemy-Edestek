@@ -118,7 +118,8 @@ export default async function GuestQuestionsByLanguagePage({
 
   const unlockedIds = new Set(unlocks.map((u) => u.questionId));
   const topics = questions.filter((q) => q.type === "TOPIC");
-  const exercises = questions.filter((q) => q.type !== "TOPIC");
+  const quizzes = questions.filter((q) => q.type === "QUIZ");
+  const exercises = questions.filter((q) => q.type === "QUESTION");
 
   return (
     <div className="space-y-8">
@@ -138,6 +139,11 @@ export default async function GuestQuestionsByLanguagePage({
       <QuestionSection
         title="📘 Konu Anlatımı"
         items={topics}
+        unlockedIds={unlockedIds}
+      />
+      <QuestionSection
+        title="🧠 Testler"
+        items={quizzes}
         unlockedIds={unlockedIds}
       />
       <QuestionSection
