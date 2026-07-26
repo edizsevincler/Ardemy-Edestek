@@ -1,7 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
-import { saveUploadedFile } from "@/lib/storage";
+import { saveUploadedFile, getPdfPageCount } from "@/lib/storage";
 import { revalidatePath } from "next/cache";
 
 type CreateQuestionState =
@@ -30,10 +30,12 @@ export async function createQuestion(
 
   let fileUrl: string | undefined;
   let fileName: string | undefined;
+  let pageCount: number | null = null;
   if (file instanceof File && file.size > 0) {
     const saved = await saveUploadedFile(file, "questions");
     fileUrl = saved.fileUrl;
     fileName = saved.fileName;
+    pageCount = await getPdfPageCount(file);
   }
 
   await prisma.question.create({
@@ -44,6 +46,7 @@ export async function createQuestion(
       body: body || null,
       fileUrl,
       fileName,
+      pageCount,
       creditCost: Math.round(creditCost),
       isPublished,
     },
@@ -83,10 +86,12 @@ export async function editQuestion(
 
   let fileUrl = existing.fileUrl;
   let fileName = existing.fileName;
+  let pageCount = existing.pageCount;
   if (file instanceof File && file.size > 0) {
     const saved = await saveUploadedFile(file, "questions");
     fileUrl = saved.fileUrl;
     fileName = saved.fileName;
+    pageCount = await getPdfPageCount(file);
   }
 
   await prisma.question.update({
@@ -98,6 +103,7 @@ export async function editQuestion(
       body: body || null,
       fileUrl,
       fileName,
+      pageCount,
       creditCost: Math.round(creditCost),
       isPublished,
     },

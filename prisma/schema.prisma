@@ -135,6 +135,7 @@ model Question {
   body        String?
   fileUrl     String?
   fileName    String?
+  pageCount   Int?
   creditCost  Int      @default(1)
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())

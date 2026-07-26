@@ -2,6 +2,7 @@ import { writeFile, mkdir, readFile } from "fs/promises";
 import path from "path";
 import { randomUUID } from "crypto";
 import { put } from "@vercel/blob";
+import { PDFDocument } from "pdf-lib";
 
 const UPLOAD_ROOT = path.join(process.cwd(), "uploads");
 
@@ -32,6 +33,17 @@ export async function saveUploadedFile(file: File, subdir: string) {
   await writeFile(path.join(dir, storedName), bytes);
 
   return { fileUrl: `${subdir}/${storedName}`, fileName: file.name };
+}
+
+export async function getPdfPageCount(file: File): Promise<number | null> {
+  if (!file.name.toLowerCase().endsWith(".pdf")) return null;
+  try {
+    const bytes = await file.arrayBuffer();
+    const doc = await PDFDocument.load(bytes, { ignoreEncryption: true });
+    return doc.getPageCount();
+  } catch {
+    return null;
+  }
 }
 
 export async function readStoredFile(fileUrl: string) {

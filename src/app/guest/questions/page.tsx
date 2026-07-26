@@ -8,6 +8,7 @@ type QuestionItem = {
   title: string;
   subject: string;
   creditCost: number;
+  pageCount: number | null;
 };
 
 function groupBySubject(items: QuestionItem[]) {
@@ -55,6 +56,11 @@ function QuestionSection({
                   >
                     <p className="font-medium text-brand-950">
                       {isUnlocked ? q.title : "🔒 " + q.title}
+                      {q.pageCount ? (
+                        <span className="ml-1 font-normal text-slate-500">
+                          ({q.pageCount} sayfa)
+                        </span>
+                      ) : null}
                     </p>
                     {isUnlocked ? (
                       <Link
