@@ -58,7 +58,10 @@ export function QuizForm({
       {result && (
         <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 text-center">
           <p className="text-lg font-semibold text-brand-950">
-            Sonuç: {result.score} / {result.total}
+            {result.score} doğru, {result.total - result.score} yanlış
+          </p>
+          <p className="text-sm text-slate-500">
+            {result.total} sorudan {result.score} tanesini doğru yaptınız.
           </p>
         </div>
       )}
@@ -119,6 +122,17 @@ export function QuizForm({
       >
         {isPending ? "Gönderiliyor..." : result ? "Tekrar Gönder" : "Testi Bitir"}
       </button>
+
+      {result && (
+        <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 text-center">
+          <p className="text-lg font-semibold text-brand-950">
+            {result.score} doğru, {result.total - result.score} yanlış
+          </p>
+          <p className="text-sm text-slate-500">
+            {result.total} sorudan {result.score} tanesini doğru yaptınız.
+          </p>
+        </div>
+      )}
     </div>
   );
 }
