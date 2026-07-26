@@ -53,6 +53,12 @@ export function QuizForm({
     });
   }
 
+  function handleRetake() {
+    setAnswers({});
+    setResult(null);
+    setError(null);
+  }
+
   return (
     <div className="space-y-4">
       {result && (
@@ -114,14 +120,24 @@ export function QuizForm({
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 
-      <button
-        type="button"
-        disabled={isPending || answeredCount < items.length}
-        onClick={handleSubmit}
-        className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
-      >
-        {isPending ? "Gönderiliyor..." : result ? "Tekrar Gönder" : "Testi Bitir"}
-      </button>
+      {result ? (
+        <button
+          type="button"
+          onClick={handleRetake}
+          className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95"
+        >
+          Tekrar Çöz
+        </button>
+      ) : (
+        <button
+          type="button"
+          disabled={isPending || answeredCount < items.length}
+          onClick={handleSubmit}
+          className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
+        >
+          {isPending ? "Gönderiliyor..." : "Testi Bitir"}
+        </button>
+      )}
 
       {result && (
         <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 text-center">
