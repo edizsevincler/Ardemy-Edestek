@@ -34,7 +34,11 @@ export function UnlockButton({
         disabled={isPending}
         className="rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 px-3 py-1.5 text-sm font-semibold text-brand-950 shadow-sm shadow-gold-600/30 transition-all duration-200 hover:from-gold-400 hover:to-gold-300 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
       >
-        {isPending ? "Açılıyor..." : `${creditCost} kredi ile aç`}
+        {isPending
+          ? "Açılıyor..."
+          : creditCost === 0
+            ? "Ücretsiz Aç"
+            : `${creditCost} kredi ile aç`}
       </button>
       {state.status === "error" && (
         <p className="mt-1 text-xs text-red-600">{state.message}</p>

@@ -24,8 +24,8 @@ export async function createQuestion(
   if (!title || !subject) {
     return { status: "error", message: "Başlık ve konu gerekli." };
   }
-  if (!Number.isFinite(creditCost) || creditCost < 1) {
-    return { status: "error", message: "Kredi bedeli en az 1 olmalı." };
+  if (!Number.isFinite(creditCost) || creditCost < 0) {
+    return { status: "error", message: "Kredi bedeli negatif olamaz." };
   }
 
   let fileUrl: string | undefined;
