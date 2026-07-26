@@ -31,14 +31,15 @@ export default async function GuestQuestionDetailPage({
   });
 
   const watermarkText = `${session!.user.email ?? session!.user.name} • ${new Date().toLocaleString("tr-TR")}`;
+  const language = question.subject.split(" - ")[0].trim();
 
   return (
     <div className="space-y-4">
       <Link
-        href="/guest/questions"
+        href={`/guest/questions/list/${encodeURIComponent(language)}`}
         className="text-sm text-slate-500 hover:text-brand-700"
       >
-        ← Soru Bankası
+        ← {language}
       </Link>
 
       <ProtectedContent watermarkText={watermarkText}>
