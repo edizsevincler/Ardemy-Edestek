@@ -3,11 +3,8 @@ import { notFound } from "next/navigation";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { UnlockButton } from "../../UnlockButton";
-
-const FLAGS: Record<string, string> = {
-  Rusça: "🇷🇺",
-  İngilizce: "🇬🇧",
-};
+import { FlagIcon } from "@/components/FlagIcon";
+import { slugify } from "@/lib/slugify";
 
 type QuestionItem = {
   id: string;
@@ -94,7 +91,7 @@ export default async function GuestQuestionsByLanguagePage({
 }: {
   params: Promise<{ language: string }>;
 }) {
-  const { language } = await params;
+  const { language: slug } = await params;
   const session = await auth();
   const userId = session!.user.id;
 
@@ -110,12 +107,14 @@ export default async function GuestQuestionsByLanguagePage({
   ]);
 
   const questions = allQuestions.filter(
-    (q) => q.subject.split(" - ")[0].trim() === language
+    (q) => slugify(q.subject.split(" - ")[0].trim()) === slug
   );
 
   if (questions.length === 0) {
     notFound();
   }
+
+  const language = questions[0].subject.split(" - ")[0].trim();
 
   const unlockedIds = new Set(unlocks.map((u) => u.questionId));
   const topics = questions.filter((q) => q.type === "TOPIC");
@@ -131,7 +130,7 @@ export default async function GuestQuestionsByLanguagePage({
           ← İçerikler
         </Link>
         <h1 className="mt-2 flex items-center gap-2 text-2xl font-semibold text-brand-950">
-          <span>{FLAGS[language] ?? "🌐"}</span>
+          <FlagIcon language={language} />
           {language}
         </h1>
       </div>

@@ -4,6 +4,7 @@ import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { ProtectedContent } from "@/components/ProtectedContent";
 import { AnswerForm } from "./AnswerForm";
+import { slugify } from "@/lib/slugify";
 
 export default async function GuestQuestionDetailPage({
   params,
@@ -36,7 +37,7 @@ export default async function GuestQuestionDetailPage({
   return (
     <div className="space-y-4">
       <Link
-        href={`/guest/questions/list/${encodeURIComponent(language)}`}
+        href={`/guest/questions/list/${slugify(language)}`}
         className="text-sm text-slate-500 hover:text-brand-700"
       >
         ← {language}

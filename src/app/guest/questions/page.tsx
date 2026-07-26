@@ -1,10 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
-
-const FLAGS: Record<string, string> = {
-  Rusça: "🇷🇺",
-  İngilizce: "🇬🇧",
-};
+import { FlagIcon } from "@/components/FlagIcon";
+import { slugify } from "@/lib/slugify";
 
 function languageOf(subject: string) {
   return subject.split(" - ")[0].trim();
@@ -39,10 +36,10 @@ export default async function GuestQuestionsLandingPage() {
           {languages.map(([language, count]) => (
             <Link
               key={language}
-              href={`/guest/questions/list/${encodeURIComponent(language)}`}
+              href={`/guest/questions/list/${slugify(language)}`}
               className="flex items-center gap-4 rounded-xl border border-brand-100 bg-white p-6 shadow-sm transition-all duration-200 hover:shadow-md hover:scale-[1.02]"
             >
-              <span className="text-4xl">{FLAGS[language] ?? "🌐"}</span>
+              <FlagIcon language={language} className="h-10 w-14" />
               <div>
                 <p className="text-lg font-semibold text-brand-950">
                   {language}
