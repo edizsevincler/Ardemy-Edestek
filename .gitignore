@@ -55,3 +55,6 @@ ogrenci-hesaplari.txt
 /.agents
 /.windsurf
 /.claude/skills
+
+.vercel
+.env*
