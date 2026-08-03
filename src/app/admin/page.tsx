@@ -78,7 +78,7 @@ export default async function AdminHomePage() {
     <div className="space-y-8">
       <h1 className="text-2xl font-semibold text-brand-950">Hoş geldiniz</h1>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
           <p className="text-sm text-slate-500">Öğrenci sayısı</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">
@@ -102,7 +102,7 @@ export default async function AdminHomePage() {
         </div>
       </div>
 
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-3">
         <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
           <h2 className="font-medium text-brand-950">En çok açılan sorular</h2>
           <ul className="mt-3 space-y-2 text-sm">
@@ -110,8 +110,8 @@ export default async function AdminHomePage() {
               <li className="text-slate-400">Henüz soru açılmadı.</li>
             )}
             {topQuestions.map((q) => (
-              <li key={q.id} className="flex justify-between text-slate-700">
-                <span className="truncate pr-2">{q.title}</span>
+              <li key={q.id} className="flex min-w-0 justify-between text-slate-700">
+                <span className="min-w-0 truncate pr-2">{q.title}</span>
                 <span className="shrink-0 text-slate-400">
                   {q._count.unlocks} açılma
                 </span>
@@ -127,8 +127,8 @@ export default async function AdminHomePage() {
               <li className="text-slate-400">Henüz misafir yok.</li>
             )}
             {recentGuests.map((g) => (
-              <li key={g.id} className="flex justify-between text-slate-700">
-                <span className="truncate pr-2">{g.name}</span>
+              <li key={g.id} className="flex min-w-0 justify-between text-slate-700">
+                <span className="min-w-0 truncate pr-2">{g.name}</span>
                 <span className="shrink-0 text-slate-400">
                   {g.createdAt.toLocaleDateString("tr-TR")}
                 </span>
@@ -156,7 +156,7 @@ export default async function AdminHomePage() {
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         {sections.map((s) => (
           <Link key={s.title} href={s.href}>
             <div className="h-full rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm transition hover:border-brand-300">

@@ -17,7 +17,7 @@ export default async function GuestHomePage() {
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold text-brand-950">Hoş geldiniz</h1>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
           <p className="text-sm text-slate-500">Kredi bakiyeniz</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">

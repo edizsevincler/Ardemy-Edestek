@@ -24,66 +24,70 @@ export default async function AdminLayout({
 
   return (
     <div className="min-h-screen bg-background">
-      <header className="flex items-center justify-between bg-brand-950 px-6 py-4 shadow-md">
-        <div className="flex items-center gap-6">
-          <div className="flex items-center gap-3">
-            <Logo size={40} />
-            <div>
-              <p className="text-xs uppercase tracking-wide text-brand-200">
+      <header className="bg-brand-950 px-4 py-3 shadow-md sm:px-6 sm:py-4">
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex min-w-0 items-center gap-3">
+            <Logo size={36} className="shrink-0" />
+            <div className="min-w-0">
+              <p className="text-[11px] uppercase tracking-wide text-brand-200 sm:text-xs">
                 Yönetici Paneli
               </p>
-              <p className="font-medium text-white">{session.user.name}</p>
+              <p className="truncate text-sm font-medium text-white sm:text-base">
+                {session.user.name}
+              </p>
             </div>
           </div>
-          <nav className="flex gap-4 text-sm text-brand-100">
-            <Link href="/admin" className="transition hover:text-gold-400">
-              Panel
-            </Link>
-            <Link href="/admin/students" className="transition hover:text-gold-400">
-              Öğrenciler
-            </Link>
-            <Link href="/admin/guests" className="transition hover:text-gold-400">
-              Misafirler
-            </Link>
-            <Link href="/admin/assignments" className="transition hover:text-gold-400">
-              Ödevler
-            </Link>
-            <Link href="/admin/lesson-files" className="transition hover:text-gold-400">
-              Ders Dosyaları
-            </Link>
-            <Link href="/admin/questions" className="transition hover:text-gold-400">
-              Soru Bankası
-            </Link>
-            <Link href="/admin/credit-packages" className="transition hover:text-gold-400">
-              Kredi Paketleri
-            </Link>
-            <Link
-              href="/admin/pending-payments"
-              className="flex items-center gap-1.5 transition hover:text-gold-400"
-            >
-              Bekleyen Ödemeler
-              {pendingPaymentsCount > 0 && (
-                <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-medium text-white">
-                  {pendingPaymentsCount}
-                </span>
-              )}
-            </Link>
-            <Link
-              href="/admin/messages"
-              className="flex items-center gap-1.5 transition hover:text-gold-400"
-            >
-              Mesajlar
-              {unreadCount > 0 && (
-                <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-medium text-white">
-                  {unreadCount}
-                </span>
-              )}
-            </Link>
-          </nav>
+          <SignOutButton />
         </div>
-        <SignOutButton />
+        <nav className="-mx-4 mt-3 flex gap-x-4 gap-y-2 overflow-x-auto whitespace-nowrap px-4 text-sm text-brand-100 sm:mx-0 sm:flex-wrap sm:px-0">
+          <Link href="/admin" className="shrink-0 transition hover:text-gold-400">
+            Panel
+          </Link>
+          <Link href="/admin/students" className="shrink-0 transition hover:text-gold-400">
+            Öğrenciler
+          </Link>
+          <Link href="/admin/guests" className="shrink-0 transition hover:text-gold-400">
+            Misafirler
+          </Link>
+          <Link href="/admin/assignments" className="shrink-0 transition hover:text-gold-400">
+            Ödevler
+          </Link>
+          <Link href="/admin/lesson-files" className="shrink-0 transition hover:text-gold-400">
+            Ders Dosyaları
+          </Link>
+          <Link href="/admin/questions" className="shrink-0 transition hover:text-gold-400">
+            Soru Bankası
+          </Link>
+          <Link href="/admin/credit-packages" className="shrink-0 transition hover:text-gold-400">
+            Kredi Paketleri
+          </Link>
+          <Link
+            href="/admin/pending-payments"
+            className="flex shrink-0 items-center gap-1.5 transition hover:text-gold-400"
+          >
+            Bekleyen Ödemeler
+            {pendingPaymentsCount > 0 && (
+              <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-medium text-white">
+                {pendingPaymentsCount}
+              </span>
+            )}
+          </Link>
+          <Link
+            href="/admin/messages"
+            className="flex shrink-0 items-center gap-1.5 transition hover:text-gold-400"
+          >
+            Mesajlar
+            {unreadCount > 0 && (
+              <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-medium text-white">
+                {unreadCount}
+              </span>
+            )}
+          </Link>
+        </nav>
       </header>
-      <main className="mx-auto max-w-5xl px-6 py-8 animate-fade-in">{children}</main>
+      <main className="mx-auto max-w-5xl px-4 py-6 animate-fade-in sm:px-6 sm:py-8">
+        {children}
+      </main>
     </div>
   );
 }

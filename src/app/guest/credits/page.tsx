@@ -75,7 +75,7 @@ export default async function GuestCreditsPage() {
           Şu anda satışta paket bulunmuyor.
         </p>
       ) : (
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {packages.map((p) => (
             <PackageCard
               key={p.id}
