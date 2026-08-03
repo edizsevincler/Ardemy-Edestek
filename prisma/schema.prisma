@@ -55,6 +55,13 @@ model User {
   sessionsRemaining Int         @default(0)
   credits           Int         @default(0)
 
+  // Duolingo tarzı günlük seri: her gün en az bir soru/test çözünce artar,
+  // bir gün atlanırsa bir sonraki aktivitede 1'e sıfırlanır.
+  currentStreak    Int       @default(0)
+  longestStreak    Int       @default(0)
+  lastStreakDate   DateTime?
+  lastRewardStreak Int       @default(0)
+
   assignments           Assignment[]
   assignmentSubmissions AssignmentSubmission[]
   lessonFiles           LessonFile[]
@@ -64,6 +71,7 @@ model User {
   questionAnswers       QuestionAnswer[]
   quizSubmissions       QuizSubmission[]
   verificationTokens    VerificationToken[]
+  streakRewards         StreakReward[]
 }
 
 // GUEST kaydı sırasında e-postanın gerçekten kullanıcıya ait olduğunu
@@ -226,6 +234,20 @@ model QuestionUnlock {
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
 
   @@unique([userId, questionId])
+}
+
+// Bir kullanıcının 30 günün katı bir seriye ulaşması (30, 60, 90...) burada
+// kayıt olur — eğitmen admin panelinden görüp ödülü (ör. 40 dk hediye ders)
+// elden verdikten sonra `fulfilled` işaretler.
+model StreakReward {
+  id          String    @id @default(cuid())
+  streakDays  Int
+  createdAt   DateTime  @default(now())
+  fulfilled   Boolean   @default(false)
+  fulfilledAt DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model CreditPackage {

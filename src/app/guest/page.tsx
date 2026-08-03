@@ -1,23 +1,26 @@
 import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { displayStreak, nextStreakMilestone } from "@/lib/streak";
 
 export default async function GuestHomePage() {
   const session = await auth();
   const [me, unlockedCount, questionCount] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session!.user.id },
-      select: { credits: true },
+      select: { credits: true, currentStreak: true, lastStreakDate: true },
     }),
     prisma.questionUnlock.count({ where: { userId: session!.user.id } }),
     prisma.question.count({ where: { isPublished: true } }),
   ]);
+  const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate) : 0;
+  const daysToReward = nextStreakMilestone(streak) - streak;
 
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold text-brand-950">Hoş geldiniz</h1>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
           <p className="text-sm text-slate-500">Kredi bakiyeniz</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">
@@ -34,6 +37,15 @@ export default async function GuestHomePage() {
           <p className="text-sm text-slate-500">Yayında soru</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">
             {questionCount}
+          </p>
+        </div>
+        <div className="rounded-xl border border-orange-200 bg-orange-50 p-5 shadow-sm">
+          <p className="text-sm text-slate-500">🔥 Çalışma seriniz</p>
+          <p className="mt-1 text-2xl font-semibold text-brand-950">
+            {streak} gün
+          </p>
+          <p className="mt-1 text-xs text-slate-500">
+            {daysToReward} gün sonra 40 dk hediye ders!
           </p>
         </div>
       </div>

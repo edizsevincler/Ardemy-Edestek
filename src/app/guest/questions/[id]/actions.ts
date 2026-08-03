@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile } from "@/lib/storage";
+import { recordStreakActivity } from "@/lib/streak";
 import { revalidatePath } from "next/cache";
 
 type SubmitAnswerState =
@@ -69,6 +70,8 @@ export async function submitAnswer(
       fileName,
     },
   });
+
+  await recordStreakActivity(session.user.id);
 
   revalidatePath(`/guest/questions/${questionId}`);
   revalidatePath(`/admin/questions/${questionId}/answers`);
@@ -137,6 +140,8 @@ export async function submitQuiz(
       answers: graded,
     },
   });
+
+  await recordStreakActivity(session.user.id);
 
   revalidatePath(`/guest/questions/${questionId}`);
 

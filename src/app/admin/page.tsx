@@ -72,6 +72,11 @@ export default async function AdminHomePage() {
       description: "Misafirlerin satın alabileceği kredi paketlerini yönet.",
       href: "/admin/credit-packages",
     },
+    {
+      title: "🔥 Seri Ödülleri",
+      description: "30 günlük çalışma serisine ulaşanları gör, ödülü işaretle.",
+      href: "/admin/streak-rewards",
+    },
   ];
 
   return (

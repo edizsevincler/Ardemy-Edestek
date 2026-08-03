@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { AssignmentCard } from "./AssignmentCard";
 import { LessonFilesList } from "./LessonFilesList";
 import { formatSessionStatus } from "@/lib/session-status";
+import { displayStreak, nextStreakMilestone } from "@/lib/streak";
 
 export default async function StudentHomePage() {
   const session = await auth();
@@ -11,7 +12,12 @@ export default async function StudentHomePage() {
   const [me, assignments, lessonFiles] = await Promise.all([
     prisma.user.findUnique({
       where: { id: studentId },
-      select: { sessionType: true, sessionsRemaining: true },
+      select: {
+        sessionType: true,
+        sessionsRemaining: true,
+        currentStreak: true,
+        lastStreakDate: true,
+      },
     }),
     prisma.assignment.findMany({
       where: { studentId },
@@ -27,18 +33,30 @@ export default async function StudentHomePage() {
     }),
   ]);
 
+  const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate) : 0;
+  const daysToReward = nextStreakMilestone(streak) - streak;
+
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <h1 className="text-2xl font-semibold text-slate-900">Hoş geldiniz</h1>
-        {me && (
-          <div className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm">
-            <span className="text-slate-500">Kalan: </span>
-            <span className="font-medium text-slate-900">
-              {formatSessionStatus(me.sessionType, me.sessionsRemaining)}
+        <div className="flex flex-wrap items-center gap-3">
+          {me && (
+            <div className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm">
+              <span className="text-slate-500">Kalan: </span>
+              <span className="font-medium text-slate-900">
+                {formatSessionStatus(me.sessionType, me.sessionsRemaining)}
+              </span>
+            </div>
+          )}
+          <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-2 text-sm">
+            <span className="text-slate-500">🔥 Seri: </span>
+            <span className="font-medium text-slate-900">{streak} gün</span>
+            <span className="ml-1 text-xs text-slate-400">
+              ({daysToReward} gün sonra 40 dk hediye ders)
             </span>
           </div>
-        )}
+        </div>
       </div>
 
       <section className="space-y-3">

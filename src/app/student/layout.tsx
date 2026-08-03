@@ -4,6 +4,7 @@ import Link from "next/link";
 import { SignOutButton } from "@/components/SignOutButton";
 import { Logo } from "@/components/Logo";
 import { prisma } from "@/lib/prisma";
+import { displayStreak } from "@/lib/streak";
 
 export default async function StudentLayout({
   children,
@@ -21,9 +22,10 @@ export default async function StudentLayout({
     }),
     prisma.user.findUnique({
       where: { id: session.user.id },
-      select: { credits: true },
+      select: { credits: true, currentStreak: true, lastStreakDate: true },
     }),
   ]);
+  const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate) : 0;
 
   return (
     <div className="min-h-screen bg-background">
@@ -71,6 +73,9 @@ export default async function StudentLayout({
           </Link>
           <span className="shrink-0 rounded-full bg-gold-500/20 px-2.5 py-1 text-xs font-medium text-gold-400">
             {me?.credits ?? 0} kredi
+          </span>
+          <span className="shrink-0 rounded-full bg-orange-500/20 px-2.5 py-1 text-xs font-medium text-orange-400">
+            🔥 {streak} gün
           </span>
         </nav>
       </header>

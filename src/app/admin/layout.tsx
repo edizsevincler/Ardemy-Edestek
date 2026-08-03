@@ -15,12 +15,14 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  const [unreadCount, pendingPaymentsCount] = await Promise.all([
-    prisma.message.count({
-      where: { senderRole: "STUDENT", read: false },
-    }),
-    prisma.creditPurchase.count({ where: { status: "PENDING" } }),
-  ]);
+  const [unreadCount, pendingPaymentsCount, pendingStreakRewardsCount] =
+    await Promise.all([
+      prisma.message.count({
+        where: { senderRole: "STUDENT", read: false },
+      }),
+      prisma.creditPurchase.count({ where: { status: "PENDING" } }),
+      prisma.streakReward.count({ where: { fulfilled: false } }),
+    ]);
 
   return (
     <div className="min-h-screen bg-background">
@@ -69,6 +71,17 @@ export default async function AdminLayout({
             {pendingPaymentsCount > 0 && (
               <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-medium text-white">
                 {pendingPaymentsCount}
+              </span>
+            )}
+          </Link>
+          <Link
+            href="/admin/streak-rewards"
+            className="flex shrink-0 items-center gap-1.5 transition hover:text-gold-400"
+          >
+            🔥 Seri Ödülleri
+            {pendingStreakRewardsCount > 0 && (
+              <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-medium text-white">
+                {pendingStreakRewardsCount}
               </span>
             )}
           </Link>
