@@ -1,6 +1,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { AssignmentCard } from "./AssignmentCard";
+import { LessonFilesList } from "./LessonFilesList";
 import { formatSessionStatus } from "@/lib/session-status";
 
 export default async function StudentHomePage() {
@@ -62,32 +63,13 @@ export default async function StudentHomePage() {
         <h2 className="text-lg font-medium text-slate-900">
           Ders Dosyalarım
         </h2>
-        {lessonFiles.length === 0 && (
+        {lessonFiles.length === 0 ? (
           <p className="text-sm text-slate-500">
             Henüz size özel ders dosyası yok.
           </p>
+        ) : (
+          <LessonFilesList lessonFiles={lessonFiles} />
         )}
-        <div className="space-y-2">
-          {lessonFiles.map((f) => (
-            <div
-              key={f.id}
-              className="flex items-center justify-between rounded-lg border border-slate-200 bg-white p-4"
-            >
-              <div>
-                <p className="font-medium text-slate-900">{f.title}</p>
-                <p className="text-xs text-slate-500">
-                  {(f.lessonDate ?? f.uploadedAt).toLocaleDateString("tr-TR")}
-                </p>
-              </div>
-              <a
-                href={`/api/lesson-files/${f.id}`}
-                className="text-sm text-slate-600 underline hover:text-slate-900"
-              >
-                İndir
-              </a>
-            </div>
-          ))}
-        </div>
       </section>
     </div>
   );
