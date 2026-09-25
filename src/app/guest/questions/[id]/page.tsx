@@ -28,7 +28,7 @@ export default async function GuestQuestionDetailPage({
     redirect("/guest/questions");
   }
 
-  const watermarkText = `${session!.user.email ?? session!.user.name} • ${new Date().toLocaleString("tr-TR")}`;
+  const watermarkText = `${session!.user.name} • ${new Date().toLocaleString("tr-TR")}`;
   const language = question.subject.split(" - ")[0].trim();
 
   if (question.type === "QUIZ") {
@@ -69,23 +69,25 @@ export default async function GuestQuestionDetailPage({
           </h1>
         </div>
 
-        <QuizForm
-          questionId={question.id}
-          items={items}
-          existingSubmission={
-            submission
-              ? {
-                  score: submission.score,
-                  total: submission.total,
-                  answers: submission.answers as {
-                    itemId: string;
-                    selected: "A" | "B" | "C" | "D";
-                    correct: boolean;
-                  }[],
-                }
-              : null
-          }
-        />
+        <ProtectedContent watermarkText={watermarkText}>
+          <QuizForm
+            questionId={question.id}
+            items={items}
+            existingSubmission={
+              submission
+                ? {
+                    score: submission.score,
+                    total: submission.total,
+                    answers: submission.answers as {
+                      itemId: string;
+                      selected: "A" | "B" | "C" | "D";
+                      correct: boolean;
+                    }[],
+                  }
+                : null
+            }
+          />
+        </ProtectedContent>
       </div>
     );
   }
