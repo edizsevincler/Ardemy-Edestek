@@ -33,9 +33,8 @@ export default function DistanceSalesAgreementPage() {
           <section className="space-y-2">
             <h2 className="text-base font-semibold text-brand-950">1. Taraflar</h2>
             <p>
-              <strong>Satıcı:</strong> Ediz Sevinçler, bireysel eğitmen sıfatıyla
-              Ardemy Academy platformunu işletmektedir. Satıcının tescilli bir şirket
-              kaydı bulunmamaktadır.
+              <strong>Satıcı:</strong> Ediz Sevinçler, Ardemy Academy platformunu
+              işletmektedir.
               <br />
               İletişim: <a href="mailto:sevinclere@gmail.com" className="text-brand-600 underline">sevinclere@gmail.com</a>
             </p>
@@ -103,28 +102,13 @@ export default function DistanceSalesAgreementPage() {
             </h2>
             <p>
               6502 sayılı Tüketicinin Korunması Hakkında Kanun ve Mesafeli
-              Sözleşmeler Yönetmeliği uyarınca, elektronik ortamda anında ifa edilen
-              ve tüketicinin onayıyla ifasına başlanan dijital içeriklerde cayma
-              hakkı, içeriğe erişim sağlandıktan sonra kullanılamaz (Yönetmelik
-              m.15/1-ğ). Buna göre:
-            </p>
-            <ul className="list-disc space-y-1 pl-5">
-              <li>
-                Satın alınan kredilerin <strong>hiçbiri kullanılmamışsa</strong>{" "}
-                (herhangi bir içerik açılmamışsa), Alıcı satın alma tarihinden
-                itibaren <strong>14 gün içinde</strong> talep ederek iade alabilir.
-              </li>
-              <li>
-                Kredilerin bir kısmı veya tamamı kullanılarak içerik açılmışsa, o
-                kısma karşılık gelen tutar için cayma hakkı kullanılamaz.
-              </li>
-            </ul>
-            <p>
-              İade talepleri{" "}
-              <a href="mailto:sevinclere@gmail.com" className="text-brand-600 underline">
-                sevinclere@gmail.com
-              </a>{" "}
-              adresine yazılı olarak iletilmelidir.
+              Sözleşmeler Yönetmeliği&apos;nin 15/1-ğ maddesi uyarınca, elektronik
+              ortamda anında ifa edilen ve tüketicinin onayıyla ifasına hemen
+              başlanan dijital içerik ve hizmetlerde cayma hakkı bulunmamaktadır.
+              Satın alınan kredi paketi, ödemenin onaylanmasıyla birlikte anında
+              Alıcı&apos;nın hesabına tanımlandığından (ifaya hemen başlandığından),
+              Alıcı işbu sözleşme kapsamında cayma hakkını kullanamaz ve satın
+              alınan krediler iade edilmez.
             </p>
           </section>
 

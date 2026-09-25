@@ -34,10 +34,9 @@ export default function PrivacyPolicyPage() {
             <h2 className="text-base font-semibold text-brand-950">1. Veri Sorumlusu</h2>
             <p>
               6698 sayılı Kişisel Verilerin Korunması Kanunu (&quot;KVKK&quot;) uyarınca,
-              Ardemy Academy platformunu bireysel eğitmen sıfatıyla işleten{" "}
+              Ardemy Academy platformunu işleten{" "}
               <strong>Ediz Sevinçler</strong> (&quot;Veri Sorumlusu&quot;), aşağıda
-              açıklanan kişisel verilerinizi işlemektedir. Platform tescilli bir şirket
-              tarafından değil, bireysel bir eğitmen tarafından yürütülmektedir.
+              açıklanan kişisel verilerinizi işlemektedir.
             </p>
             <p>
               İletişim: <a href="mailto:sevinclere@gmail.com" className="text-brand-600 underline">sevinclere@gmail.com</a>
