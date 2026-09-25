@@ -77,6 +77,15 @@ export default function LoginPage() {
           </Link>
         </p>
       </form>
+
+      <div className="absolute bottom-4 flex gap-4 text-xs text-white/70">
+        <Link href="/gizlilik-politikasi" className="hover:text-white hover:underline">
+          Gizlilik Politikası
+        </Link>
+        <Link href="/mesafeli-satis-sozlesmesi" className="hover:text-white hover:underline">
+          Mesafeli Satış Sözleşmesi
+        </Link>
+      </div>
     </main>
   );
 }

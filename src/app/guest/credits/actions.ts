@@ -24,6 +24,13 @@ export async function requestCreditPurchase(
     return { status: "error", message: "Oturum bulunamadı." };
   }
 
+  if (formData.get("consent") !== "on") {
+    return {
+      status: "error",
+      message: "Mesafeli Satış Sözleşmesi'ni kabul etmelisiniz.",
+    };
+  }
+
   const packageId = String(formData.get("packageId") ?? "");
   const pkg = await prisma.creditPackage.findUnique({ where: { id: packageId } });
   if (!pkg || !pkg.isActive) {

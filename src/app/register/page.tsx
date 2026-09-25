@@ -116,6 +116,25 @@ export default function RegisterPage() {
           />
         </div>
 
+        <label className="flex items-start gap-2 text-xs text-slate-500">
+          <input
+            type="checkbox"
+            name="consent"
+            required
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300"
+          />
+          <span>
+            <Link
+              href="/gizlilik-politikasi"
+              target="_blank"
+              className="font-medium text-brand-600 hover:underline"
+            >
+              Gizlilik Politikası ve KVKK Aydınlatma Metni
+            </Link>
+            &apos;ni okudum, kabul ediyorum.
+          </span>
+        </label>
+
         {state.status === "error" && (
           <p className="text-sm text-red-600">{state.message}</p>
         )}

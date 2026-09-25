@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import { requestCreditPurchase } from "./actions";
 
 const initialState = { status: "idle" } as const;
@@ -39,8 +40,26 @@ export function PackageCard({
         </p>
       </div>
 
-      <form action={formAction} className="mt-4">
+      <form action={formAction} className="mt-4 space-y-3">
         <input type="hidden" name="packageId" value={id} />
+        <label className="flex items-start gap-2 text-left text-xs text-slate-500">
+          <input
+            type="checkbox"
+            name="consent"
+            required
+            className="mt-0.5 h-4 w-4 shrink-0 rounded border-slate-300"
+          />
+          <span>
+            <Link
+              href="/mesafeli-satis-sozlesmesi"
+              target="_blank"
+              className="font-medium text-brand-600 hover:underline"
+            >
+              Mesafeli Satış Sözleşmesi
+            </Link>
+            &apos;ni okudum, kabul ediyorum.
+          </span>
+        </label>
         <button
           type="submit"
           disabled={isPending || state.status === "success"}

@@ -20,9 +20,16 @@ export async function registerGuest(
     .toLowerCase();
   const password = String(formData.get("password") ?? "");
   const passwordConfirm = String(formData.get("passwordConfirm") ?? "");
+  const consent = formData.get("consent");
 
   if (!name || !email || !password) {
     return { status: "error", message: "Tüm alanları doldurun." };
+  }
+  if (consent !== "on") {
+    return {
+      status: "error",
+      message: "Gizlilik Politikası'nı kabul etmelisiniz.",
+    };
   }
   if (!/^\S+@\S+\.\S+$/.test(email)) {
     return { status: "error", message: "Geçerli bir e-posta girin." };
