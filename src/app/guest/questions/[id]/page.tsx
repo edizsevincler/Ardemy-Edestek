@@ -88,6 +88,10 @@ export default async function GuestQuestionDetailPage({
             }
           />
         </ProtectedContent>
+        <p className="text-xs text-slate-400">
+          🔒 Bu içerik yalnızca kişisel kullanımınız içindir; izinsiz
+          paylaşım, çoğaltım veya satış telif hakkı ihlalidir.
+        </p>
       </div>
     );
   }
@@ -140,6 +144,10 @@ export default async function GuestQuestionDetailPage({
           )}
         </div>
       </ProtectedContent>
+      <p className="text-xs text-slate-400">
+        🔒 Bu içerik yalnızca kişisel kullanımınız içindir; izinsiz paylaşım,
+        çoğaltım veya satış telif hakkı ihlalidir.
+      </p>
 
       {question.type !== "TOPIC" && (
         <AnswerForm questionId={question.id} answer={answer} />

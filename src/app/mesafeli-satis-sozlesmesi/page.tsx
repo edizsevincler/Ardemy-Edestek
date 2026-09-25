@@ -114,7 +114,29 @@ export default function DistanceSalesAgreementPage() {
 
           <section className="space-y-2">
             <h2 className="text-base font-semibold text-brand-950">
-              7. Uyuşmazlıkların Çözümü
+              7. Fikri Mülkiyet ve İçerik Kullanım Kuralları
+            </h2>
+            <p>
+              Platformda yer alan tüm konu anlatımları, testler, sorular ve
+              dosyalar (&quot;İçerik&quot;) Satıcı&apos;nın fikri mülkiyetindedir
+              ve 5846 sayılı Fikir ve Sanat Eserleri Kanunu kapsamında korunur.
+              Alıcı, satın aldığı veya kredi ile açtığı İçeriği yalnızca kendi
+              kişisel eğitim amacıyla kullanabilir.
+            </p>
+            <p>
+              İçeriğin tamamının veya bir kısmının izinsiz kopyalanması,
+              çoğaltılması, ekran görüntüsü/kaydı alınarak veya başka bir
+              şekilde üçüncü kişilerle paylaşılması, herhangi bir platformda
+              yeniden yayınlanması veya satılması <strong>kesinlikle
+              yasaktır</strong>. Bu kurala aykırı davranış tespit edilirse
+              Satıcı, ilgili hesabı önceden bildirimde bulunmaksızın askıya
+              alma/kapatma ve hukuki yollara başvurma hakkını saklı tutar.
+            </p>
+          </section>
+
+          <section className="space-y-2">
+            <h2 className="text-base font-semibold text-brand-950">
+              8. Uyuşmazlıkların Çözümü
             </h2>
             <p>
               İşbu sözleşmeden doğan uyuşmazlıklarda, Ticaret Bakanlığı&apos;nca her
@@ -126,7 +148,7 @@ export default function DistanceSalesAgreementPage() {
 
           <section className="space-y-2">
             <h2 className="text-base font-semibold text-brand-950">
-              8. Yürürlük
+              9. Yürürlük
             </h2>
             <p>
               Alıcı, kredi satın alma işlemini onaylayarak (&quot;Havaleyi
