@@ -4,6 +4,7 @@ import { AssignmentCard } from "./AssignmentCard";
 import { LessonFilesList } from "./LessonFilesList";
 import { formatSessionStatus } from "@/lib/session-status";
 import { displayStreak, nextStreakMilestone } from "@/lib/streak";
+import { ReferralCard } from "@/components/ReferralCard";
 
 export default async function StudentHomePage() {
   const session = await auth();
@@ -89,6 +90,8 @@ export default async function StudentHomePage() {
           <LessonFilesList lessonFiles={lessonFiles} />
         )}
       </section>
+
+      <ReferralCard userId={studentId} />
     </div>
   );
 }

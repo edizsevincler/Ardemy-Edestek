@@ -33,3 +33,16 @@ export function generatePassword(length = 12) {
     ""
   );
 }
+
+// Karışabilecek karakterler (O/0, I/1) çıkarıldı — link paylaşırken/elle
+// yazarken hata riski azalsın diye.
+const REFERRAL_CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
+
+export function generateReferralCode(length = 6) {
+  const bytes = new Uint8Array(length);
+  crypto.getRandomValues(bytes);
+  return Array.from(
+    bytes,
+    (b) => REFERRAL_CODE_CHARS[b % REFERRAL_CODE_CHARS.length]
+  ).join("");
+}

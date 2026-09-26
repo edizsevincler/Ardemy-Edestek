@@ -1,17 +1,19 @@
 "use client";
 
-import { useActionState } from "react";
+import { Suspense, useActionState } from "react";
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { registerGuest } from "./actions";
 import { Logo } from "@/components/Logo";
 
 const initialState = { status: "idle" } as const;
 
-export default function RegisterPage() {
+function RegisterForm() {
   const [state, formAction, isPending] = useActionState(
     registerGuest,
     initialState
   );
+  const ref = useSearchParams().get("ref");
 
   if (state.status === "success") {
     return (
@@ -57,6 +59,8 @@ export default function RegisterPage() {
             Soru bankasına erişmek için kayıt olun
           </p>
         </div>
+
+        {ref && <input type="hidden" name="ref" value={ref} />}
 
         <div className="space-y-1">
           <label htmlFor="name" className="text-sm font-medium text-slate-700">
@@ -155,5 +159,13 @@ export default function RegisterPage() {
         </p>
       </form>
     </main>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterForm />
+    </Suspense>
   );
 }

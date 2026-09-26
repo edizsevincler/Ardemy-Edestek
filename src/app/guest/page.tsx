@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { displayStreak, nextStreakMilestone } from "@/lib/streak";
+import { ReferralCard } from "@/components/ReferralCard";
 
 export default async function GuestHomePage() {
   const session = await auth();
@@ -64,6 +65,8 @@ export default async function GuestHomePage() {
           Kredi Satın Al
         </Link>
       </div>
+
+      <ReferralCard userId={session!.user.id} />
     </div>
   );
 }

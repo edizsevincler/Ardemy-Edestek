@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/prisma";
+import { grantReferralRewardIfEligible } from "@/lib/referral";
 import { revalidatePath } from "next/cache";
 
 export async function approvePayment(purchaseId: string) {
@@ -19,6 +20,8 @@ export async function approvePayment(purchaseId: string) {
       data: { credits: { increment: purchase.credits } },
     }),
   ]);
+
+  await grantReferralRewardIfEligible(purchase.userId);
 
   revalidatePath("/admin/pending-payments");
   revalidatePath("/admin/students");

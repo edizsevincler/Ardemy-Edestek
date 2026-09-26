@@ -86,6 +86,12 @@ export default async function AdminLayout({
             )}
           </Link>
           <Link
+            href="/admin/referrals"
+            className="shrink-0 transition hover:text-gold-400"
+          >
+            🎁 Arkadaşını Getir
+          </Link>
+          <Link
             href="/admin/messages"
             className="flex shrink-0 items-center gap-1.5 transition hover:text-gold-400"
           >

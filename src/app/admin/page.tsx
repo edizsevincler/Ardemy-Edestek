@@ -77,6 +77,11 @@ export default async function AdminHomePage() {
       description: "30 günlük çalışma serisine ulaşanları gör, ödülü işaretle.",
       href: "/admin/streak-rewards",
     },
+    {
+      title: "🎁 Arkadaşını Getir",
+      description: "Referans linkiyle katılanları ve ödül durumunu gör.",
+      href: "/admin/referrals",
+    },
   ];
 
   return (

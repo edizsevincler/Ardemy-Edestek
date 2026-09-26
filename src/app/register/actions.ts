@@ -49,9 +49,20 @@ export async function registerGuest(
     };
   }
 
+  const refCode = String(formData.get("ref") ?? "").trim();
+  const referrer = refCode
+    ? await prisma.user.findUnique({ where: { referralCode: refCode } })
+    : null;
+
   const passwordHash = await hashPassword(password);
   const user = await prisma.user.create({
-    data: { name, email, passwordHash, role: "GUEST" },
+    data: {
+      name,
+      email,
+      passwordHash,
+      role: "GUEST",
+      referredById: referrer?.id,
+    },
   });
 
   const token = randomBytes(32).toString("hex");

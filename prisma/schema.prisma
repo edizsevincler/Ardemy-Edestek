@@ -62,6 +62,15 @@ model User {
   lastStreakDate   DateTime?
   lastRewardStreak Int       @default(0)
 
+  // Arkadaşını getir sistemi: referralCode ilk ziyarette üretilip
+  // atanır (bkz. lib/referral.ts). Ödül, davet edilenin İLK onaylanan
+  // kredi alışverişinde bir kereye mahsus verilir (referralRewardGiven).
+  referralCode        String? @unique
+  referredById        String?
+  referredBy          User?   @relation("Referrals", fields: [referredById], references: [id], onDelete: SetNull)
+  referrals           User[]  @relation("Referrals")
+  referralRewardGiven Boolean @default(false)
+
   assignments           Assignment[]
   assignmentSubmissions AssignmentSubmission[]
   lessonFiles           LessonFile[]
