@@ -92,6 +92,12 @@ export default async function AdminLayout({
             🎁 Arkadaşını Getir
           </Link>
           <Link
+            href="/admin/inactive-users"
+            className="shrink-0 transition hover:text-gold-400"
+          >
+            Pasif Kullanıcılar
+          </Link>
+          <Link
             href="/admin/messages"
             className="flex shrink-0 items-center gap-1.5 transition hover:text-gold-400"
           >

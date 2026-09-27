@@ -80,3 +80,26 @@ export async function sendStreakRewardEmail(
     `
   );
 }
+
+// Bir kullanıcı serisini sürdürüyor ama bugün henüz soru/test çözmediyse
+// günün sonunda hatırlatma gönderir — streak'i kaybetmesin diye (kayıp
+// kaçırma korkusu, alışkanlık döngüsünü tamamlar).
+export async function sendStreakReminderEmail(
+  to: string,
+  name: string,
+  currentStreak: number
+) {
+  const url = `${APP_URL}/guest/questions`;
+
+  await sendEmail(
+    to,
+    name,
+    `🔥 ${currentStreak} günlük serini kaybetme!`,
+    `
+      <p>Merhaba ${name},</p>
+      <p><strong>${currentStreak} günlük</strong> çalışma serin devam ediyor ama bugün henüz bir soru/test çözmedin.</p>
+      <p>Serini korumak için bugün bitmeden en az bir soru çöz:</p>
+      <p><a href="${url}">Soru bankasına git</a></p>
+    `
+  );
+}

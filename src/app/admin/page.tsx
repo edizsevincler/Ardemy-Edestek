@@ -82,6 +82,11 @@ export default async function AdminHomePage() {
       description: "Referans linkiyle katılanları ve ödül durumunu gör.",
       href: "/admin/referrals",
     },
+    {
+      title: "Pasif Kullanıcılar",
+      description: "Uzun süredir giriş yapmamış öğrenci/misafirleri gör.",
+      href: "/admin/inactive-users",
+    },
   ];
 
   return (

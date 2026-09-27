@@ -4,7 +4,7 @@ import { sendStreakRewardEmail } from "@/lib/email";
 const TIMEZONE = "Europe/Istanbul";
 const MILESTONE = 30;
 
-function dateKey(date: Date): string {
+export function dateKey(date: Date): string {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: TIMEZONE,
     year: "numeric",
