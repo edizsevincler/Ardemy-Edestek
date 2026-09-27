@@ -16,7 +16,6 @@ export default async function Home() {
   }
 
   const [
-    questionCount,
     topicCount,
     packages,
     studentCount,
@@ -24,7 +23,6 @@ export default async function Home() {
     answerCount,
     streakAgg,
   ] = await Promise.all([
-    prisma.question.count({ where: { isPublished: true, type: "QUESTION" } }),
     prisma.question.count({ where: { isPublished: true, type: "TOPIC" } }),
     prisma.creditPackage.findMany({
       where: { isActive: true },
@@ -124,7 +122,7 @@ export default async function Home() {
         </section>
 
         <section className="px-4 py-12 sm:px-6">
-          <div className="mx-auto grid max-w-5xl grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="mx-auto grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
             <div className="rounded-xl border border-brand-100 bg-white p-6 text-center shadow-sm">
               <p className="text-3xl font-semibold text-brand-950">
                 {topicCount}
@@ -136,12 +134,6 @@ export default async function Home() {
                 {quizCount}
               </p>
               <p className="mt-1 text-sm text-slate-500">Çoktan Seçmeli Test</p>
-            </div>
-            <div className="rounded-xl border border-brand-100 bg-white p-6 text-center shadow-sm">
-              <p className="text-3xl font-semibold text-brand-950">
-                {questionCount}
-              </p>
-              <p className="mt-1 text-sm text-slate-500">Alıştırma Sorusu</p>
             </div>
           </div>
         </section>
