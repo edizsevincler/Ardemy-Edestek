@@ -4,6 +4,7 @@ import { randomBytes } from "crypto";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
 import { sendVerificationEmail } from "@/lib/email";
+import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
 
 type RegisterState =
   | { status: "idle" }
@@ -62,6 +63,7 @@ export async function registerGuest(
       passwordHash,
       role: "GUEST",
       referredById: referrer?.id,
+      credits: SIGNUP_BONUS_CREDITS,
     },
   });
 

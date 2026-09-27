@@ -5,6 +5,7 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { registerGuest } from "./actions";
 import { Logo } from "@/components/Logo";
+import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
 
 const initialState = { status: "idle" } as const;
 
@@ -57,6 +58,9 @@ function RegisterForm() {
           </h1>
           <p className="mt-1 text-sm text-slate-500">
             Soru bankasına erişmek için kayıt olun
+          </p>
+          <p className="mt-2 rounded-full bg-gold-50 px-3 py-1 text-xs font-medium text-gold-600">
+            🎁 Kayıt olunca {SIGNUP_BONUS_CREDITS} kredi hediye!
           </p>
         </div>
 

@@ -46,6 +46,18 @@ export async function getPdfPageCount(file: File): Promise<number | null> {
   }
 }
 
+// Kilidi açılmamış içerikler için "tadımlık" önizleme: PDF'in sadece ilk
+// sayfasını içeren yeni, ayrı bir dosya üretir — orijinal dosyaya asla
+// erişim vermez.
+export async function extractFirstPdfPage(buffer: Buffer): Promise<Buffer> {
+  const source = await PDFDocument.load(buffer, { ignoreEncryption: true });
+  const preview = await PDFDocument.create();
+  const [firstPage] = await preview.copyPages(source, [0]);
+  preview.addPage(firstPage);
+  const bytes = await preview.save();
+  return Buffer.from(bytes);
+}
+
 export async function readStoredFile(fileUrl: string) {
   if (fileUrl.startsWith("http")) {
     const res = await fetch(fileUrl);

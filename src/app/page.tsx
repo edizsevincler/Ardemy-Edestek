@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Logo } from "@/components/Logo";
 import { Footer } from "@/components/Footer";
+import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
 
 export default async function Home() {
   const session = await auth();
@@ -93,6 +94,10 @@ export default async function Home() {
                 Zaten hesabım var
               </Link>
             </div>
+            <p className="mt-4 inline-block rounded-full bg-gold-400/20 px-4 py-1.5 text-sm font-medium text-gold-300">
+              🎁 Kayıt olunca {SIGNUP_BONUS_CREDITS} kredi hediye — kart bilgisi
+              gerekmez
+            </p>
             {(studentCount > 0 || solvedCount > 0 || longestStreak > 0) && (
               <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-brand-100">
                 {studentCount > 0 && (
@@ -162,7 +167,8 @@ export default async function Home() {
                 </div>
                 <p className="mt-3 font-medium text-brand-950">Kredi al</p>
                 <p className="mt-1 text-sm text-slate-500">
-                  İhtiyacına göre kredi paketi seç, birçok içerik ücretsiz.
+                  Kayıtla {SIGNUP_BONUS_CREDITS} kredi hediye, ihtiyacına göre
+                  daha fazlasını ekleyebilirsin.
                 </p>
               </div>
               <div className="text-center">

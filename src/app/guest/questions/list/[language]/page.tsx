@@ -73,7 +73,15 @@ function QuestionSection({
                         Görüntüle
                       </Link>
                     ) : (
-                      <UnlockButton questionId={q.id} creditCost={q.creditCost} />
+                      <div className="flex shrink-0 items-center gap-2">
+                        <Link
+                          href={`/guest/questions/${q.id}`}
+                          className="text-sm text-brand-600 underline hover:text-brand-800"
+                        >
+                          Önizle
+                        </Link>
+                        <UnlockButton questionId={q.id} creditCost={q.creditCost} />
+                      </div>
                     )}
                   </div>
                 );
