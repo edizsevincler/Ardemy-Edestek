@@ -15,24 +15,13 @@ export default async function Home() {
     redirect("/student");
   }
 
-  const [
-    topicCount,
-    packages,
-    studentCount,
-    quizSubmissionCount,
-    answerCount,
-    streakAgg,
-  ] = await Promise.all([
+  const [topicCount, packages] = await Promise.all([
     prisma.question.count({ where: { isPublished: true, type: "TOPIC" } }),
     prisma.creditPackage.findMany({
       where: { isActive: true },
       orderBy: { credits: "asc" },
       take: 3,
     }),
-    prisma.user.count({ where: { role: "STUDENT" } }),
-    prisma.quizSubmission.count(),
-    prisma.questionAnswer.count(),
-    prisma.user.aggregate({ _max: { longestStreak: true } }),
   ]);
   const quizzes = await prisma.question.findMany({
     where: { isPublished: true, type: "QUIZ" },
@@ -44,8 +33,6 @@ export default async function Home() {
   ]);
   const quizCount = quizzes.length;
   const totalSoruCount = quizQuestionCount + openQuestionCount;
-  const solvedCount = quizSubmissionCount + answerCount;
-  const longestStreak = streakAgg._max.longestStreak ?? 0;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">
@@ -103,28 +90,6 @@ export default async function Home() {
               🎁 Kayıt olunca {SIGNUP_BONUS_CREDITS} kredi hediye — kart bilgisi
               gerekmez
             </p>
-            {(studentCount > 0 || solvedCount > 0 || longestStreak > 0) && (
-              <div className="mt-8 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-brand-100">
-                {studentCount > 0 && (
-                  <span>
-                    <strong className="text-white">{studentCount}</strong>{" "}
-                    öğrenci
-                  </span>
-                )}
-                {solvedCount > 0 && (
-                  <span>
-                    <strong className="text-white">{solvedCount}</strong>{" "}
-                    çözülen soru/test
-                  </span>
-                )}
-                {longestStreak > 0 && (
-                  <span>
-                    🔥 en uzun seri:{" "}
-                    <strong className="text-white">{longestStreak}</strong> gün
-                  </span>
-                )}
-              </div>
-            )}
           </div>
         </section>
 
