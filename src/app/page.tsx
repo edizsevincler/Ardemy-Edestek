@@ -34,9 +34,16 @@ export default async function Home() {
     prisma.questionAnswer.count(),
     prisma.user.aggregate({ _max: { longestStreak: true } }),
   ]);
-  const quizCount = await prisma.question.count({
+  const quizzes = await prisma.question.findMany({
     where: { isPublished: true, type: "QUIZ" },
+    select: { id: true },
   });
+  const [quizQuestionCount, openQuestionCount] = await Promise.all([
+    prisma.quizItem.count({ where: { questionId: { in: quizzes.map((q) => q.id) } } }),
+    prisma.question.count({ where: { isPublished: true, type: "QUESTION" } }),
+  ]);
+  const quizCount = quizzes.length;
+  const totalSoruCount = quizQuestionCount + openQuestionCount;
   const solvedCount = quizSubmissionCount + answerCount;
   const longestStreak = streakAgg._max.longestStreak ?? 0;
 
@@ -122,7 +129,13 @@ export default async function Home() {
         </section>
 
         <section className="px-4 py-12 sm:px-6">
-          <div className="mx-auto grid max-w-2xl grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="mx-auto grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
+            <div className="rounded-xl border border-gold-200 bg-gold-50 p-6 text-center shadow-sm sm:order-first">
+              <p className="text-3xl font-semibold text-brand-950">
+                {totalSoruCount.toLocaleString("tr-TR")}
+              </p>
+              <p className="mt-1 text-sm text-slate-600">Soru</p>
+            </div>
             <div className="rounded-xl border border-brand-100 bg-white p-6 text-center shadow-sm">
               <p className="text-3xl font-semibold text-brand-950">
                 {topicCount}

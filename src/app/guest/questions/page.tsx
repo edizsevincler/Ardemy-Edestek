@@ -10,18 +10,46 @@ function languageOf(subject: string) {
 export default async function GuestQuestionsLandingPage() {
   const questions = await prisma.question.findMany({
     where: { isPublished: true },
-    select: { subject: true },
+    select: { id: true, subject: true, type: true },
   });
 
-  const counts = new Map<string, number>();
+  const topicCounts = new Map<string, number>();
+  const quizQuestionIds = new Map<string, string[]>();
+  const openQuestionCounts = new Map<string, number>();
+
   for (const q of questions) {
     const language = languageOf(q.subject);
-    counts.set(language, (counts.get(language) ?? 0) + 1);
+    if (q.type === "TOPIC") {
+      topicCounts.set(language, (topicCounts.get(language) ?? 0) + 1);
+    } else if (q.type === "QUIZ") {
+      const ids = quizQuestionIds.get(language) ?? [];
+      ids.push(q.id);
+      quizQuestionIds.set(language, ids);
+    } else {
+      openQuestionCounts.set(language, (openQuestionCounts.get(language) ?? 0) + 1);
+    }
   }
 
-  const languages = Array.from(counts.entries()).sort((a, b) =>
-    a[0].localeCompare(b[0], "tr")
-  );
+  // Her test 20 soru içerir — gerçek "toplam soru sayısı" için tek tek sayıyoruz.
+  const soruCounts = new Map<string, number>();
+  for (const [language, ids] of quizQuestionIds) {
+    const count = await prisma.quizItem.count({
+      where: { questionId: { in: ids } },
+    });
+    soruCounts.set(language, count + (openQuestionCounts.get(language) ?? 0));
+  }
+
+  const allLanguages = new Set([
+    ...topicCounts.keys(),
+    ...soruCounts.keys(),
+  ]);
+  const languages = Array.from(allLanguages)
+    .map((language) => ({
+      language,
+      topicCount: topicCounts.get(language) ?? 0,
+      soruCount: soruCounts.get(language) ?? 0,
+    }))
+    .sort((a, b) => a.language.localeCompare(b.language, "tr"));
 
   return (
     <div className="space-y-6">
@@ -33,7 +61,7 @@ export default async function GuestQuestionsLandingPage() {
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-          {languages.map(([language, count]) => (
+          {languages.map(({ language, topicCount, soruCount }) => (
             <Link
               key={language}
               href={`/guest/questions/list/${slugify(language)}`}
@@ -44,7 +72,12 @@ export default async function GuestQuestionsLandingPage() {
                 <p className="text-lg font-semibold text-brand-950">
                   {language}
                 </p>
-                <p className="text-sm text-slate-500">{count} içerik</p>
+                <p className="text-sm font-medium text-gold-600">
+                  {soruCount} soru
+                </p>
+                <p className="text-xs text-slate-400">
+                  {topicCount} konu anlatımı
+                </p>
               </div>
             </Link>
           ))}
