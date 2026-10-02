@@ -81,6 +81,7 @@ model User {
   quizSubmissions       QuizSubmission[]
   verificationTokens    VerificationToken[]
   streakRewards         StreakReward[]
+  dailyAnswers          DailyQuestionAnswer[]
 }
 
 // GUEST kaydı sırasında e-postanın gerçekten kullanıcıya ait olduğunu
@@ -193,6 +194,24 @@ model QuizItem {
 // seçilen şıkkını ve doğru olup olmadığını tutar (ör: [{"itemId":"...",
 // "selected":"B","correct":true}, ...]) — tekrar çözmeye izin verilir, yeni
 // gönderim eskisinin üzerine yazılır (unique).
+// "Günün Sorusu": her gün herkese ücretsiz tek bir test sorusu gösterilir
+// (bkz. lib/daily-question.ts). Kullanıcı başına günde bir cevap hakkı var;
+// `dateKey` İstanbul saatine göre YYYY-MM-DD. quizItemId bilerek FK değil —
+// soru sonradan silinse bile cevap geçmişi (rozet sayacı) bozulmasın.
+model DailyQuestionAnswer {
+  id         String     @id @default(cuid())
+  dateKey    String
+  quizItemId String
+  selected   QuizOption
+  correct    Boolean
+  answeredAt DateTime   @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, dateKey])
+}
+
 model QuizSubmission {
   id          String   @id @default(cuid())
   score       Int

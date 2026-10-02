@@ -5,6 +5,8 @@ import { LessonFilesList } from "./LessonFilesList";
 import { formatSessionStatus } from "@/lib/session-status";
 import { displayStreak, nextStreakMilestone } from "@/lib/streak";
 import { ReferralCard } from "@/components/ReferralCard";
+import { DailyQuestionSection } from "@/components/DailyQuestionSection";
+import { BadgesCard } from "@/components/BadgesCard";
 
 export default async function StudentHomePage() {
   const session = await auth();
@@ -60,6 +62,8 @@ export default async function StudentHomePage() {
         </div>
       </div>
 
+      <DailyQuestionSection userId={studentId} />
+
       <section className="space-y-3">
         <h2 className="text-lg font-medium text-slate-900">Ödevlerim</h2>
         {assignments.length === 0 && (
@@ -90,6 +94,8 @@ export default async function StudentHomePage() {
           <LessonFilesList lessonFiles={lessonFiles} />
         )}
       </section>
+
+      <BadgesCard userId={studentId} />
 
       <ReferralCard userId={studentId} />
     </div>

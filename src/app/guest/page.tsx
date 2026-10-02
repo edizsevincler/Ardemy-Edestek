@@ -3,6 +3,8 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { displayStreak, nextStreakMilestone } from "@/lib/streak";
 import { ReferralCard } from "@/components/ReferralCard";
+import { DailyQuestionSection } from "@/components/DailyQuestionSection";
+import { BadgesCard } from "@/components/BadgesCard";
 
 export default async function GuestHomePage() {
   const session = await auth();
@@ -51,6 +53,8 @@ export default async function GuestHomePage() {
         </div>
       </div>
 
+      <DailyQuestionSection userId={session!.user.id} />
+
       <div className="flex gap-3">
         <Link
           href="/guest/questions"
@@ -65,6 +69,8 @@ export default async function GuestHomePage() {
           Kredi Satın Al
         </Link>
       </div>
+
+      <BadgesCard userId={session!.user.id} />
 
       <ReferralCard userId={session!.user.id} />
     </div>

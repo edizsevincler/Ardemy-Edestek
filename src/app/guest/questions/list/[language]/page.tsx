@@ -28,10 +28,12 @@ function QuestionSection({
   title,
   items,
   unlockedIds,
+  completedIds,
 }: {
   title: string;
   items: QuestionItem[];
   unlockedIds: Set<string>;
+  completedIds?: Set<string>;
 }) {
   if (items.length === 0) return null;
 
@@ -41,7 +43,12 @@ function QuestionSection({
     <section className="space-y-4">
       <h2 className="text-lg font-medium text-brand-950">{title}</h2>
       <div className="space-y-6">
-        {groups.map(([subject, groupItems]) => (
+        {groups.map(([subject, groupItems]) => {
+          const doneCount = completedIds
+            ? groupItems.filter((q) => completedIds.has(q.id)).length
+            : 0;
+          const percent = Math.round((doneCount / groupItems.length) * 100);
+          return (
           <div
             key={subject}
             className="space-y-3 rounded-xl border border-brand-200 bg-brand-50/40 p-4"
@@ -49,6 +56,22 @@ function QuestionSection({
             <h3 className="text-xs font-semibold uppercase tracking-wide text-brand-600">
               {subject}
             </h3>
+            {completedIds && (
+              <div>
+                <div className="flex items-center justify-between text-xs text-slate-500">
+                  <span>
+                    {doneCount}/{groupItems.length} test tamamlandı
+                  </span>
+                  <span>%{percent}</span>
+                </div>
+                <div className="mt-1 h-2 overflow-hidden rounded-full bg-brand-100">
+                  <div
+                    className="h-full rounded-full bg-gradient-to-r from-gold-500 to-gold-400 transition-all"
+                    style={{ width: `${percent}%` }}
+                  />
+                </div>
+              </div>
+            )}
             <div className="space-y-3">
               {groupItems.map((q) => {
                 const isUnlocked = unlockedIds.has(q.id);
@@ -62,6 +85,11 @@ function QuestionSection({
                       {q.pageCount ? (
                         <span className="ml-1 font-normal text-slate-500">
                           ({q.pageCount} sayfa)
+                        </span>
+                      ) : null}
+                      {completedIds?.has(q.id) ? (
+                        <span className="ml-2 text-xs font-medium text-green-600">
+                          ✓ Çözüldü
                         </span>
                       ) : null}
                     </p>
@@ -88,7 +116,8 @@ function QuestionSection({
               })}
             </div>
           </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -103,7 +132,7 @@ export default async function GuestQuestionsByLanguagePage({
   const session = await auth();
   const userId = session!.user.id;
 
-  const [allQuestions, unlocks] = await Promise.all([
+  const [allQuestions, unlocks, submissions] = await Promise.all([
     prisma.question.findMany({
       where: { isPublished: true },
       orderBy: [{ subject: "asc" }, { createdAt: "desc" }],
@@ -112,7 +141,12 @@ export default async function GuestQuestionsByLanguagePage({
       where: { userId },
       select: { questionId: true },
     }),
+    prisma.quizSubmission.findMany({
+      where: { userId },
+      select: { questionId: true },
+    }),
   ]);
+  const completedIds = new Set(submissions.map((s) => s.questionId));
 
   const questions = allQuestions.filter(
     (q) => slugify(q.subject.split(" - ")[0].trim()) === slug
@@ -153,6 +187,7 @@ export default async function GuestQuestionsByLanguagePage({
         title="🧠 Testler"
         items={quizzes}
         unlockedIds={unlockedIds}
+        completedIds={completedIds}
       />
       <QuestionSection
         title="📝 Sorular"
