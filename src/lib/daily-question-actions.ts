@@ -4,7 +4,11 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 import { dateKey, recordStreakActivity } from "@/lib/streak";
-import { getTodaysQuizItem, type DailyOption } from "@/lib/daily-question";
+import {
+  getDailyLanguage,
+  getTodaysQuizItem,
+  type DailyOption,
+} from "@/lib/daily-question";
 import { revalidatePath } from "next/cache";
 
 type AnswerResult =
@@ -35,7 +39,7 @@ export async function answerDailyQuestion(
     return { status: "error", message: "Bugünkü soruyu zaten cevapladın." };
   }
 
-  const item = await getTodaysQuizItem();
+  const item = await getTodaysQuizItem(await getDailyLanguage(userId));
   if (!item) {
     return { status: "error", message: "Bugün için soru bulunamadı." };
   }

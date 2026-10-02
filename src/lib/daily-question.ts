@@ -38,9 +38,15 @@ function hashString(value: string) {
   return hash;
 }
 
-const publishedQuizItems = {
-  question: { isPublished: true, type: "QUIZ" as const },
-};
+function publishedQuizItems(language?: string | null) {
+  return {
+    question: {
+      isPublished: true,
+      type: "QUIZ" as const,
+      ...(language ? { subject: { startsWith: language } } : {}),
+    },
+  };
+}
 
 function toDailyItem(item: {
   id: string;
@@ -65,18 +71,34 @@ function toDailyItem(item: {
 
 // Bugünün sorusu tarihten türetilir (herkese aynı soru, gün değişince değişir).
 // Doğru cevap (correct) bilerek seçilmiyor — istemciye hiç gitmemeli.
-export async function getTodaysQuizItem(): Promise<DailyItem | null> {
-  const count = await prisma.quizItem.count({ where: publishedQuizItems });
+export async function getTodaysQuizItem(
+  language?: string | null
+): Promise<DailyItem | null> {
+  let where = publishedQuizItems(language);
+  let count = await prisma.quizItem.count({ where });
+  if (count === 0 && language) {
+    // İstenen dilde henüz içerik yok (ör. Almanca) — karışık seçime düş.
+    where = publishedQuizItems(null);
+    count = await prisma.quizItem.count({ where });
+  }
   if (count === 0) return null;
 
   const index = hashString(dateKey(new Date())) % count;
   const item = await prisma.quizItem.findFirst({
-    where: publishedQuizItems,
+    where,
     orderBy: { id: "asc" },
     skip: index,
     select: itemSelect,
   });
   return item ? toDailyItem(item) : null;
+}
+
+export async function getDailyLanguage(userId: string) {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { dailyLanguage: true },
+  });
+  return user?.dailyLanguage ?? null;
 }
 
 export async function getDailyState(
@@ -103,6 +125,6 @@ export async function getDailyState(
     }
   }
 
-  const item = await getTodaysQuizItem();
+  const item = await getTodaysQuizItem(await getDailyLanguage(userId));
   return item ? { item, result: null } : null;
 }

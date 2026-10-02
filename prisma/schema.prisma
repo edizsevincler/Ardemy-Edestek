@@ -71,6 +71,10 @@ model User {
   referrals           User[]  @relation("Referrals")
   referralRewardGiven Boolean @default(false)
 
+  // Günün Sorusu hangi dilden gelsin (ör. "Rusça"). Boşsa tüm dillerden
+  // karışık; o dilde yayında test yoksa da karışık seçime düşer.
+  dailyLanguage String?
+
   assignments           Assignment[]
   assignmentSubmissions AssignmentSubmission[]
   lessonFiles           LessonFile[]
