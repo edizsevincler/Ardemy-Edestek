@@ -5,6 +5,8 @@ import { SignOutButton } from "@/components/SignOutButton";
 import { Logo } from "@/components/Logo";
 import { prisma } from "@/lib/prisma";
 import { displayStreak } from "@/lib/streak";
+import { UserAvatar } from "@/components/UserAvatar";
+import { findTitle } from "@/lib/cosmetics";
 
 export default async function StudentLayout({
   children,
@@ -27,9 +29,12 @@ export default async function StudentLayout({
         currentStreak: true,
         lastStreakDate: true,
         streakFreezes: true,
+        equippedTitle: true,
+        equippedFrame: true,
       },
     }),
   ]);
+  const title = findTitle(me?.equippedTitle);
   const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate, me.streakFreezes) : 0;
 
   return (
@@ -38,9 +43,20 @@ export default async function StudentLayout({
         <div className="flex items-center justify-between gap-3">
           <div className="flex min-w-0 items-center gap-3">
             <Logo size={36} className="shrink-0" />
+            <UserAvatar
+              name={session.user.name ?? ""}
+              frameId={me?.equippedFrame}
+              size={32}
+            />
             <div className="min-w-0">
-              <p className="text-[11px] uppercase tracking-wide text-brand-200 sm:text-xs">
-                Öğrenci Paneli
+              <p className="truncate text-[11px] tracking-wide text-brand-200 sm:text-xs">
+                {title ? (
+                  <span className="font-medium text-gold-400">
+                    {title.emoji} {title.label}
+                  </span>
+                ) : (
+                  <span className="uppercase">Öğrenci Paneli</span>
+                )}
               </p>
               <p className="truncate text-sm font-medium text-white sm:text-base">
                 {session.user.name}
@@ -69,6 +85,18 @@ export default async function StudentLayout({
             className="shrink-0 transition hover:text-gold-400"
           >
             İçerikler
+          </Link>
+          <Link
+            href="/guest/exam"
+            className="shrink-0 transition hover:text-gold-400"
+          >
+            Deneme Sınavı
+          </Link>
+          <Link
+            href="/guest/shop"
+            className="shrink-0 transition hover:text-gold-400"
+          >
+            Mağaza
           </Link>
           <Link
             href="/guest/credits"

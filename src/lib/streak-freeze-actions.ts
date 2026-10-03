@@ -45,7 +45,7 @@ export async function buyStreakFreeze(): Promise<BuyResult> {
     return { status: "error", message: "Yeterli krediniz yok." };
   }
 
-  revalidatePath("/guest");
-  revalidatePath("/student");
+  revalidatePath("/guest", "layout");
+  revalidatePath("/student", "layout");
   return { status: "success" };
 }

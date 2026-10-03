@@ -65,6 +65,11 @@ model User {
   // Seri koruma: kaçırılan bir günde seriyi otomatik kurtarır (bkz. lib/streak.ts).
   streakFreezes Int @default(0)
 
+  // Mağaza: satın alınan unvan/çerçeveler (UserCosmetic) ve şu an takılı
+  // olanlar. Tanımlar kodda (lib/cosmetics.ts), burada yalnızca id tutulur.
+  equippedTitle String?
+  equippedFrame String?
+
   // Arkadaşını getir sistemi: referralCode ilk ziyarette üretilip
   // atanır (bkz. lib/referral.ts). Ödül, davet edilenin İLK onaylanan
   // kredi alışverişinde bir kereye mahsus verilir (referralRewardGiven).
@@ -89,6 +94,8 @@ model User {
   verificationTokens    VerificationToken[]
   streakRewards         StreakReward[]
   dailyAnswers          DailyQuestionAnswer[]
+  cosmetics             UserCosmetic[]
+  examAttempts          ExamAttempt[]
   badges                UserBadge[]
 }
 
@@ -327,4 +334,55 @@ model CreditPurchase {
 
   packageId String
   package   CreditPackage @relation(fields: [packageId], references: [id])
+}
+
+// Mağazadan satın alınmış bir unvan veya çerçeve.
+model UserCosmetic {
+  id          String   @id @default(cuid())
+  itemId      String
+  purchasedAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, itemId])
+}
+
+// Deneme sınavı havuzu: soru bankasındaki testlerden (QuizItem) BAĞIMSIZ,
+// yalnızca deneme sınavında kullanılan özgün sorular. `correct` istemciye
+// sınav bitmeden gönderilmez.
+model ExamQuestion {
+  id          String     @id @default(cuid())
+  language    String // "İngilizce" | "Rusça"
+  topic       String
+  prompt      String
+  optionA     String
+  optionB     String
+  optionC     String
+  optionD     String
+  correct     QuizOption
+  explanation String?
+  createdAt   DateTime   @default(now())
+
+  @@unique([language, prompt])
+  @@index([language])
+}
+
+// Satın alınmış bir deneme sınavı. Sorular başlangıçta sabitlenir
+// (`questionIds`); süre `startedAt`'tan sunucu tarafında hesaplanır.
+// `answers`: [{ questionId, selected: "A"|null, correct: bool }, ...]
+model ExamAttempt {
+  id          String    @id @default(cuid())
+  language    String
+  questionIds Json
+  startedAt   DateTime  @default(now())
+  submittedAt DateTime?
+  score       Int?
+  total       Int
+  answers     Json?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, startedAt])
 }
