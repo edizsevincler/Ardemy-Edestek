@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { submitQuiz } from "./actions";
+import { NewBadgesBanner } from "@/components/NewBadgesBanner";
 
 type OptionLetter = "A" | "B" | "C" | "D";
 
@@ -37,6 +38,7 @@ export function QuizForm({
   });
   const [result, setResult] = useState(existingSubmission);
   const [error, setError] = useState<string | null>(null);
+  const [newBadges, setNewBadges] = useState<{ emoji: string; title: string }[]>([]);
   const [isPending, startTransition] = useTransition();
 
   const answeredCount = Object.keys(answers).length;
@@ -50,6 +52,7 @@ export function QuizForm({
         return;
       }
       setResult(res);
+      setNewBadges(res.newBadges);
     });
   }
 
@@ -57,10 +60,13 @@ export function QuizForm({
     setAnswers({});
     setResult(null);
     setError(null);
+    setNewBadges([]);
   }
 
   return (
     <div className="space-y-4">
+      <NewBadgesBanner badges={newBadges} />
+
       {result && (
         <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 text-center">
           <p className="text-lg font-semibold text-brand-950">

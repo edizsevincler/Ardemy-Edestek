@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 import { dateKey, recordStreakActivity } from "@/lib/streak";
+import { awardBadges } from "@/lib/badges";
 import {
   getDailyLanguage,
   getTodaysQuizItem,
@@ -13,7 +14,12 @@ import { revalidatePath } from "next/cache";
 
 type AnswerResult =
   | { status: "error"; message: string }
-  | { status: "success"; correct: boolean; correctOption: DailyOption };
+  | {
+      status: "success";
+      correct: boolean;
+      correctOption: DailyOption;
+      newBadges: { emoji: string; title: string }[];
+    };
 
 export async function answerDailyQuestion(
   selected: DailyOption
@@ -64,9 +70,10 @@ export async function answerDailyQuestion(
   }
 
   await recordStreakActivity(userId);
+  const newBadges = await awardBadges(userId).catch(() => []);
 
   revalidatePath("/guest");
   revalidatePath("/student");
 
-  return { status: "success", correct, correctOption: full.correct };
+  return { status: "success", correct, correctOption: full.correct, newBadges };
 }

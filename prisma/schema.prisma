@@ -86,6 +86,7 @@ model User {
   verificationTokens    VerificationToken[]
   streakRewards         StreakReward[]
   dailyAnswers          DailyQuestionAnswer[]
+  badges                UserBadge[]
 }
 
 // GUEST kaydı sırasında e-postanın gerçekten kullanıcıya ait olduğunu
@@ -214,6 +215,20 @@ model DailyQuestionAnswer {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, dateKey])
+}
+
+// Kazanılan rozetler kalıcı tutulur (test tekrar çözülünce skor değişse veya
+// zamana bağlı rozetlerde kayıp olmasın) ve "yeni rozet" kutlaması için
+// ilk kazanılma anı bilinir. Rozet tanımları kodda: lib/badges.ts.
+model UserBadge {
+  id       String   @id @default(cuid())
+  badgeId  String
+  earnedAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, badgeId])
 }
 
 model QuizSubmission {

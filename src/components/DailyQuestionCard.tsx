@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { answerDailyQuestion } from "@/lib/daily-question-actions";
+import { NewBadgesBanner } from "@/components/NewBadgesBanner";
 import type { DailyItem, DailyOption, DailyResult } from "@/lib/daily-question";
 
 const OPTIONS: DailyOption[] = ["A", "B", "C", "D"];
@@ -18,6 +19,7 @@ export function DailyQuestionCard({
   );
   const [result, setResult] = useState<DailyResult | null>(initialResult);
   const [error, setError] = useState<string | null>(null);
+  const [newBadges, setNewBadges] = useState<{ emoji: string; title: string }[]>([]);
   const [isPending, startTransition] = useTransition();
 
   function submit() {
@@ -34,6 +36,7 @@ export function DailyQuestionCard({
         correct: res.correct,
         correctOption: res.correctOption,
       });
+      setNewBadges(res.newBadges);
     });
   }
 
@@ -83,6 +86,12 @@ export function DailyQuestionCard({
       </div>
 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
+
+      {newBadges.length > 0 && (
+        <div className="mt-3">
+          <NewBadgesBanner badges={newBadges} />
+        </div>
+      )}
 
       {result ? (
         <p className="mt-3 text-sm font-medium text-brand-950">

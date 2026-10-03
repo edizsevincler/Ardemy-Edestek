@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile } from "@/lib/storage";
 import { recordStreakActivity } from "@/lib/streak";
+import { awardBadges } from "@/lib/badges";
 import { revalidatePath } from "next/cache";
 
 type SubmitAnswerState =
@@ -88,6 +89,7 @@ type SubmitQuizResult =
       score: number;
       total: number;
       answers: { itemId: string; selected: QuizOptionLetter; correct: boolean }[];
+      newBadges: { emoji: string; title: string }[];
     };
 
 export async function submitQuiz(
@@ -142,6 +144,7 @@ export async function submitQuiz(
   });
 
   await recordStreakActivity(session.user.id);
+  const newBadges = await awardBadges(session.user.id).catch(() => []);
 
   revalidatePath(`/guest/questions/${questionId}`);
 
@@ -150,5 +153,6 @@ export async function submitQuiz(
     score,
     total: items.length,
     answers: graded as { itemId: string; selected: QuizOptionLetter; correct: boolean }[],
+    newBadges,
   };
 }
