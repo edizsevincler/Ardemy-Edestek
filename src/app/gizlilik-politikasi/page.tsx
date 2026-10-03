@@ -143,8 +143,12 @@ export default function PrivacyPolicyPage() {
             </h2>
             <p>
               Platform, yalnızca oturumunuzu açık tutmak için zorunlu bir oturum
-              çerezi kullanır. Reklam veya analiz amaçlı üçüncü taraf çerezleri
-              kullanılmamaktadır.
+              çerezi kullanır. Ayrıca, siteye hangi bağlantıdan (ör. sosyal medya)
+              geldiğinizi öğrenmek için 30 gün geçerli birinci taraf bir kaynak
+              çerezi (ardemy_src) kullanılabilir; bu çerez yalnızca kayıt
+              olduğunuzda hangi kanaldan geldiğinizi kaydetmek içindir ve
+              üçüncü taraflarla paylaşılmaz. Reklam veya analiz amaçlı üçüncü
+              taraf çerezleri kullanılmamaktadır.
             </p>
           </section>
 

@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
   outputFileTracingIncludes: {
     "/api/share/**": ["./src/lib/og/**"],
     "/api/admin/social/**": ["./src/lib/og/**"],
+    "/api/poster/**": ["./src/lib/og/**"],
   },
 };
 

@@ -10,6 +10,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       path: `/dene/${slug}`,
       priority: 0.9,
     })),
+    { path: "/rusca-alfabe", priority: 0.9 },
     { path: "/register", priority: 0.7 },
     { path: "/gizlilik-politikasi", priority: 0.2 },
     { path: "/mesafeli-satis-sozlesmesi", priority: 0.2 },

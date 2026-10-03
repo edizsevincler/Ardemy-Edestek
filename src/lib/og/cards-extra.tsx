@@ -69,6 +69,7 @@ export function LessonSlide({
   rows,
   note,
   footer = "Kaydet ve sonra tekrar bak",
+  chip,
 }: {
   size: Size;
   logo: string;
@@ -78,6 +79,7 @@ export function LessonSlide({
   rows: { left: string; right: string }[];
   note?: string;
   footer?: string;
+  chip?: string;
 }) {
   return (
     <Frame size={size} logo={logo} footer={footer}>
@@ -92,7 +94,7 @@ export function LessonSlide({
           fontWeight: 700,
         }}
       >
-        {`Mini Ders · ${step}/${total}`}
+        {chip ?? `Mini Ders · ${step}/${total}`}
       </div>
       <div
         style={{

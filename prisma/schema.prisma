@@ -67,6 +67,10 @@ model User {
 
   // Mağaza: satın alınan unvan/çerçeveler (UserCosmetic) ve şu an takılı
   // olanlar. Tanımlar kodda (lib/cosmetics.ts), burada yalnızca id tutulur.
+  // Kayıt anında siteye hangi kanaldan gelindiği (ör. "instagram", "tiktok").
+  // Bkz. lib/source.ts ve /admin/sources. Boşsa kaynak bilinmiyor/doğrudan.
+  signupSource String?
+
   equippedTitle String?
   equippedFrame String?
 

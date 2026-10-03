@@ -1,10 +1,12 @@
 "use server";
 
 import { randomBytes } from "crypto";
+import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
 import { sendVerificationEmail } from "@/lib/email";
 import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
+import { sanitizeSource, SOURCE_COOKIE } from "@/lib/source";
 
 type RegisterState =
   | { status: "idle" }
@@ -55,6 +57,13 @@ export async function registerGuest(
     ? await prisma.user.findUnique({ where: { referralCode: refCode } })
     : null;
 
+  // Kaynak: çerezdeki kanal (ör. instagram); yoksa arkadaş linkiyle geldiyse
+  // "arkadas-linki"; ikisi de yoksa boş (doğrudan/bilinmiyor).
+  const cookieStore = await cookies();
+  const signupSource =
+    sanitizeSource(cookieStore.get(SOURCE_COOKIE)?.value) ??
+    (referrer ? "arkadas-linki" : null);
+
   const passwordHash = await hashPassword(password);
   const user = await prisma.user.create({
     data: {
@@ -64,6 +73,7 @@ export async function registerGuest(
       role: "GUEST",
       referredById: referrer?.id,
       credits: SIGNUP_BONUS_CREDITS,
+      signupSource,
     },
   });
 
