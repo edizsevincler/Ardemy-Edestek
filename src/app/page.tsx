@@ -5,8 +5,12 @@ import { prisma } from "@/lib/prisma";
 import { Logo } from "@/components/Logo";
 import { Footer } from "@/components/Footer";
 import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { getI18n } from "@/lib/i18n/server";
+import { INTL_TAG } from "@/lib/i18n/config";
 
 export default async function Home() {
+  const { locale, t } = await getI18n();
   const session = await auth();
 
   if (session?.user) {
@@ -43,17 +47,18 @@ export default async function Home() {
             <span className="font-semibold text-brand-950">Ardemy Academy</span>
           </div>
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
             <Link
               href="/login"
               className="text-sm font-medium text-brand-700 hover:underline"
             >
-              Giriş Yap
+              {t("Giriş Yap")}
             </Link>
             <Link
               href="/register"
               className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95"
             >
-              Ücretsiz Kayıt Ol
+              {t("Ücretsiz Kayıt Ol")}
             </Link>
           </div>
         </div>
@@ -65,25 +70,23 @@ export default async function Home() {
           <div className="pointer-events-none absolute -bottom-32 -right-16 h-96 w-96 rounded-full bg-brand-400/30 blur-3xl animate-float-slow-delayed" />
           <div className="relative mx-auto max-w-2xl">
             <h1 className="text-3xl font-semibold text-white sm:text-4xl">
-              Dil öğrenmenin en pratik yolu
+              {t("Dil öğrenmenin en pratik yolu")}
             </h1>
             <p className="mt-4 text-base text-brand-100 sm:text-lg">
-              Konu anlatımları, çoktan seçmeli testler ve soru bankasıyla
-              kendi hızında pratik yap; birebir ders takibiyle ilerlemeni
-              öğretmeninle paylaş.
+              {t("Konu anlatımları, çoktan seçmeli testler ve soru bankasıyla kendi hızında pratik yap; birebir ders takibiyle ilerlemeni öğretmeninle paylaş.")}
             </p>
             <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
               <Link
                 href="/register"
                 className="w-full rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 px-6 py-3 text-sm font-semibold text-brand-950 shadow-sm shadow-gold-600/30 transition-all duration-200 hover:from-gold-400 hover:to-gold-300 hover:scale-[1.03] hover:shadow-lg active:scale-95 sm:w-auto"
               >
-                Ücretsiz Kayıt Ol
+                {t("Ücretsiz Kayıt Ol")}
               </Link>
               <Link
                 href="/login"
                 className="w-full rounded-lg border border-white/30 px-6 py-3 text-sm font-medium text-white transition hover:bg-white/10 sm:w-auto"
               >
-                Zaten hesabım var
+                {t("Zaten hesabım var")}
               </Link>
             </div>
             <p className="mt-4">
@@ -91,12 +94,11 @@ export default async function Home() {
                 href="/dene"
                 className="text-sm font-medium text-gold-300 underline underline-offset-4 hover:text-gold-400"
               >
-                Önce ücretsiz dene — kayıt olmadan 5 soruluk test çöz →
+                {t("Önce ücretsiz dene — kayıt olmadan 5 soruluk test çöz →")}
               </Link>
             </p>
             <p className="mt-4 inline-block rounded-full bg-gold-400/20 px-4 py-1.5 text-sm font-medium text-gold-300">
-              🎁 Kayıt olunca {SIGNUP_BONUS_CREDITS} kredi hediye — kart bilgisi
-              gerekmez
+              {t("🎁 Kayıt olunca {n} kredi hediye — kart bilgisi gerekmez", { n: SIGNUP_BONUS_CREDITS })}
             </p>
           </div>
         </section>
@@ -105,21 +107,21 @@ export default async function Home() {
           <div className="mx-auto grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
             <div className="rounded-xl border border-gold-200 bg-gold-50 p-6 text-center shadow-sm sm:order-first">
               <p className="text-3xl font-semibold text-brand-950">
-                {totalSoruCount.toLocaleString("tr-TR")}
+                {totalSoruCount.toLocaleString(INTL_TAG[locale])}
               </p>
-              <p className="mt-1 text-sm text-slate-600">Soru</p>
+              <p className="mt-1 text-sm text-slate-600">{t("Soru")}</p>
             </div>
             <div className="rounded-xl border border-brand-100 bg-white p-6 text-center shadow-sm">
               <p className="text-3xl font-semibold text-brand-950">
                 {topicCount}
               </p>
-              <p className="mt-1 text-sm text-slate-500">Konu Anlatımı</p>
+              <p className="mt-1 text-sm text-slate-500">{t("Konu Anlatımı")}</p>
             </div>
             <div className="rounded-xl border border-brand-100 bg-white p-6 text-center shadow-sm">
               <p className="text-3xl font-semibold text-brand-950">
                 {quizCount}
               </p>
-              <p className="mt-1 text-sm text-slate-500">Çoktan Seçmeli Test</p>
+              <p className="mt-1 text-sm text-slate-500">{t("Çoktan Seçmeli Test")}</p>
             </div>
           </div>
         </section>
@@ -127,26 +129,25 @@ export default async function Home() {
         <section className="bg-white px-4 py-12 sm:px-6">
           <div className="mx-auto max-w-5xl">
             <h2 className="text-center text-2xl font-semibold text-brand-950">
-              Nasıl çalışır?
+              {t("Nasıl çalışır?")}
             </h2>
             <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-3">
               <div className="text-center">
                 <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
                   1
                 </div>
-                <p className="mt-3 font-medium text-brand-950">Ücretsiz kayıt ol</p>
+                <p className="mt-3 font-medium text-brand-950">{t("Ücretsiz kayıt ol")}</p>
                 <p className="mt-1 text-sm text-slate-500">
-                  E-postanı doğrula, hemen platforma eriş.
+                  {t("E-postanı doğrula, hemen platforma eriş.")}
                 </p>
               </div>
               <div className="text-center">
                 <div className="mx-auto flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
                   2
                 </div>
-                <p className="mt-3 font-medium text-brand-950">Kredi al</p>
+                <p className="mt-3 font-medium text-brand-950">{t("Kredi al")}</p>
                 <p className="mt-1 text-sm text-slate-500">
-                  Kayıtla {SIGNUP_BONUS_CREDITS} kredi hediye, ihtiyacına göre
-                  daha fazlasını ekleyebilirsin.
+                  {t("Kayıtla {n} kredi hediye, ihtiyacına göre daha fazlasını ekleyebilirsin.", { n: SIGNUP_BONUS_CREDITS })}
                 </p>
               </div>
               <div className="text-center">
@@ -154,10 +155,10 @@ export default async function Home() {
                   3
                 </div>
                 <p className="mt-3 font-medium text-brand-950">
-                  Çöz, öğren, serini sürdür
+                  {t("Çöz, öğren, serini sürdür")}
                 </p>
                 <p className="mt-1 text-sm text-slate-500">
-                  🔥 Her gün pratik yaparak serini koru, 30 günde hediye ders kazan.
+                  {t("🔥 Her gün pratik yaparak serini koru, 30 günde hediye ders kazan.")}
                 </p>
               </div>
             </div>
@@ -168,7 +169,7 @@ export default async function Home() {
           <section className="px-4 py-12 sm:px-6">
             <div className="mx-auto max-w-5xl">
               <h2 className="text-center text-2xl font-semibold text-brand-950">
-                Kredi Paketleri
+                {t("Kredi Paketleri")}
               </h2>
               <div className="mt-8 grid grid-cols-1 gap-4 sm:grid-cols-3">
                 {packages.map((p) => (
@@ -180,11 +181,11 @@ export default async function Home() {
                     <p className="mt-2 text-2xl font-semibold text-brand-950">
                       {p.credits}
                       <span className="ml-1 text-sm font-normal text-slate-500">
-                        kredi
+                        {t("kredi")}
                       </span>
                     </p>
                     <p className="mt-1 text-slate-700">
-                      {Number(p.priceTRY).toLocaleString("tr-TR", {
+                      {Number(p.priceTRY).toLocaleString(INTL_TAG[locale], {
                         style: "currency",
                         currency: "TRY",
                       })}
@@ -201,7 +202,7 @@ export default async function Home() {
             href="/register"
             className="inline-block rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-6 py-3 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95"
           >
-            Hemen Ücretsiz Kayıt Ol
+            {t("Hemen Ücretsiz Kayıt Ol")}
           </Link>
         </section>
       </main>

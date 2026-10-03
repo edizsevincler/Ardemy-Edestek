@@ -2,12 +2,14 @@ import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { FlagIcon } from "@/components/FlagIcon";
 import { slugify } from "@/lib/slugify";
+import { getT } from "@/lib/i18n/server";
 
 function languageOf(subject: string) {
   return subject.split(" - ")[0].trim();
 }
 
 export default async function GuestQuestionsLandingPage() {
+  const t = await getT();
   const questions = await prisma.question.findMany({
     where: { isPublished: true },
     select: { id: true, subject: true, type: true },
@@ -53,11 +55,11 @@ export default async function GuestQuestionsLandingPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-brand-950">İçerikler</h1>
+      <h1 className="text-2xl font-semibold text-brand-950">{t("İçerikler")}</h1>
 
       {languages.length === 0 ? (
         <p className="text-sm text-slate-500">
-          Şu anda yayınlanmış içerik bulunmuyor.
+          {t("Şu anda yayınlanmış içerik bulunmuyor.")}
         </p>
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -70,13 +72,13 @@ export default async function GuestQuestionsLandingPage() {
               <FlagIcon language={language} className="h-10 w-14" />
               <div>
                 <p className="text-lg font-semibold text-brand-950">
-                  {language}
+                  {t(language)}
                 </p>
                 <p className="text-sm font-medium text-gold-600">
-                  {soruCount} soru
+                  {t("{n} {n#soru|soru}", { n: soruCount })}
                 </p>
                 <p className="text-xs text-slate-400">
-                  {topicCount} konu anlatımı
+                  {t("{n} {n#konu anlatımı|konu anlatımı}", { n: topicCount })}
                 </p>
               </div>
             </Link>

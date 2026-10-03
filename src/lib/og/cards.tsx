@@ -5,6 +5,7 @@
 import type { ReactNode } from "react";
 import { INSTAGRAM_HANDLE, SITE_HOST } from "@/lib/site";
 import { OG_FONT_FAMILY } from "@/lib/og/assets";
+import { makeT, type TFunction } from "@/lib/i18n/translate";
 
 const BG = "linear-gradient(160deg, #1c1147 0%, #2f2178 55%, #4b32b3 100%)";
 const GOLD = "#e8c25a";
@@ -134,6 +135,7 @@ export function ExamCard({
   language,
   score,
   total,
+  t = makeT(null),
 }: {
   size: Size;
   logo: string;
@@ -141,16 +143,17 @@ export function ExamCard({
   language: string;
   score: number;
   total: number;
+  t?: TFunction;
 }) {
   const percent = Math.round((score / Math.max(total, 1)) * 100);
   return (
-    <Frame size={size} logo={logo} footer="Sen de dene">
+    <Frame size={size} logo={logo} footer={t("Sen de dene")}>
       <div style={{ display: "flex", fontSize: 150 }}>{verdictEmoji(percent)}</div>
       <div style={{ display: "flex", fontSize: 48, color: "#cfc4f2", marginTop: 16 }}>
         {firstName}
       </div>
       <div style={{ display: "flex", fontSize: 56, fontWeight: 700, marginTop: 8 }}>
-        {language} Deneme Sınavı
+        {t("{lang} Deneme Sınavı", { lang: t(language) })}
       </div>
       <div
         style={{
@@ -165,7 +168,7 @@ export function ExamCard({
         {score}/{total}
       </div>
       <div style={{ display: "flex", fontSize: 52, color: "#e7e1fa" }}>
-        %{percent} doğru
+        {t("%{n} doğru", { n: percent })}
       </div>
     </Frame>
   );
@@ -176,14 +179,16 @@ export function StreakCard({
   logo,
   firstName,
   streak,
+  t = makeT(null),
 }: {
   size: Size;
   logo: string;
   firstName: string;
   streak: number;
+  t?: TFunction;
 }) {
   return (
-    <Frame size={size} logo={logo} footer="Sen de seri yap">
+    <Frame size={size} logo={logo} footer={t("Sen de seri yap")}>
       <div style={{ display: "flex", fontSize: 220 }}>🔥</div>
       <div
         style={{
@@ -197,10 +202,10 @@ export function StreakCard({
         {streak}
       </div>
       <div style={{ display: "flex", fontSize: 72, fontWeight: 700 }}>
-        günlük çalışma serisi
+        {t("günlük çalışma serisi")}
       </div>
       <div style={{ display: "flex", fontSize: 44, color: "#cfc4f2", marginTop: 20 }}>
-        {firstName} her gün çalışıyor 💪
+        {t("{name} her gün çalışıyor 💪", { name: firstName })}
       </div>
     </Frame>
   );
@@ -213,6 +218,7 @@ export function BadgeCard({
   emoji,
   title,
   description,
+  t = makeT(null),
 }: {
   size: Size;
   logo: string;
@@ -220,11 +226,12 @@ export function BadgeCard({
   emoji: string;
   title: string;
   description: string;
+  t?: TFunction;
 }) {
   return (
-    <Frame size={size} logo={logo} footer="Sen de rozet kazan">
+    <Frame size={size} logo={logo} footer={t("Sen de rozet kazan")}>
       <div style={{ display: "flex", fontSize: 44, color: "#cfc4f2" }}>
-        {firstName} yeni bir rozet kazandı!
+        {t("{name} yeni bir rozet kazandı!", { name: firstName })}
       </div>
       <div
         style={{

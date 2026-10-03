@@ -2,6 +2,8 @@
 
 import { useActionState, useRef, useEffect } from "react";
 import { submitAnswer } from "./actions";
+import { useLocale, useT } from "@/lib/i18n/client";
+import { INTL_TAG } from "@/lib/i18n/config";
 
 const initialState = { status: "idle" } as const;
 
@@ -22,6 +24,8 @@ export function AnswerForm({
   questionId: string;
   answer: Answer;
 }) {
+  const t = useT();
+  const locale = useLocale();
   const [state, formAction, isPending] = useActionState(
     submitAnswer,
     initialState
@@ -39,7 +43,7 @@ export function AnswerForm({
       {answer && (
         <div className="rounded-xl border border-brand-100 bg-brand-50 p-4">
           <p className="text-sm font-medium text-brand-950">
-            Gönderdiğiniz cevap ({answer.submittedAt.toLocaleString("tr-TR")})
+            {t("Gönderdiğiniz cevap ({date})", { date: answer.submittedAt.toLocaleString(INTL_TAG[locale]) })}
           </p>
           {answer.body && (
             <p className="mt-1 whitespace-pre-wrap text-sm text-slate-700">
@@ -58,7 +62,7 @@ export function AnswerForm({
           {answer.gradedAt ? (
             <div className="mt-3 rounded-lg border border-emerald-200 bg-emerald-50 p-3">
               <p className="text-xs font-medium uppercase tracking-wide text-emerald-700">
-                Eğitmen geri bildirimi
+                {t("Eğitmen geri bildirimi")}
               </p>
               <p className="mt-1 whitespace-pre-wrap text-sm text-emerald-900">
                 {answer.feedback}
@@ -66,7 +70,7 @@ export function AnswerForm({
             </div>
           ) : (
             <p className="mt-3 text-xs text-slate-500">
-              Değerlendirme bekleniyor...
+              {t("Değerlendirme bekleniyor...")}
             </p>
           )}
         </div>
@@ -74,14 +78,14 @@ export function AnswerForm({
 
       <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-4 shadow-sm">
         <h2 className="text-sm font-medium text-brand-950">
-          {answer ? "Yeni cevap gönder" : "Cevabınızı gönderin"}
+          {answer ? t("Yeni cevap gönder") : t("Cevabınızı gönderin")}
         </h2>
         <form ref={formRef} action={formAction} className="mt-3 space-y-3">
           <input type="hidden" name="questionId" value={questionId} />
           <textarea
             name="body"
             rows={4}
-            placeholder="Cevabınızı buraya yazın..."
+            placeholder={t("Cevabınızı buraya yazın...")}
             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
           />
           <input name="file" type="file" className="w-full text-sm" />
@@ -90,7 +94,7 @@ export function AnswerForm({
             disabled={isPending}
             className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm shadow-brand-900/20 transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
           >
-            {isPending ? "Gönderiliyor..." : "Cevabı Gönder"}
+            {isPending ? t("Gönderiliyor...") : t("Cevabı Gönder")}
           </button>
           {state.status === "error" && (
             <p className="text-sm text-red-600">{state.message}</p>

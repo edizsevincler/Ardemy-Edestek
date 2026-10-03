@@ -14,6 +14,7 @@ import {
   type ExamResultData,
 } from "@/lib/exam-config";
 import { revalidatePath } from "next/cache";
+import { getT } from "@/lib/i18n/server";
 
 type StartResult =
   | { status: "success"; attemptId: string }
@@ -54,10 +55,11 @@ function refreshLayouts() {
 }
 
 export async function startExam(language: string): Promise<StartResult> {
+  const t = await getT();
   const userId = await requireUserId();
-  if (!userId) return { status: "error", message: "Oturum bulunamadı." };
+  if (!userId) return { status: "error", message: t("Oturum bulunamadı.") };
   if (!(EXAM_LANGUAGES as readonly string[]).includes(language)) {
-    return { status: "error", message: "Geçersiz dil." };
+    return { status: "error", message: t("Geçersiz dil.") };
   }
 
   // Yarım kalmış bir sınav varsa yeniden ücret alınmadan oradan devam edilir.
@@ -75,7 +77,7 @@ export async function startExam(language: string): Promise<StartResult> {
   if (pool.length < EXAM_SIZE) {
     return {
       status: "error",
-      message: "Bu dilde yeterli deneme sorusu henüz yok.",
+      message: t("Bu dilde yeterli deneme sorusu henüz yok."),
     };
   }
 
@@ -111,7 +113,7 @@ export async function startExam(language: string): Promise<StartResult> {
     if (error instanceof Error && error.message === "NO_CREDITS") {
       return {
         status: "error",
-        message: `Deneme sınavı için ${EXAM_PRICE_CREDITS} kredi gerekli.`,
+        message: t("Deneme sınavı için {n} kredi gerekli.", { n: EXAM_PRICE_CREDITS }),
       };
     }
     throw error;
@@ -122,17 +124,18 @@ export async function submitExam(
   attemptId: string,
   answers: Record<string, ExamLetter>
 ): Promise<SubmitResult> {
+  const t = await getT();
   const userId = await requireUserId();
-  if (!userId) return { status: "error", message: "Oturum bulunamadı." };
+  if (!userId) return { status: "error", message: t("Oturum bulunamadı.") };
 
   const attempt = await prisma.examAttempt.findUnique({
     where: { id: attemptId },
   });
   if (!attempt || attempt.userId !== userId) {
-    return { status: "error", message: "Sınav bulunamadı." };
+    return { status: "error", message: t("Sınav bulunamadı.") };
   }
   if (attempt.submittedAt) {
-    return { status: "error", message: "Bu sınav zaten tamamlandı." };
+    return { status: "error", message: t("Bu sınav zaten tamamlandı.") };
   }
 
   const questionIds = attempt.questionIds as string[];
@@ -161,7 +164,7 @@ export async function submitExam(
     data: { submittedAt: new Date(), score, answers: graded },
   });
   if (updated.count === 0) {
-    return { status: "error", message: "Bu sınav zaten tamamlandı." };
+    return { status: "error", message: t("Bu sınav zaten tamamlandı.") };
   }
 
   const activity = await recordStreakActivity(userId);
@@ -180,6 +183,6 @@ export async function submitExam(
       review,
     },
     newBadges,
-    streakNotes: streakNotes(activity),
+    streakNotes: streakNotes(activity, t),
   };
 }

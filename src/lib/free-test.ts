@@ -1,13 +1,33 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { prisma } from "@/lib/prisma";
+import { tx } from "@/lib/i18n/translate";
 
 export const FREE_TEST_SIZE = 5;
 
+// `name` veritabanındaki konu adıyla eşleşir (çevrilmez); diğer alanlar arayüz
+// metinleridir ve t() ile gösterilir (tx = çeviri tablosunda aranacak işaretçi).
 export const FREE_TEST_LANGUAGES = {
-  rusca: { name: "Rusça", sample: "Rusça padejler, fiiller ve günlük kalıplar" },
+  rusca: {
+    name: "Rusça",
+    cardTitle: tx("Rusça Testi"),
+    sample: tx("Rusça padejler, fiiller ve günlük kalıplar"),
+    h1: tx("Ücretsiz Rusça Testi"),
+    metaTitle: tx("Ücretsiz Rusça Testi — 5 Soruda Seviyeni Dene | Ardemy Academy"),
+    metaDescription: tx("Kayıt olmadan ücretsiz Rusça testi çöz: Rusça padejler, fiiller ve günlük kalıplar. Anında sonuç, doğru cevaplar ve binlerce soruluk soru bankasına erişim."),
+    intro: tx("5 soruda Rusça seviyeni dene — kayıt gerekmez. Konular: Rusça padejler, fiiller ve günlük kalıplar. Test bitince doğru cevapları hemen görürsün."),
+    about: tx("Ardemy Academy, Rusça ve diğer dillerde konu anlatımları, çoktan seçmeli testler, günlük soru, deneme sınavları ve birebir ders takibi sunan bir dil öğrenme platformudur. Kayıt olunca 2 kredi hediye edilir; kart bilgisi gerekmez."),
+    tryButton: tx("Rusça testini dene"),
+  },
   ingilizce: {
     name: "İngilizce",
-    sample: "İngilizce zamanlar, kelimeler ve kalıplar",
+    cardTitle: tx("İngilizce Testi"),
+    sample: tx("İngilizce zamanlar, kelimeler ve kalıplar"),
+    h1: tx("Ücretsiz İngilizce Testi"),
+    metaTitle: tx("Ücretsiz İngilizce Testi — 5 Soruda Seviyeni Dene | Ardemy Academy"),
+    metaDescription: tx("Kayıt olmadan ücretsiz İngilizce testi çöz: İngilizce zamanlar, kelimeler ve kalıplar. Anında sonuç, doğru cevaplar ve binlerce soruluk soru bankasına erişim."),
+    intro: tx("5 soruda İngilizce seviyeni dene — kayıt gerekmez. Konular: İngilizce zamanlar, kelimeler ve kalıplar. Test bitince doğru cevapları hemen görürsün."),
+    about: tx("Ardemy Academy, İngilizce ve diğer dillerde konu anlatımları, çoktan seçmeli testler, günlük soru, deneme sınavları ve birebir ders takibi sunan bir dil öğrenme platformudur. Kayıt olunca 2 kredi hediye edilir; kart bilgisi gerekmez."),
+    tryButton: tx("İngilizce testini dene"),
   },
 } as const;
 

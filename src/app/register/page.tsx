@@ -5,11 +5,14 @@ import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { registerGuest } from "./actions";
 import { Logo } from "@/components/Logo";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { useT } from "@/lib/i18n/client";
 import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
 
 const initialState = { status: "idle" } as const;
 
 function RegisterForm() {
+  const t = useT();
   const [state, formAction, isPending] = useActionState(
     registerGuest,
     initialState
@@ -21,21 +24,22 @@ function RegisterForm() {
       <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-brand-950 via-brand-800 to-brand-600 px-4 py-10">
         <div className="pointer-events-none absolute -top-32 -left-32 h-80 w-80 rounded-full bg-gold-400/20 blur-3xl animate-float-slow" />
         <div className="pointer-events-none absolute -bottom-32 -right-16 h-96 w-96 rounded-full bg-brand-400/30 blur-3xl animate-float-slow-delayed" />
+        <div className="absolute right-4 top-4">
+          <LanguageSwitcher tone="dark" />
+        </div>
         <div className="relative w-full max-w-sm space-y-4 rounded-2xl bg-white p-8 text-center shadow-2xl ring-1 ring-black/5">
           <Logo size={64} />
           <h1 className="text-xl font-semibold text-brand-950">
-            E-postanızı kontrol edin
+            {t("E-postanızı kontrol edin")}
           </h1>
           <p className="text-sm text-slate-500">
-            Hesabınızı aktifleştirmek için e-postanıza gönderilen linke
-            tıklayın. Linki bulamıyorsanız gereksiz/spam klasörünü kontrol
-            edin.
+            {t("Hesabınızı aktifleştirmek için e-postanıza gönderilen linke tıklayın. Linki bulamıyorsanız gereksiz/spam klasörünü kontrol edin.")}
           </p>
           <Link
             href="/login"
             className="inline-block text-sm font-medium text-brand-600 hover:underline"
           >
-            Giriş sayfasına dön
+            {t("Giriş sayfasına dön")}
           </Link>
         </div>
       </main>
@@ -46,6 +50,9 @@ function RegisterForm() {
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-brand-950 via-brand-800 to-brand-600 px-4 py-10">
       <div className="pointer-events-none absolute -top-32 -left-32 h-80 w-80 rounded-full bg-gold-400/20 blur-3xl animate-float-slow" />
       <div className="pointer-events-none absolute -bottom-32 -right-16 h-96 w-96 rounded-full bg-brand-400/30 blur-3xl animate-float-slow-delayed" />
+      <div className="absolute right-4 top-4">
+        <LanguageSwitcher tone="dark" />
+      </div>
 
       <form
         action={formAction}
@@ -54,13 +61,13 @@ function RegisterForm() {
         <div className="flex flex-col items-center text-center">
           <Logo size={64} />
           <h1 className="mt-4 text-xl font-semibold text-brand-950">
-            Hesap Oluştur
+            {t("Hesap Oluştur")}
           </h1>
           <p className="mt-1 text-sm text-slate-500">
-            Soru bankasına erişmek için kayıt olun
+            {t("Soru bankasına erişmek için kayıt olun")}
           </p>
           <p className="mt-2 rounded-full bg-gold-50 px-3 py-1 text-xs font-medium text-gold-600">
-            🎁 Kayıt olunca {SIGNUP_BONUS_CREDITS} kredi hediye!
+            {t("🎁 Kayıt olunca {n} kredi hediye!", { n: SIGNUP_BONUS_CREDITS })}
           </p>
         </div>
 
@@ -68,7 +75,7 @@ function RegisterForm() {
 
         <div className="space-y-1">
           <label htmlFor="name" className="text-sm font-medium text-slate-700">
-            Ad Soyad
+            {t("Ad Soyad")}
           </label>
           <input
             id="name"
@@ -81,7 +88,7 @@ function RegisterForm() {
 
         <div className="space-y-1">
           <label htmlFor="email" className="text-sm font-medium text-slate-700">
-            E-posta
+            {t("E-posta")}
           </label>
           <input
             id="email"
@@ -95,7 +102,7 @@ function RegisterForm() {
 
         <div className="space-y-1">
           <label htmlFor="password" className="text-sm font-medium text-slate-700">
-            Şifre
+            {t("Şifre")}
           </label>
           <input
             id="password"
@@ -112,7 +119,7 @@ function RegisterForm() {
             htmlFor="passwordConfirm"
             className="text-sm font-medium text-slate-700"
           >
-            Şifre (tekrar)
+            {t("Şifre (tekrar)")}
           </label>
           <input
             id="passwordConfirm"
@@ -137,9 +144,9 @@ function RegisterForm() {
               target="_blank"
               className="font-medium text-brand-600 hover:underline"
             >
-              Gizlilik Politikası ve KVKK Aydınlatma Metni
+              {t("Gizlilik Politikası ve KVKK Aydınlatma Metni")}
             </Link>
-            &apos;ni okudum, kabul ediyorum.
+            {t("'ni okudum, kabul ediyorum.")}
           </span>
         </label>
 
@@ -152,13 +159,13 @@ function RegisterForm() {
           disabled={isPending}
           className="w-full rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 py-2.5 text-sm font-semibold text-brand-950 shadow-sm shadow-gold-600/30 transition-all duration-200 hover:from-gold-400 hover:to-gold-300 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
         >
-          {isPending ? "Oluşturuluyor..." : "Kayıt Ol"}
+          {isPending ? t("Oluşturuluyor...") : t("Kayıt Ol")}
         </button>
 
         <p className="text-center text-sm text-slate-500">
-          Zaten hesabınız var mı?{" "}
+          {t("Zaten hesabınız var mı?")}{" "}
           <Link href="/login" className="font-medium text-brand-600 hover:underline">
-            Giriş yapın
+            {t("Giriş yapın")}
           </Link>
         </p>
       </form>

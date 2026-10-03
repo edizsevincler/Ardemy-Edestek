@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useT } from "@/lib/i18n/client";
 
 // Görseli (story boyutu) üretip cihazın paylaşım menüsünü açar (mobilde
 // Instagram/WhatsApp vb.). Dosya paylaşımı desteklenmiyorsa görsel indirilir.
@@ -8,7 +9,7 @@ export function ShareButton({
   imagePath,
   filename,
   text,
-  label = "Paylaş",
+  label,
   small = false,
 }: {
   imagePath: string;
@@ -17,6 +18,7 @@ export function ShareButton({
   label?: string;
   small?: boolean;
 }) {
+  const t = useT();
   const [busy, setBusy] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
 
@@ -47,9 +49,9 @@ export function ShareButton({
       a.download = filename;
       a.click();
       URL.revokeObjectURL(href);
-      setMessage("Görsel indirildi — Instagram veya WhatsApp'ta paylaşabilirsin.");
+      setMessage(t("Görsel indirildi — Instagram veya WhatsApp'ta paylaşabilirsin."));
     } catch {
-      setMessage("Görsel hazırlanamadı, biraz sonra tekrar dene.");
+      setMessage(t("Görsel hazırlanamadı, biraz sonra tekrar dene."));
     } finally {
       setBusy(false);
     }
@@ -65,7 +67,7 @@ export function ShareButton({
           small ? "px-2 py-0.5 text-xs" : "px-4 py-2 text-sm"
         }`}
       >
-        {busy ? "Hazırlanıyor..." : `📤 ${label}`}
+        {busy ? t("Hazırlanıyor...") : `📤 ${label ?? t("Paylaş")}`}
       </button>
       {message && <span className="text-xs text-slate-500">{message}</span>}
     </span>

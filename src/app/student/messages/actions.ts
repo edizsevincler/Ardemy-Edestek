@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getT } from "@/lib/i18n/server";
 
 type SendMessageState =
   | { status: "idle" }
@@ -13,14 +14,15 @@ export async function sendStudentMessage(
   _prevState: SendMessageState,
   formData: FormData
 ): Promise<SendMessageState> {
+  const t = await getT();
   const session = await auth();
   if (!session?.user) {
-    return { status: "error", message: "Oturum bulunamadı." };
+    return { status: "error", message: t("Oturum bulunamadı.") };
   }
 
   const body = String(formData.get("body") ?? "").trim();
   if (!body) {
-    return { status: "error", message: "Mesaj boş olamaz." };
+    return { status: "error", message: t("Mesaj boş olamaz.") };
   }
 
   await prisma.message.create({

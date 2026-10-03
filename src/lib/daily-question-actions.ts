@@ -11,6 +11,7 @@ import {
   type DailyOption,
 } from "@/lib/daily-question";
 import { revalidatePath } from "next/cache";
+import { getT } from "@/lib/i18n/server";
 
 type AnswerResult =
   | { status: "error"; message: string }
@@ -25,15 +26,16 @@ type AnswerResult =
 export async function answerDailyQuestion(
   selected: DailyOption
 ): Promise<AnswerResult> {
+  const t = await getT();
   const session = await auth();
   if (
     !session?.user ||
     (session.user.role !== "GUEST" && session.user.role !== "STUDENT")
   ) {
-    return { status: "error", message: "Oturum bulunamadı." };
+    return { status: "error", message: t("Oturum bulunamadı.") };
   }
   if (!["A", "B", "C", "D"].includes(selected)) {
-    return { status: "error", message: "Geçersiz seçenek." };
+    return { status: "error", message: t("Geçersiz seçenek.") };
   }
 
   const userId = session.user.id;
@@ -43,12 +45,12 @@ export async function answerDailyQuestion(
     where: { userId_dateKey: { userId, dateKey: todayKey } },
   });
   if (existing) {
-    return { status: "error", message: "Bugünkü soruyu zaten cevapladın." };
+    return { status: "error", message: t("Bugünkü soruyu zaten cevapladın.") };
   }
 
   const item = await getTodaysQuizItem(await getDailyLanguage(userId));
   if (!item) {
-    return { status: "error", message: "Bugün için soru bulunamadı." };
+    return { status: "error", message: t("Bugün için soru bulunamadı.") };
   }
   const full = await prisma.quizItem.findUniqueOrThrow({
     where: { id: item.id },
@@ -65,7 +67,7 @@ export async function answerDailyQuestion(
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      return { status: "error", message: "Bugünkü soruyu zaten cevapladın." };
+      return { status: "error", message: t("Bugünkü soruyu zaten cevapladın.") };
     }
     throw error;
   }
@@ -81,6 +83,6 @@ export async function answerDailyQuestion(
     correct,
     correctOption: full.correct,
     newBadges,
-    streakNotes: streakNotes(activity),
+    streakNotes: streakNotes(activity, t),
   };
 }

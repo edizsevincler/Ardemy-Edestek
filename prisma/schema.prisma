@@ -71,6 +71,9 @@ model User {
   // Bkz. lib/source.ts ve /admin/sources. Boşsa kaynak bilinmiyor/doğrudan.
   signupSource String?
 
+  // Arayüz/e-posta dili ("tr" | "en" | "ru"). Kayıtta ve dil seçilince güncellenir.
+  locale String @default("tr")
+
   equippedTitle String?
   equippedFrame String?
 

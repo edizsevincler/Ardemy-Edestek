@@ -1,23 +1,22 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Logo } from "@/components/Logo";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { getT } from "@/lib/i18n/server";
 import { INSTAGRAM_HANDLE } from "@/lib/site";
 import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
 
-export const metadata: Metadata = {
-  title: "Ardemy Academy — Bağlantılar",
-  description: "Ücretsiz Rusça ve İngilizce testleri, kayıt ve iletişim bağlantıları.",
-  // Instagram/TikTok biyografi sayfası: arama sonuçlarında çıkması gerekmiyor.
-  robots: { index: false, follow: true },
-};
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getT();
+  return {
+    title: t("Ardemy Academy — Bağlantılar"),
+    description: t("Ücretsiz Rusça ve İngilizce testleri, kayıt ve iletişim bağlantıları."),
+    // Instagram/TikTok biyografi sayfası: arama sonuçlarında çıkması gerekmiyor.
+    robots: { index: false, follow: true },
+  };
+}
 
 const WHATSAPP_DIGITS = process.env.WHATSAPP_NUMBER?.replace(/[^0-9]/g, "");
-const WHATSAPP_LINK = WHATSAPP_DIGITS
-  ? `https://wa.me/${WHATSAPP_DIGITS}?text=${encodeURIComponent(
-      "Merhaba, Ardemy Academy hakkında bilgi almak istiyorum."
-    )}`
-  : null;
-
 const INSTAGRAM_URL = `https://www.instagram.com/${INSTAGRAM_HANDLE.replace("@", "")}/`;
 
 type Item = {
@@ -29,41 +28,48 @@ type Item = {
   primary?: boolean;
 };
 
-export default function LinkPage() {
+export default async function LinkPage() {
+  const t = await getT();
+  const whatsappLink = WHATSAPP_DIGITS
+    ? `https://wa.me/${WHATSAPP_DIGITS}?text=${encodeURIComponent(
+        t("Merhaba, Ardemy Academy hakkında bilgi almak istiyorum.")
+      )}`
+    : null;
+
   const items: Item[] = [
     {
       href: "/dene/rusca",
       emoji: "🇷🇺",
-      title: "Ücretsiz Rusça testi",
-      hint: "5 soru, kayıt gerekmez",
+      title: t("Ücretsiz Rusça testi"),
+      hint: t("5 soru, kayıt gerekmez"),
       primary: true,
     },
     {
       href: "/dene/ingilizce",
       emoji: "🇬🇧",
-      title: "Ücretsiz İngilizce testi",
-      hint: "5 soru, kayıt gerekmez",
+      title: t("Ücretsiz İngilizce testi"),
+      hint: t("5 soru, kayıt gerekmez"),
       primary: true,
     },
     {
       href: "/register",
       emoji: "🎁",
-      title: "Kayıt ol",
-      hint: `${SIGNUP_BONUS_CREDITS} kredi hediye`,
+      title: t("Kayıt ol"),
+      hint: t("{n} kredi hediye", { n: SIGNUP_BONUS_CREDITS }),
     },
     {
       href: "/rusca-alfabe",
       emoji: "🔤",
-      title: "Rusça alfabe",
-      hint: "Ücretsiz poster ve okunuşlar",
+      title: t("Rusça alfabe"),
+      hint: t("Ücretsiz poster ve okunuşlar"),
     },
-    ...(WHATSAPP_LINK
+    ...(whatsappLink
       ? [
           {
-            href: WHATSAPP_LINK,
+            href: whatsappLink,
             emoji: "💬",
-            title: "WhatsApp'tan yaz",
-            hint: "Ders ve fiyat bilgisi",
+            title: t("WhatsApp'tan yaz"),
+            hint: t("Ders ve fiyat bilgisi"),
             external: true,
           },
         ]
@@ -72,7 +78,7 @@ export default function LinkPage() {
       href: INSTAGRAM_URL,
       emoji: "📸",
       title: `Instagram ${INSTAGRAM_HANDLE}`,
-      hint: "Her gün yeni soru",
+      hint: t("Her gün yeni soru"),
       external: true,
     },
   ];
@@ -81,13 +87,16 @@ export default function LinkPage() {
     <main className="relative flex min-h-screen justify-center overflow-hidden bg-gradient-to-br from-brand-950 via-brand-800 to-brand-600 px-4 py-10">
       <div className="pointer-events-none absolute -top-32 -left-32 h-80 w-80 rounded-full bg-gold-400/20 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-32 -right-16 h-96 w-96 rounded-full bg-brand-400/30 blur-3xl" />
+      <div className="absolute right-4 top-4">
+        <LanguageSwitcher tone="dark" />
+      </div>
 
       <div className="relative w-full max-w-sm">
         <div className="flex flex-col items-center text-center">
           <Logo size={72} />
           <h1 className="mt-4 text-xl font-semibold text-white">Ardemy Academy</h1>
           <p className="mt-1 text-sm text-brand-100">
-            Rusça &amp; İngilizce · Ediz Sevinçler
+            {t("Rusça & İngilizce · Ediz Sevinçler")}
           </p>
         </div>
 

@@ -5,6 +5,7 @@ import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 import { findCosmetic } from "@/lib/cosmetics";
 import { revalidatePath } from "next/cache";
+import { getT } from "@/lib/i18n/server";
 
 type Result = { status: "success" } | { status: "error"; message: string };
 
@@ -27,11 +28,12 @@ function refresh() {
 }
 
 export async function buyCosmetic(itemId: string): Promise<Result> {
+  const t = await getT();
   const userId = await requireUserId();
-  if (!userId) return { status: "error", message: "Oturum bulunamadı." };
+  if (!userId) return { status: "error", message: t("Oturum bulunamadı.") };
 
   const item = findCosmetic(itemId);
-  if (!item) return { status: "error", message: "Ürün bulunamadı." };
+  if (!item) return { status: "error", message: t("Ürün bulunamadı.") };
 
   try {
     await prisma.$transaction(async (tx) => {
@@ -56,13 +58,13 @@ export async function buyCosmetic(itemId: string): Promise<Result> {
     });
   } catch (error) {
     if (error instanceof Error && error.message === "NO_CREDITS") {
-      return { status: "error", message: "Yeterli krediniz yok." };
+      return { status: "error", message: t("Yeterli krediniz yok.") };
     }
     if (
       error instanceof Prisma.PrismaClientKnownRequestError &&
       error.code === "P2002"
     ) {
-      return { status: "error", message: "Bu ürüne zaten sahipsin." };
+      return { status: "error", message: t("Bu ürüne zaten sahipsin.") };
     }
     throw error;
   }
@@ -76,18 +78,19 @@ export async function equipCosmetic(
   kind: "title" | "frame",
   itemId: string | null
 ): Promise<Result> {
+  const t = await getT();
   const userId = await requireUserId();
-  if (!userId) return { status: "error", message: "Oturum bulunamadı." };
+  if (!userId) return { status: "error", message: t("Oturum bulunamadı.") };
 
   if (itemId !== null) {
     const item = findCosmetic(itemId);
     if (!item || item.kind !== kind) {
-      return { status: "error", message: "Ürün bulunamadı." };
+      return { status: "error", message: t("Ürün bulunamadı.") };
     }
     const owned = await prisma.userCosmetic.findUnique({
       where: { userId_itemId: { userId, itemId } },
     });
-    if (!owned) return { status: "error", message: "Bu ürüne sahip değilsin." };
+    if (!owned) return { status: "error", message: t("Bu ürüne sahip değilsin.") };
   }
 
   await prisma.user.update({

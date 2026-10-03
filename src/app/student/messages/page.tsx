@@ -3,8 +3,10 @@ import { prisma } from "@/lib/prisma";
 import { MessageThread } from "@/components/MessageThread";
 import { MessageForm } from "./MessageForm";
 import { MarkThreadRead } from "./MarkThreadRead";
+import { getT } from "@/lib/i18n/server";
 
 export default async function StudentMessagesPage() {
+  const t = await getT();
   const session = await auth();
   const studentId = session!.user.id;
 
@@ -16,7 +18,7 @@ export default async function StudentMessagesPage() {
   return (
     <div className="space-y-4">
       <MarkThreadRead />
-      <h1 className="text-2xl font-semibold text-slate-900">Mesajlar</h1>
+      <h1 className="text-2xl font-semibold text-slate-900">{t("Mesajlar")}</h1>
       <div className="rounded-lg border border-slate-200 bg-white">
         <MessageThread messages={messages} viewerRole="STUDENT" />
         <MessageForm />

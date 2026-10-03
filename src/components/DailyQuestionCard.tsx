@@ -3,6 +3,8 @@
 import { useState, useTransition } from "react";
 import { answerDailyQuestion } from "@/lib/daily-question-actions";
 import { NewBadgesBanner } from "@/components/NewBadgesBanner";
+import { useT } from "@/lib/i18n/client";
+import { subjectLabel } from "@/lib/i18n/subject";
 import type { DailyItem, DailyOption, DailyResult } from "@/lib/daily-question";
 
 const OPTIONS: DailyOption[] = ["A", "B", "C", "D"];
@@ -14,6 +16,7 @@ export function DailyQuestionCard({
   item: DailyItem;
   initialResult: DailyResult | null;
 }) {
+  const t = useT();
   const [selected, setSelected] = useState<DailyOption | null>(
     initialResult?.selected ?? null
   );
@@ -45,8 +48,8 @@ export function DailyQuestionCard({
   return (
     <div className="rounded-xl border border-gold-200 bg-gold-50/60 p-5 shadow-sm">
       <div className="flex flex-wrap items-center justify-between gap-2">
-        <h2 className="font-medium text-brand-950">📅 Günün Sorusu</h2>
-        <span className="text-xs text-slate-500">{item.subject}</span>
+        <h2 className="font-medium text-brand-950">{t("📅 Günün Sorusu")}</h2>
+        <span className="text-xs text-slate-500">{subjectLabel(item.subject, t)}</span>
       </div>
       <p className="mt-3 font-medium text-brand-950">{item.prompt}</p>
 
@@ -98,8 +101,8 @@ export function DailyQuestionCard({
       {result ? (
         <p className="mt-3 text-sm font-medium text-brand-950">
           {result.correct
-            ? "🎉 Doğru! Serin devam ediyor, yarın yeni soru seni bekliyor."
-            : `Bu sefer olmadı — doğru cevap ${result.correctOption}. Serin devam ediyor, yarın yeniden dene!`}
+            ? t("🎉 Doğru! Serin devam ediyor, yarın yeni soru seni bekliyor.")
+            : t("Bu sefer olmadı — doğru cevap {opt}. Serin devam ediyor, yarın yeniden dene!", { opt: result.correctOption })}
         </p>
       ) : (
         <div className="mt-3 flex flex-wrap items-center gap-3">
@@ -109,10 +112,10 @@ export function DailyQuestionCard({
             onClick={submit}
             className="rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 px-4 py-2 text-sm font-semibold text-brand-950 shadow-sm transition-all duration-200 hover:from-gold-400 hover:to-gold-300 hover:scale-[1.03] active:scale-95 disabled:opacity-50"
           >
-            {isPending ? "Gönderiliyor..." : "Cevapla"}
+            {isPending ? t("Gönderiliyor...") : t("Cevapla")}
           </button>
           <span className="text-xs text-slate-500">
-            Ücretsiz — cevaplayınca serin de devam eder 🔥
+            {t("Ücretsiz — cevaplayınca serin de devam eder 🔥")}
           </span>
         </div>
       )}

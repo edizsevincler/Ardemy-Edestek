@@ -1,10 +1,12 @@
 import { prisma } from "@/lib/prisma";
 import { getOrCreateReferralCode, REFERRAL_REWARD_CREDITS } from "@/lib/referral";
 import { CopyLinkButton } from "@/components/CopyLinkButton";
+import { getT } from "@/lib/i18n/server";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
 
 export async function ReferralCard({ userId }: { userId: string }) {
+  const t = await getT();
   const [code, referredCount] = await Promise.all([
     getOrCreateReferralCode(userId),
     prisma.user.count({ where: { referredById: userId } }),
@@ -13,10 +15,9 @@ export async function ReferralCard({ userId }: { userId: string }) {
 
   return (
     <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
-      <h2 className="font-medium text-brand-950">🎁 Arkadaşını Getir</h2>
+      <h2 className="font-medium text-brand-950">{t("🎁 Arkadaşını Getir")}</h2>
       <p className="mt-1 text-sm text-slate-500">
-        Linkini paylaş, arkadaşın ilk kredi paketini satın aldığında ikinize
-        de {REFERRAL_REWARD_CREDITS} kredi hediye edilir.
+        {t("Linkini paylaş, arkadaşın ilk kredi paketini satın aldığında ikinize de {n} kredi hediye edilir.", { n: REFERRAL_REWARD_CREDITS })}
       </p>
       <div className="mt-3 flex flex-col gap-2 sm:flex-row">
         <input
@@ -28,7 +29,7 @@ export async function ReferralCard({ userId }: { userId: string }) {
       </div>
       {referredCount > 0 && (
         <p className="mt-2 text-xs text-slate-400">
-          Şu ana kadar {referredCount} kişi senin linkinle katıldı.
+          {t("Şu ana kadar {n} kişi senin linkinle katıldı.", { n: referredCount })}
         </p>
       )}
     </div>

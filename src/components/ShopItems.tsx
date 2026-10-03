@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { buyCosmetic, equipCosmetic } from "@/lib/cosmetics-actions";
 import { FRAMES, TITLES } from "@/lib/cosmetics";
 import { UserAvatar } from "@/components/UserAvatar";
+import { useT } from "@/lib/i18n/client";
 
 type Props = {
   name: string;
@@ -20,6 +21,7 @@ export function ShopItems({
   equippedTitle,
   equippedFrame,
 }: Props) {
+  const t = useT();
   const [error, setError] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
 
@@ -27,7 +29,7 @@ export function ShopItems({
     setError(null);
     startTransition(async () => {
       const res = await action();
-      if (res.status === "error") setError(res.message ?? "Bir hata oluştu.");
+      if (res.status === "error") setError(res.message ?? t("Bir hata oluştu."));
     });
   }
 
@@ -54,7 +56,7 @@ export function ShopItems({
               : "border-brand-200 bg-white text-brand-700 hover:bg-brand-50"
           }`}
         >
-          {equipped ? "✓ Takılı (çıkar)" : "Tak"}
+          {equipped ? t("✓ Takılı (çıkar)") : t("Tak")}
         </button>
       );
     }
@@ -65,7 +67,7 @@ export function ShopItems({
         onClick={() => run(() => buyCosmetic(id))}
         className="mt-3 w-full rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 px-3 py-1.5 text-sm font-semibold text-brand-950 shadow-sm transition-all duration-200 hover:scale-[1.03] active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
       >
-        {credits < price ? `${price} kredi (yetersiz)` : `${price} kredi ile al`}
+        {credits < price ? t("{n} kredi (yetersiz)", { n: price }) : t("{n} kredi ile al", { n: price })}
       </button>
     );
   }
@@ -79,23 +81,23 @@ export function ShopItems({
       )}
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium text-brand-950">🏷️ Unvanlar</h2>
+        <h2 className="text-lg font-medium text-brand-950">{t("🏷️ Unvanlar")}</h2>
         <p className="text-sm text-slate-500">
-          Takılı unvan, panelin üstünde adının yanında görünür.
+          {t("Takılı unvan, panelin üstünde adının yanında görünür.")}
         </p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-          {TITLES.map((t) => (
+          {TITLES.map((title) => (
             <div
-              key={t.id}
+              key={title.id}
               className="rounded-xl border border-brand-100 bg-white p-4 text-center shadow-sm"
             >
-              <div className="text-3xl">{t.emoji}</div>
-              <p className="mt-1 font-medium text-brand-950">{t.label}</p>
+              <div className="text-3xl">{title.emoji}</div>
+              <p className="mt-1 font-medium text-brand-950">{t(title.label)}</p>
               {itemButton({
-                id: t.id,
-                price: t.price,
+                id: title.id,
+                price: title.price,
                 kind: "title",
-                equipped: equippedTitle === t.id,
+                equipped: equippedTitle === title.id,
               })}
             </div>
           ))}
@@ -103,9 +105,9 @@ export function ShopItems({
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium text-brand-950">🖼️ Profil Çerçeveleri</h2>
+        <h2 className="text-lg font-medium text-brand-950">{t("🖼️ Profil Çerçeveleri")}</h2>
         <p className="text-sm text-slate-500">
-          Çerçeve, panelin üstündeki profil simgenin etrafında görünür.
+          {t("Çerçeve, panelin üstündeki profil simgenin etrafında görünür.")}
         </p>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
           {FRAMES.map((f) => (
@@ -116,7 +118,7 @@ export function ShopItems({
               <div className="flex justify-center rounded-lg bg-brand-950 py-3">
                 <UserAvatar name={name} frameId={f.id} size={44} />
               </div>
-              <p className="mt-2 font-medium text-brand-950">{f.label}</p>
+              <p className="mt-2 font-medium text-brand-950">{t(f.label)}</p>
               {itemButton({
                 id: f.id,
                 price: f.price,

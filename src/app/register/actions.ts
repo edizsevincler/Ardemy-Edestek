@@ -7,6 +7,7 @@ import { hashPassword } from "@/lib/password";
 import { sendVerificationEmail } from "@/lib/email";
 import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
 import { sanitizeSource, SOURCE_COOKIE } from "@/lib/source";
+import { getI18n } from "@/lib/i18n/server";
 
 type RegisterState =
   | { status: "idle" }
@@ -17,6 +18,7 @@ export async function registerGuest(
   _prevState: RegisterState,
   formData: FormData
 ): Promise<RegisterState> {
+  const { locale, t } = await getI18n();
   const name = String(formData.get("name") ?? "").trim();
   const email = String(formData.get("email") ?? "")
     .trim()
@@ -26,29 +28,29 @@ export async function registerGuest(
   const consent = formData.get("consent");
 
   if (!name || !email || !password) {
-    return { status: "error", message: "Tüm alanları doldurun." };
+    return { status: "error", message: t("Tüm alanları doldurun.") };
   }
   if (consent !== "on") {
     return {
       status: "error",
-      message: "Gizlilik Politikası'nı kabul etmelisiniz.",
+      message: t("Gizlilik Politikası'nı kabul etmelisiniz."),
     };
   }
   if (!/^\S+@\S+\.\S+$/.test(email)) {
-    return { status: "error", message: "Geçerli bir e-posta girin." };
+    return { status: "error", message: t("Geçerli bir e-posta girin.") };
   }
   if (password.length < 6) {
-    return { status: "error", message: "Şifre en az 6 karakter olmalı." };
+    return { status: "error", message: t("Şifre en az 6 karakter olmalı.") };
   }
   if (password !== passwordConfirm) {
-    return { status: "error", message: "Şifreler eşleşmiyor." };
+    return { status: "error", message: t("Şifreler eşleşmiyor.") };
   }
 
   const existing = await prisma.user.findUnique({ where: { email } });
   if (existing) {
     return {
       status: "error",
-      message: "Bu e-posta ile zaten bir hesap var. Giriş yapmayı deneyin.",
+      message: t("Bu e-posta ile zaten bir hesap var. Giriş yapmayı deneyin."),
     };
   }
 
@@ -74,6 +76,7 @@ export async function registerGuest(
       referredById: referrer?.id,
       credits: SIGNUP_BONUS_CREDITS,
       signupSource,
+      locale,
     },
   });
 
@@ -87,7 +90,7 @@ export async function registerGuest(
   });
 
   try {
-    await sendVerificationEmail(email, name, token);
+    await sendVerificationEmail(email, name, token, locale);
   } catch (error) {
     // Mail gönderilemezse hesabı yarım bırakmayalım — kullanıcı aynı
     // e-postayla tekrar deneyebilsin diye kaydı geri alıyoruz.
@@ -95,7 +98,7 @@ export async function registerGuest(
     console.error("Doğrulama e-postası gönderilemedi:", error);
     return {
       status: "error",
-      message: "Onay e-postası gönderilemedi. Lütfen birazdan tekrar deneyin.",
+      message: t("Onay e-postası gönderilemedi. Lütfen birazdan tekrar deneyin."),
     };
   }
 

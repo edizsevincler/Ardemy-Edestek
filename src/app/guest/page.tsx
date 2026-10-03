@@ -13,8 +13,10 @@ import { StreakFreezeCard } from "@/components/StreakFreezeCard";
 import { ReferralCard } from "@/components/ReferralCard";
 import { DailyQuestionSection } from "@/components/DailyQuestionSection";
 import { BadgesCard } from "@/components/BadgesCard";
+import { getT } from "@/lib/i18n/server";
 
 export default async function GuestHomePage() {
+  const t = await getT();
   const session = await auth();
   const [me, unlockedCount, questionCount] = await Promise.all([
     prisma.user.findUnique({
@@ -35,34 +37,34 @@ export default async function GuestHomePage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-2xl font-semibold text-brand-950">Hoş geldiniz</h1>
+      <h1 className="text-2xl font-semibold text-brand-950">{t("Hoş geldiniz")}</h1>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
-          <p className="text-sm text-slate-500">Kredi bakiyeniz</p>
+          <p className="text-sm text-slate-500">{t("Kredi bakiyeniz")}</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">
             {me?.credits ?? 0}
           </p>
         </div>
         <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
-          <p className="text-sm text-slate-500">Açtığınız sorular</p>
+          <p className="text-sm text-slate-500">{t("Açtığınız sorular")}</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">
             {unlockedCount}
           </p>
         </div>
         <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
-          <p className="text-sm text-slate-500">Yayında soru</p>
+          <p className="text-sm text-slate-500">{t("Yayında soru")}</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">
             {questionCount}
           </p>
         </div>
         <div className="rounded-xl border border-orange-200 bg-orange-50 p-5 shadow-sm">
-          <p className="text-sm text-slate-500">🔥 Çalışma seriniz</p>
+          <p className="text-sm text-slate-500">{t("🔥 Çalışma seriniz")}</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">
-            {streak} gün
+            {t("{n} gün", { n: streak })}
           </p>
           <p className="mt-1 text-xs text-slate-500">
-            {daysToReward} gün sonra 40 dk hediye ders!
+            {t("{n} gün sonra 40 dk hediye ders!", { n: daysToReward })}
           </p>
           {streak >= 1 && (
             <div className="mt-2">
@@ -70,8 +72,8 @@ export default async function GuestHomePage() {
                 small
                 imagePath="/api/share/streak"
                 filename="ardemy-seri.png"
-                label="Serimi paylaş"
-                text={`${streak} gündür her gün çalışıyorum! 🔥 Sen de dene: ${shareUrl}`}
+                label={t("Serimi paylaş")}
+                text={t("{n} gündür her gün çalışıyorum! 🔥 Sen de dene: {url}", { n: streak, url: shareUrl })}
               />
             </div>
           )}
@@ -92,13 +94,13 @@ export default async function GuestHomePage() {
           href="/guest/questions"
           className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95"
         >
-          Soru Bankasına Git
+          {t("Soru Bankasına Git")}
         </Link>
         <Link
           href="/guest/credits"
           className="rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 px-4 py-2 text-sm font-semibold text-brand-950 shadow-sm transition-all duration-200 hover:from-gold-400 hover:to-gold-300 hover:scale-[1.03] hover:shadow-lg active:scale-95"
         >
-          Kredi Satın Al
+          {t("Kredi Satın Al")}
         </Link>
       </div>
 

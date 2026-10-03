@@ -3,6 +3,19 @@
 export const EXAM_PRICE_CREDITS = 2;
 export const EXAM_SIZE = 20;
 export const EXAM_MINUTES = 20;
+import { tx } from "@/lib/i18n/translate";
+
+// Deneme sorularının konu adları (veritabanında Türkçe); gösterimde t() ile çevrilir.
+export const EXAM_TOPICS = [
+  tx("Zamanlar"),
+  tx("Dil Bilgisi"),
+  tx("Kelime"),
+  tx("Edat ve Kalıplar"),
+  tx("Padejler"),
+  tx("Fiil ve Dil Bilgisi"),
+  tx("Kalıplar ve Sayılar"),
+];
+
 export const EXAM_LANGUAGES = ["İngilizce", "Rusça"] as const;
 // Başlayıp bitirilmeyen bir sınavın "devam et" olarak açık kalacağı süre.
 export const EXAM_RESUME_HOURS = 2;

@@ -1,8 +1,10 @@
 import { getBadges } from "@/lib/badges";
 import { getReferralShareUrl } from "@/lib/referral";
 import { ShareButton } from "@/components/ShareButton";
+import { getT } from "@/lib/i18n/server";
 
 export async function BadgesCard({ userId }: { userId: string }) {
+  const t = await getT();
   const [badges, shareUrl] = await Promise.all([
     getBadges(userId),
     getReferralShareUrl(userId),
@@ -12,7 +14,7 @@ export async function BadgesCard({ userId }: { userId: string }) {
   return (
     <div className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm">
       <h2 className="font-medium text-brand-950">
-        🏅 Rozetlerim{" "}
+        {t("🏅 Rozetlerim")}{" "}
         <span className="text-sm font-normal text-slate-400">
           ({earnedCount}/{badges.length})
         </span>
@@ -48,7 +50,7 @@ export async function BadgesCard({ userId }: { userId: string }) {
                   small
                   imagePath={`/api/share/badge/${b.id}`}
                   filename={`ardemy-rozet-${b.id}.png`}
-                  text={`Ardemy Academy'de "${b.title}" rozetini kazandım! ${b.emoji} Sen de dene: ${shareUrl}`}
+                  text={t("Ardemy Academy'de \"{title}\" rozetini kazandım! {emoji} Sen de dene: {url}", { title: b.title, emoji: b.emoji, url: shareUrl })}
                 />
               </div>
             )}

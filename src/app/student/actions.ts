@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile } from "@/lib/storage";
 import { revalidatePath } from "next/cache";
+import { getT } from "@/lib/i18n/server";
 
 type SubmitState =
   | { status: "idle" }
@@ -14,9 +15,10 @@ export async function submitAssignment(
   _prevState: SubmitState,
   formData: FormData
 ): Promise<SubmitState> {
+  const t = await getT();
   const session = await auth();
   if (!session?.user) {
-    return { status: "error", message: "Oturum bulunamadı." };
+    return { status: "error", message: t("Oturum bulunamadı.") };
   }
 
   const assignmentId = String(formData.get("assignmentId") ?? "");
@@ -27,11 +29,11 @@ export async function submitAssignment(
     where: { id: assignmentId },
   });
   if (!assignment || assignment.studentId !== session.user.id) {
-    return { status: "error", message: "Bu ödev size ait değil." };
+    return { status: "error", message: t("Bu ödev size ait değil.") };
   }
 
   if (!(file instanceof File) || file.size === 0) {
-    return { status: "error", message: "Bir dosya seçin." };
+    return { status: "error", message: t("Bir dosya seçin.") };
   }
 
   const saved = await saveUploadedFile(file, "submissions");

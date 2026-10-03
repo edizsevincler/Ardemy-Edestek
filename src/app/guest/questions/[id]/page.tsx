@@ -7,6 +7,9 @@ import { AnswerForm } from "./AnswerForm";
 import { QuizForm } from "./QuizForm";
 import { UnlockButton } from "../UnlockButton";
 import { slugify } from "@/lib/slugify";
+import { getI18n } from "@/lib/i18n/server";
+import { INTL_TAG } from "@/lib/i18n/config";
+import { subjectLabel } from "@/lib/i18n/subject";
 
 export default async function GuestQuestionDetailPage({
   params,
@@ -14,6 +17,7 @@ export default async function GuestQuestionDetailPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const { locale, t } = await getI18n();
   const session = await auth();
   const userId = session!.user.id;
 
@@ -26,7 +30,7 @@ export default async function GuestQuestionDetailPage({
     where: { userId_questionId: { userId, questionId: id } },
   });
 
-  const watermarkText = `${session!.user.name} • ${new Date().toLocaleString("tr-TR")}`;
+  const watermarkText = `${session!.user.name} • ${new Date().toLocaleString(INTL_TAG[locale])}`;
   const language = question.subject.split(" - ")[0].trim();
 
   const backLink = (
@@ -34,14 +38,14 @@ export default async function GuestQuestionDetailPage({
       href={`/guest/questions/list/${slugify(language)}`}
       className="text-sm text-slate-500 hover:text-brand-700"
     >
-      ← {language}
+      ← {t(language)}
     </Link>
   );
 
   const header = (
     <div>
       <p className="text-xs font-medium uppercase tracking-wide text-brand-500">
-        {question.subject}
+        {subjectLabel(question.subject, t)}
       </p>
       <h1 className="mt-1 text-xl font-semibold text-brand-950">
         {question.title}
@@ -87,8 +91,7 @@ export default async function GuestQuestionDetailPage({
           )}
           <div className="rounded-xl border border-gold-200 bg-gold-50 p-4 text-center">
             <p className="text-sm text-brand-900">
-              🔒 Bu ücretsiz önizleme — kalan {Math.max(items.length - 1, 0)}{" "}
-              soruyu çözmek ve puanını görmek için kilidi aç.
+              {t("🔒 Bu ücretsiz önizleme — kalan {n} soruyu çözmek ve puanını görmek için kilidi aç.", { n: Math.max(items.length - 1, 0) })}
             </p>
             <div className="mt-3 flex justify-center">
               <UnlockButton questionId={question.id} creditCost={question.creditCost} />
@@ -127,8 +130,7 @@ export default async function GuestQuestionDetailPage({
           />
         </ProtectedContent>
         <p className="text-xs text-slate-400">
-          🔒 Bu içerik yalnızca kişisel kullanımınız içindir; izinsiz
-          paylaşım, çoğaltım veya satış telif hakkı ihlalidir.
+          {t("🔒 Bu içerik yalnızca kişisel kullanımınız içindir; izinsiz paylaşım, çoğaltım veya satış telif hakkı ihlalidir.")}
         </p>
       </div>
     );
@@ -155,18 +157,18 @@ export default async function GuestQuestionDetailPage({
               <iframe
                 src={`/api/questions/${question.id}/preview`}
                 className="mt-4 h-[50vh] w-full rounded-lg border border-slate-200"
-                title={`${question.title} — önizleme`}
+                title={t("{title} — önizleme", { title: question.title })}
               />
               <p className="mt-2 text-xs text-slate-400">
-                Sadece ilk sayfa gösteriliyor
-                {question.pageCount ? ` (toplam ${question.pageCount} sayfa)` : ""}.
+                {t("Sadece ilk sayfa gösteriliyor")}
+                {question.pageCount ? t(" (toplam {n} sayfa)", { n: question.pageCount }) : ""}.
               </p>
             </>
           )}
 
           <div className="mt-4 rounded-xl border border-gold-200 bg-gold-50 p-4 text-center">
             <p className="text-sm text-brand-900">
-              🔒 Devamını görmek için kilidi aç.
+              {t("🔒 Devamını görmek için kilidi aç.")}
             </p>
             <div className="mt-3 flex justify-center">
               <UnlockButton questionId={question.id} creditCost={question.creditCost} />
@@ -210,14 +212,13 @@ export default async function GuestQuestionDetailPage({
               rel="noopener noreferrer"
               className="mt-4 inline-block rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95"
             >
-              Dosyayı Görüntüle
+              {t("Dosyayı Görüntüle")}
             </a>
           )}
         </div>
       </ProtectedContent>
       <p className="text-xs text-slate-400">
-        🔒 Bu içerik yalnızca kişisel kullanımınız içindir; izinsiz paylaşım,
-        çoğaltım veya satış telif hakkı ihlalidir.
+        {t("🔒 Bu içerik yalnızca kişisel kullanımınız içindir; izinsiz paylaşım, çoğaltım veya satış telif hakkı ihlalidir.")}
       </p>
 
       {question.type !== "TOPIC" && (

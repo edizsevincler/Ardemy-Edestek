@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
 import { revalidatePath } from "next/cache";
+import { getT } from "@/lib/i18n/server";
 
 type UnlockState =
   | { status: "idle" }
@@ -14,18 +15,19 @@ export async function unlockQuestion(
   _prevState: UnlockState,
   formData: FormData
 ): Promise<UnlockState> {
+  const t = await getT();
   const session = await auth();
   if (
     !session?.user ||
     (session.user.role !== "GUEST" && session.user.role !== "STUDENT")
   ) {
-    return { status: "error", message: "Oturum bulunamadı." };
+    return { status: "error", message: t("Oturum bulunamadı.") };
   }
 
   const questionId = String(formData.get("questionId") ?? "");
   const question = await prisma.question.findUnique({ where: { id: questionId } });
   if (!question || !question.isPublished) {
-    return { status: "error", message: "Bu soru artık mevcut değil." };
+    return { status: "error", message: t("Bu soru artık mevcut değil.") };
   }
 
   const existing = await prisma.questionUnlock.findUnique({
@@ -57,7 +59,7 @@ export async function unlockQuestion(
     });
   } catch (error) {
     if (error instanceof Error && error.message === "INSUFFICIENT_CREDITS") {
-      return { status: "error", message: "Yeterli krediniz yok." };
+      return { status: "error", message: t("Yeterli krediniz yok.") };
     }
     // Aynı soruyu eşzamanlı iki istek açmaya çalışırsa (çift tık, iki
     // sekme) ikinci istek burada unique constraint'e takılır — kredi zaten

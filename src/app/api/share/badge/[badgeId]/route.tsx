@@ -3,6 +3,7 @@ import { getBadges } from "@/lib/badges";
 import { BadgeCard } from "@/lib/og/cards";
 import { parseFormat } from "@/lib/og/assets";
 import { ogResponse } from "@/lib/og/respond";
+import { getT } from "@/lib/i18n/server";
 
 export async function GET(
   request: Request,
@@ -20,6 +21,7 @@ export async function GET(
   const url = new URL(request.url);
   const format = parseFormat(url.searchParams.get("format"));
   const firstName = (session.user.name ?? "").split(" ")[0];
+  const t = await getT();
 
   return ogResponse(
     ({ size, logo }) => (
@@ -30,6 +32,7 @@ export async function GET(
         emoji={badge.emoji}
         title={badge.title}
         description={badge.description}
+        t={t}
       />
     ),
     format,

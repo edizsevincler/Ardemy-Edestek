@@ -1,4 +1,6 @@
 import { prisma } from "@/lib/prisma";
+import { tx } from "@/lib/i18n/translate";
+import { getT } from "@/lib/i18n/server";
 
 export type BadgeStats = {
   quizCount: number;
@@ -35,36 +37,36 @@ type Definition = {
 
 const DEFINITIONS: Definition[] = [
   // Test sayısı
-  { id: "first-quiz", emoji: "🎯", title: "İlk Adım", description: "İlk testini çöz", stat: "quizCount", target: 1 },
-  { id: "ten-quiz", emoji: "🏅", title: "Çalışkan", description: "10 test çöz", stat: "quizCount", target: 10 },
-  { id: "25-quiz", emoji: "🏆", title: "Test Avcısı", description: "25 test çöz", stat: "quizCount", target: 25 },
-  { id: "50-quiz", emoji: "🥇", title: "Yarım Yüzlük", description: "50 test çöz", stat: "quizCount", target: 50 },
-  { id: "100-quiz", emoji: "💎", title: "Usta", description: "100 test çöz", stat: "quizCount", target: 100 },
+  { id: "first-quiz", emoji: "🎯", title: tx("İlk Adım"), description: tx("İlk testini çöz"), stat: "quizCount", target: 1 },
+  { id: "ten-quiz", emoji: "🏅", title: tx("Çalışkan"), description: tx("10 test çöz"), stat: "quizCount", target: 10 },
+  { id: "25-quiz", emoji: "🏆", title: tx("Test Avcısı"), description: tx("25 test çöz"), stat: "quizCount", target: 25 },
+  { id: "50-quiz", emoji: "🥇", title: tx("Yarım Yüzlük"), description: tx("50 test çöz"), stat: "quizCount", target: 50 },
+  { id: "100-quiz", emoji: "💎", title: tx("Usta"), description: tx("100 test çöz"), stat: "quizCount", target: 100 },
   // Mükemmellik
-  { id: "perfect", emoji: "⭐", title: "Mükemmel", description: "Bir testten %100 al", stat: "perfectCount", target: 1 },
-  { id: "perfect3", emoji: "🏹", title: "Keskin Nişancı", description: "3 testten %100 al", stat: "perfectCount", target: 3 },
-  { id: "perfect10", emoji: "👑", title: "Kusursuz", description: "10 testten %100 al", stat: "perfectCount", target: 10 },
+  { id: "perfect", emoji: "⭐", title: tx("Mükemmel"), description: tx("Bir testten %100 al"), stat: "perfectCount", target: 1 },
+  { id: "perfect3", emoji: "🏹", title: tx("Keskin Nişancı"), description: tx("3 testten %100 al"), stat: "perfectCount", target: 3 },
+  { id: "perfect10", emoji: "👑", title: tx("Kusursuz"), description: tx("10 testten %100 al"), stat: "perfectCount", target: 10 },
   // Seri
-  { id: "streak3", emoji: "✨", title: "Isınıyor", description: "3 günlük seri yap", stat: "longestStreak", target: 3 },
-  { id: "streak7", emoji: "🔥", title: "Ateşli", description: "7 günlük seri yap", stat: "longestStreak", target: 7 },
-  { id: "streak14", emoji: "💪", title: "Kararlı", description: "14 günlük seri yap", stat: "longestStreak", target: 14 },
-  { id: "streak30", emoji: "🚀", title: "Durdurulamaz", description: "30 günlük seri yap", stat: "longestStreak", target: 30 },
-  { id: "streak100", emoji: "🏔️", title: "Yüzlük Seri", description: "100 günlük seri yap", stat: "longestStreak", target: 100 },
+  { id: "streak3", emoji: "✨", title: tx("Isınıyor"), description: tx("3 günlük seri yap"), stat: "longestStreak", target: 3 },
+  { id: "streak7", emoji: "🔥", title: tx("Ateşli"), description: tx("7 günlük seri yap"), stat: "longestStreak", target: 7 },
+  { id: "streak14", emoji: "💪", title: tx("Kararlı"), description: tx("14 günlük seri yap"), stat: "longestStreak", target: 14 },
+  { id: "streak30", emoji: "🚀", title: tx("Durdurulamaz"), description: tx("30 günlük seri yap"), stat: "longestStreak", target: 30 },
+  { id: "streak100", emoji: "🏔️", title: tx("Yüzlük Seri"), description: tx("100 günlük seri yap"), stat: "longestStreak", target: 100 },
   // Günün Sorusu
-  { id: "daily5", emoji: "📅", title: "Günlük Alışkanlık", description: "5 Günün Sorusu'nu cevapla", stat: "dailyCount", target: 5 },
-  { id: "daily10", emoji: "🗓️", title: "Düzenli", description: "10 Günün Sorusu'nu cevapla", stat: "dailyCount", target: 10 },
-  { id: "daily30", emoji: "📆", title: "Vazgeçmez", description: "30 Günün Sorusu'nu cevapla", stat: "dailyCount", target: 30 },
-  { id: "daily100", emoji: "🌟", title: "Günün Efsanesi", description: "100 Günün Sorusu'nu cevapla", stat: "dailyCount", target: 100 },
-  { id: "daily-run5", emoji: "🧠", title: "Beş Doğru", description: "Günün Sorusu'nu art arda 5 kez doğru bil", stat: "dailyCorrectRun", target: 5 },
+  { id: "daily5", emoji: "📅", title: tx("Günlük Alışkanlık"), description: tx("5 Günün Sorusu'nu cevapla"), stat: "dailyCount", target: 5 },
+  { id: "daily10", emoji: "🗓️", title: tx("Düzenli"), description: tx("10 Günün Sorusu'nu cevapla"), stat: "dailyCount", target: 10 },
+  { id: "daily30", emoji: "📆", title: tx("Vazgeçmez"), description: tx("30 Günün Sorusu'nu cevapla"), stat: "dailyCount", target: 30 },
+  { id: "daily100", emoji: "🌟", title: tx("Günün Efsanesi"), description: tx("100 Günün Sorusu'nu cevapla"), stat: "dailyCount", target: 100 },
+  { id: "daily-run5", emoji: "🧠", title: tx("Beş Doğru"), description: tx("Günün Sorusu'nu art arda 5 kez doğru bil"), stat: "dailyCorrectRun", target: 5 },
   // Keşif / sosyal
-  { id: "explorer", emoji: "🧭", title: "Kaşif", description: "5 içerik aç", stat: "unlockCount", target: 5 },
-  { id: "friend", emoji: "🤝", title: "Arkadaş Canlısı", description: "Bir arkadaşını getir", stat: "referralCount", target: 1 },
+  { id: "explorer", emoji: "🧭", title: tx("Kaşif"), description: tx("5 içerik aç"), stat: "unlockCount", target: 5 },
+  { id: "friend", emoji: "🤝", title: tx("Arkadaş Canlısı"), description: tx("Bir arkadaşını getir"), stat: "referralCount", target: 1 },
   // Konu / dil
-  { id: "subject-master", emoji: "📚", title: "Konu Ustası", description: "Bir konudaki tüm testleri bitir", stat: "completedSubjects", target: 1 },
-  { id: "polyglot", emoji: "🌍", title: "Çok Dilli", description: "İki farklı dilde test çöz", stat: "languageCount", target: 2 },
+  { id: "subject-master", emoji: "📚", title: tx("Konu Ustası"), description: tx("Bir konudaki tüm testleri bitir"), stat: "completedSubjects", target: 1 },
+  { id: "polyglot", emoji: "🌍", title: tx("Çok Dilli"), description: tx("İki farklı dilde test çöz"), stat: "languageCount", target: 2 },
   // Zaman
-  { id: "early-bird", emoji: "🌅", title: "Erkenci Kuş", description: "Sabah 05:00-08:00 arası çalış", stat: "earlyBird", target: 1 },
-  { id: "night-owl", emoji: "🦉", title: "Gece Kuşu", description: "Gece 00:00-05:00 arası çalış", stat: "nightOwl", target: 1 },
+  { id: "early-bird", emoji: "🌅", title: tx("Erkenci Kuş"), description: tx("Sabah 05:00-08:00 arası çalış"), stat: "earlyBird", target: 1 },
+  { id: "night-owl", emoji: "🦉", title: tx("Gece Kuşu"), description: tx("Gece 00:00-05:00 arası çalış"), stat: "nightOwl", target: 1 },
 ];
 
 function istanbulHour(date: Date) {
@@ -172,13 +174,14 @@ async function computeBadges(userId: string) {
 
 // Panelde gösterim için: kazanılanlar önce.
 export async function getBadges(userId: string): Promise<Badge[]> {
+  const t = await getT();
   const { badges } = await computeBadges(userId);
   return badges
     .map((b) => ({
       id: b.id,
       emoji: b.emoji,
-      title: b.title,
-      description: b.description,
+      title: t(b.title),
+      description: t(b.description),
       current: b.current,
       target: b.target,
       earned: b.earned,
@@ -199,5 +202,6 @@ export async function awardBadges(
     data: fresh.map((b) => ({ userId, badgeId: b.id })),
     skipDuplicates: true,
   });
-  return fresh.map((b) => ({ emoji: b.emoji, title: b.title }));
+  const t = await getT();
+  return fresh.map((b) => ({ emoji: b.emoji, title: t(b.title) }));
 }

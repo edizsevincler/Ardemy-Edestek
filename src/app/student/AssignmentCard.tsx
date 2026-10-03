@@ -3,6 +3,8 @@
 import { useActionState, useRef, useEffect } from "react";
 import { submitAssignment } from "./actions";
 import { getLateLabel } from "@/lib/lateness";
+import { useLocale, useT } from "@/lib/i18n/client";
+import { INTL_TAG } from "@/lib/i18n/config";
 
 const initialState = { status: "idle" } as const;
 
@@ -28,6 +30,8 @@ export function AssignmentCard({
   assignment: Assignment;
   submission: Submission;
 }) {
+  const t = useT();
+  const locale = useLocale();
   const [state, formAction, isPending] = useActionState(
     submitAssignment,
     initialState
@@ -52,7 +56,7 @@ export function AssignmentCard({
           )}
           {assignment.dueDate && (
             <p className="mt-1 text-xs text-slate-500">
-              Son tarih: {assignment.dueDate.toLocaleDateString("tr-TR")}
+              {t("Son tarih: {date}", { date: assignment.dueDate.toLocaleDateString(INTL_TAG[locale]) })}
             </p>
           )}
         </div>
@@ -61,14 +65,14 @@ export function AssignmentCard({
             href={`/api/assignments/${assignment.id}/file`}
             className="shrink-0 text-sm text-slate-600 underline hover:text-slate-900"
           >
-            Dosyayı İndir
+            {t("Dosyayı İndir")}
           </a>
         )}
       </div>
 
       {submission ? (
         (() => {
-          const lateLabel = getLateLabel(assignment.dueDate, submission.submittedAt);
+          const lateLabel = getLateLabel(assignment.dueDate, submission.submittedAt, t);
           const isLate = lateLabel !== null;
           return (
             <div
@@ -78,14 +82,14 @@ export function AssignmentCard({
                   : "border-emerald-200 bg-emerald-50 text-emerald-800"
               }`}
             >
-              Teslim edildi ({submission.submittedAt.toLocaleDateString("tr-TR")})
+              {t("Teslim edildi ({date})", { date: submission.submittedAt.toLocaleDateString(INTL_TAG[locale]) })}
               {" — "}
               <a href={`/api/submissions/${submission.id}`} className="underline">
                 {submission.fileName}
               </a>
               {isLate && (
                 <p className="mt-1 font-medium">
-                  {lateLabel} geç teslim edildi
+                  {t("{label} geç teslim edildi", { label: lateLabel ?? "" })}
                 </p>
               )}
             </div>
@@ -102,7 +106,7 @@ export function AssignmentCard({
           <input
             name="note"
             type="text"
-            placeholder="Not (opsiyonel)"
+            placeholder={t("Not (opsiyonel)")}
             className="min-w-[120px] flex-1 rounded-md border border-slate-300 px-2 py-1 text-sm outline-none focus:border-slate-500"
           />
           <button
@@ -110,7 +114,7 @@ export function AssignmentCard({
             disabled={isPending}
             className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-3 py-1.5 text-sm font-medium text-white shadow-sm shadow-brand-900/20 transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
           >
-            {isPending ? "Gönderiliyor..." : "Teslim Et"}
+            {isPending ? t("Gönderiliyor...") : t("Teslim Et")}
           </button>
           {state.status === "error" && (
             <p className="w-full text-sm text-red-600">{state.message}</p>

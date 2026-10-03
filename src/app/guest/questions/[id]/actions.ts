@@ -6,6 +6,7 @@ import { saveUploadedFile } from "@/lib/storage";
 import { recordStreakActivity, streakNotes } from "@/lib/streak";
 import { awardBadges } from "@/lib/badges";
 import { revalidatePath } from "next/cache";
+import { getT } from "@/lib/i18n/server";
 
 type SubmitAnswerState =
   | { status: "idle" }
@@ -16,12 +17,13 @@ export async function submitAnswer(
   _prevState: SubmitAnswerState,
   formData: FormData
 ): Promise<SubmitAnswerState> {
+  const t = await getT();
   const session = await auth();
   if (
     !session?.user ||
     (session.user.role !== "GUEST" && session.user.role !== "STUDENT")
   ) {
-    return { status: "error", message: "Oturum bulunamadı." };
+    return { status: "error", message: t("Oturum bulunamadı.") };
   }
 
   const questionId = String(formData.get("questionId") ?? "");
@@ -34,12 +36,12 @@ export async function submitAnswer(
     },
   });
   if (!unlock) {
-    return { status: "error", message: "Bu soruyu henüz açmadınız." };
+    return { status: "error", message: t("Bu soruyu henüz açmadınız.") };
   }
 
   const hasFile = file instanceof File && file.size > 0;
   if (!body && !hasFile) {
-    return { status: "error", message: "Bir cevap yazın veya dosya ekleyin." };
+    return { status: "error", message: t("Bir cevap yazın veya dosya ekleyin.") };
   }
 
   let fileUrl: string | undefined;
@@ -97,24 +99,25 @@ export async function submitQuiz(
   questionId: string,
   answers: Record<string, QuizOptionLetter>
 ): Promise<SubmitQuizResult> {
+  const t = await getT();
   const session = await auth();
   if (
     !session?.user ||
     (session.user.role !== "GUEST" && session.user.role !== "STUDENT")
   ) {
-    return { status: "error", message: "Oturum bulunamadı." };
+    return { status: "error", message: t("Oturum bulunamadı.") };
   }
 
   const unlock = await prisma.questionUnlock.findUnique({
     where: { userId_questionId: { userId: session.user.id, questionId } },
   });
   if (!unlock) {
-    return { status: "error", message: "Bu testi henüz açmadınız." };
+    return { status: "error", message: t("Bu testi henüz açmadınız.") };
   }
 
   const items = await prisma.quizItem.findMany({ where: { questionId } });
   if (items.length === 0) {
-    return { status: "error", message: "Bu test için soru bulunamadı." };
+    return { status: "error", message: t("Bu test için soru bulunamadı.") };
   }
 
   const graded = items.map((item) => {
@@ -127,7 +130,7 @@ export async function submitQuiz(
   });
 
   if (graded.some((g) => !g.selected)) {
-    return { status: "error", message: "Lütfen tüm soruları cevaplayın." };
+    return { status: "error", message: t("Lütfen tüm soruları cevaplayın.") };
   }
 
   const score = graded.filter((g) => g.correct).length;
@@ -155,6 +158,6 @@ export async function submitQuiz(
     total: items.length,
     answers: graded as { itemId: string; selected: QuizOptionLetter; correct: boolean }[],
     newBadges,
-    streakNotes: streakNotes(activity),
+    streakNotes: streakNotes(activity, t),
   };
 }

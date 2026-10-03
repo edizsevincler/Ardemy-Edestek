@@ -5,6 +5,9 @@ import { prisma } from "@/lib/prisma";
 import { UnlockButton } from "../../UnlockButton";
 import { FlagIcon } from "@/components/FlagIcon";
 import { slugify } from "@/lib/slugify";
+import { getT } from "@/lib/i18n/server";
+import { subjectLabel } from "@/lib/i18n/subject";
+import type { TFunction } from "@/lib/i18n/translate";
 
 type QuestionItem = {
   id: string;
@@ -29,11 +32,13 @@ function QuestionSection({
   items,
   unlockedIds,
   completedIds,
+  t,
 }: {
   title: string;
   items: QuestionItem[];
   unlockedIds: Set<string>;
   completedIds?: Set<string>;
+  t: TFunction;
 }) {
   if (items.length === 0) return null;
 
@@ -54,13 +59,13 @@ function QuestionSection({
             className="space-y-3 rounded-xl border border-brand-200 bg-brand-50/40 p-4"
           >
             <h3 className="text-xs font-semibold uppercase tracking-wide text-brand-600">
-              {subject}
+              {subjectLabel(subject, t)}
             </h3>
             {completedIds && (
               <div>
                 <div className="flex items-center justify-between text-xs text-slate-500">
                   <span>
-                    {doneCount}/{groupItems.length} test tamamlandı
+                    {t("{a}/{b} test tamamlandı", { a: doneCount, b: groupItems.length })}
                   </span>
                   <span>%{percent}</span>
                 </div>
@@ -84,12 +89,12 @@ function QuestionSection({
                       {isUnlocked ? q.title : "🔒 " + q.title}
                       {q.pageCount ? (
                         <span className="ml-1 font-normal text-slate-500">
-                          ({q.pageCount} sayfa)
+                          {t("({n} sayfa)", { n: q.pageCount })}
                         </span>
                       ) : null}
                       {completedIds?.has(q.id) ? (
                         <span className="ml-2 text-xs font-medium text-green-600">
-                          ✓ Çözüldü
+                          {t("✓ Çözüldü")}
                         </span>
                       ) : null}
                     </p>
@@ -98,7 +103,7 @@ function QuestionSection({
                         href={`/guest/questions/${q.id}`}
                         className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-3 py-1.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95"
                       >
-                        Görüntüle
+                        {t("Görüntüle")}
                       </Link>
                     ) : (
                       <div className="flex shrink-0 items-center gap-2">
@@ -106,7 +111,7 @@ function QuestionSection({
                           href={`/guest/questions/${q.id}`}
                           className="text-sm text-brand-600 underline hover:text-brand-800"
                         >
-                          Önizle
+                          {t("Önizle")}
                         </Link>
                         <UnlockButton questionId={q.id} creditCost={q.creditCost} />
                       </div>
@@ -129,6 +134,7 @@ export default async function GuestQuestionsByLanguagePage({
   params: Promise<{ language: string }>;
 }) {
   const { language: slug } = await params;
+  const t = await getT();
   const session = await auth();
   const userId = session!.user.id;
 
@@ -170,29 +176,32 @@ export default async function GuestQuestionsByLanguagePage({
           href="/guest/questions"
           className="text-sm text-slate-500 hover:text-brand-700"
         >
-          ← İçerikler
+          {t("← İçerikler")}
         </Link>
         <h1 className="mt-2 flex items-center gap-2 text-2xl font-semibold text-brand-950">
           <FlagIcon language={language} />
-          {language}
+          {t(language)}
         </h1>
       </div>
 
       <QuestionSection
-        title="📘 Konu Anlatımı"
+        title={t("📘 Konu Anlatımı")}
         items={topics}
         unlockedIds={unlockedIds}
+        t={t}
       />
       <QuestionSection
-        title="🧠 Testler"
+        title={t("🧠 Testler")}
         items={quizzes}
         unlockedIds={unlockedIds}
         completedIds={completedIds}
+        t={t}
       />
       <QuestionSection
-        title="📝 Sorular"
+        title={t("📝 Sorular")}
         items={exercises}
         unlockedIds={unlockedIds}
+        t={t}
       />
     </div>
   );

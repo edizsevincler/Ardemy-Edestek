@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { submitQuiz } from "./actions";
 import { NewBadgesBanner } from "@/components/NewBadgesBanner";
+import { useT } from "@/lib/i18n/client";
 
 type OptionLetter = "A" | "B" | "C" | "D";
 
@@ -29,6 +30,7 @@ export function QuizForm({
   items: Item[];
   existingSubmission: { score: number; total: number; answers: GradedAnswer[] } | null;
 }) {
+  const t = useT();
   const [answers, setAnswers] = useState<Record<string, OptionLetter>>(() => {
     const initial: Record<string, OptionLetter> = {};
     for (const a of existingSubmission?.answers ?? []) {
@@ -73,10 +75,10 @@ export function QuizForm({
       {result && (
         <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 text-center">
           <p className="text-lg font-semibold text-brand-950">
-            {result.score} doğru, {result.total - result.score} yanlış
+            {t("{a} doğru, {b} yanlış", { a: result.score, b: result.total - result.score })}
           </p>
           <p className="text-sm text-slate-500">
-            {result.total} sorudan {result.score} tanesini doğru yaptınız.
+            {t("{total} sorudan {score} tanesini doğru yaptınız.", { total: result.total, score: result.score })}
           </p>
         </div>
       )}
@@ -135,7 +137,7 @@ export function QuizForm({
           onClick={handleRetake}
           className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95"
         >
-          Tekrar Çöz
+          {t("Tekrar Çöz")}
         </button>
       ) : (
         <button
@@ -144,17 +146,17 @@ export function QuizForm({
           onClick={handleSubmit}
           className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
         >
-          {isPending ? "Gönderiliyor..." : "Testi Bitir"}
+          {isPending ? t("Gönderiliyor...") : t("Testi Bitir")}
         </button>
       )}
 
       {result && (
         <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 text-center">
           <p className="text-lg font-semibold text-brand-950">
-            {result.score} doğru, {result.total - result.score} yanlış
+            {t("{a} doğru, {b} yanlış", { a: result.score, b: result.total - result.score })}
           </p>
           <p className="text-sm text-slate-500">
-            {result.total} sorudan {result.score} tanesini doğru yaptınız.
+            {t("{total} sorudan {score} tanesini doğru yaptınız.", { total: result.total, score: result.score })}
           </p>
         </div>
       )}

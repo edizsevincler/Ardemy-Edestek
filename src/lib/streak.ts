@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { sendStreakRewardEmail } from "@/lib/email";
+import { makeT, type TFunction } from "@/lib/i18n/translate";
 
 const TIMEZONE = "Europe/Istanbul";
 const MILESTONE = 30;
@@ -109,17 +110,18 @@ export async function recordStreakActivity(
 }
 
 // Kullanıcıya gösterilecek seri koruma mesajları.
-export function streakNotes(r: StreakActivityResult): string[] {
+export function streakNotes(
+  r: StreakActivityResult,
+  t: TFunction = makeT(null)
+): string[] {
   const notes: string[] = [];
-  if (r.freezesUsed > 0) {
-    notes.push(
-      `🛡️ Seri korumanız devreye girdi${
-        r.freezesUsed > 1 ? ` (${r.freezesUsed} gün)` : ""
-      } — serin kurtuldu!`
-    );
+  if (r.freezesUsed > 1) {
+    notes.push(t("🛡️ Seri korumanız devreye girdi ({n} gün) — serin kurtuldu!", { n: r.freezesUsed }));
+  } else if (r.freezesUsed === 1) {
+    notes.push(t("🛡️ Seri korumanız devreye girdi — serin kurtuldu!"));
   }
   if (r.freezeEarned) {
-    notes.push(`🎁 ${FREEZE_EVERY_DAYS} günlük seri: 1 seri koruma kazandın!`);
+    notes.push(t("🎁 {n} günlük seri: 1 seri koruma kazandın!", { n: FREEZE_EVERY_DAYS }));
   }
   return notes;
 }

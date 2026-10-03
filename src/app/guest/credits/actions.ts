@@ -3,6 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
+import { getT } from "@/lib/i18n/server";
 
 type BuyState =
   | { status: "idle" }
@@ -16,25 +17,26 @@ export async function requestCreditPurchase(
   _prevState: BuyState,
   formData: FormData
 ): Promise<BuyState> {
+  const t = await getT();
   const session = await auth();
   if (
     !session?.user ||
     (session.user.role !== "GUEST" && session.user.role !== "STUDENT")
   ) {
-    return { status: "error", message: "Oturum bulunamadı." };
+    return { status: "error", message: t("Oturum bulunamadı.") };
   }
 
   if (formData.get("consent") !== "on") {
     return {
       status: "error",
-      message: "Mesafeli Satış Sözleşmesi'ni kabul etmelisiniz.",
+      message: t("Mesafeli Satış Sözleşmesi'ni kabul etmelisiniz."),
     };
   }
 
   const packageId = String(formData.get("packageId") ?? "");
   const pkg = await prisma.creditPackage.findUnique({ where: { id: packageId } });
   if (!pkg || !pkg.isActive) {
-    return { status: "error", message: "Bu paket artık satışta değil." };
+    return { status: "error", message: t("Bu paket artık satışta değil.") };
   }
 
   await prisma.creditPurchase.create({

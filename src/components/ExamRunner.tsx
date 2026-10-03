@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { submitExam } from "@/lib/exam-actions";
 import { ExamResultView } from "@/components/ExamResultView";
 import { NewBadgesBanner } from "@/components/NewBadgesBanner";
+import { useT } from "@/lib/i18n/client";
 import type {
   ExamLetter,
   ExamResultData,
@@ -32,6 +33,7 @@ export function ExamRunner({
   remainingMs: number;
   shareUrl: string;
 }) {
+  const t = useT();
   const storageKey = `exam-answers-${attemptId}`;
   const [answers, setAnswers] = useState<Record<string, ExamLetter>>({});
   const [loaded, setLoaded] = useState(false);
@@ -125,7 +127,7 @@ export function ExamRunner({
     <div className="space-y-4">
       <div className="sticky top-0 z-10 -mx-4 flex items-center justify-between gap-3 border-b border-brand-100 bg-white/95 px-4 py-2 backdrop-blur sm:mx-0 sm:rounded-xl sm:border">
         <span className="text-sm text-slate-600">
-          {answered}/{questions.length} cevaplandı
+          {t("{a}/{b} cevaplandı", { a: answered, b: questions.length })}
         </span>
         <span
           className={`rounded-full px-3 py-1 text-sm font-semibold tabular-nums ${
@@ -137,7 +139,7 @@ export function ExamRunner({
       </div>
 
       <p className="text-sm text-slate-500">
-        {language} Deneme Sınavı — süre dolunca cevapların otomatik gönderilir.
+        {t("{lang} Deneme Sınavı — süre dolunca cevapların otomatik gönderilir.", { lang: t(language) })}
       </p>
 
       <ol className="space-y-3">
@@ -146,7 +148,7 @@ export function ExamRunner({
             key={q.id}
             className="rounded-xl border border-brand-100 bg-white p-4 shadow-sm"
           >
-            <p className="text-xs text-slate-400">{index + 1}. soru</p>
+            <p className="text-xs text-slate-400">{t("{n}. soru", { n: index + 1 })}</p>
             <p className="mt-1 font-medium text-brand-950">{q.prompt}</p>
             <div className="mt-2 space-y-1.5">
               {OPTIONS.map((opt) => {
@@ -190,7 +192,7 @@ export function ExamRunner({
             if (
               answered < questions.length &&
               !window.confirm(
-                `${questions.length - answered} soru boş. Yine de bitirmek istiyor musun?`
+                t("{n} soru boş. Yine de bitirmek istiyor musun?", { n: questions.length - answered })
               )
             ) {
               return;
@@ -199,7 +201,7 @@ export function ExamRunner({
           }}
           className="rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 px-5 py-2 text-sm font-semibold text-brand-950 shadow-sm transition-all duration-200 hover:scale-[1.03] active:scale-95 disabled:opacity-50"
         >
-          {isPending ? "Gönderiliyor..." : "Sınavı Bitir"}
+          {isPending ? t("Gönderiliyor...") : t("Sınavı Bitir")}
         </button>
       </div>
     </div>

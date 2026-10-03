@@ -6,6 +6,8 @@ import { Logo } from "@/components/Logo";
 import { prisma } from "@/lib/prisma";
 import { displayStreak } from "@/lib/streak";
 import { UserAvatar } from "@/components/UserAvatar";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { getT } from "@/lib/i18n/server";
 import { findTitle } from "@/lib/cosmetics";
 
 export default async function GuestLayout({
@@ -13,6 +15,7 @@ export default async function GuestLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const t = await getT();
   const session = await auth();
   if (
     !session?.user ||
@@ -52,7 +55,7 @@ export default async function GuestLayout({
               <p className="truncate text-[11px] tracking-wide text-brand-200 sm:text-xs">
                 {title ? (
                   <span className="font-medium text-gold-400">
-                    {title.emoji} {title.label}
+                    {title.emoji} {t(title.label)}
                   </span>
                 ) : (
                   <span className="uppercase">Ardemy Academy</span>
@@ -63,7 +66,10 @@ export default async function GuestLayout({
               </p>
             </div>
           </div>
-          <SignOutButton />
+          <div className="flex shrink-0 items-center gap-2">
+            <LanguageSwitcher tone="dark" />
+            <SignOutButton />
+          </div>
         </div>
         <nav className="-mx-4 mt-3 flex items-center gap-x-4 gap-y-2 overflow-x-auto whitespace-nowrap px-4 text-sm text-brand-100 sm:mx-0 sm:flex-wrap sm:px-0">
           {isStudent && (
@@ -71,32 +77,32 @@ export default async function GuestLayout({
               href="/student"
               className="shrink-0 transition hover:text-gold-400"
             >
-              ← Öğrenci Paneli
+              {t("← Öğrenci Paneli")}
             </Link>
           )}
           <Link href="/guest" className="shrink-0 transition hover:text-gold-400">
-            Panel
+            {t("Panel")}
           </Link>
           <Link href="/guest/questions" className="shrink-0 transition hover:text-gold-400">
-            İçerikler
+            {t("İçerikler")}
           </Link>
           <Link href="/guest/exam" className="shrink-0 transition hover:text-gold-400">
-            Deneme Sınavı
+            {t("Deneme Sınavı")}
           </Link>
           <Link href="/guest/shop" className="shrink-0 transition hover:text-gold-400">
-            Mağaza
+            {t("Mağaza")}
           </Link>
           <Link href="/guest/credits" className="shrink-0 transition hover:text-gold-400">
-            Kredi Satın Al
+            {t("Kredi Satın Al")}
           </Link>
           <Link href="/guest/history" className="shrink-0 transition hover:text-gold-400">
-            Geçmişim
+            {t("Geçmişim")}
           </Link>
           <span className="shrink-0 rounded-full bg-gold-500/20 px-2.5 py-1 text-xs font-medium text-gold-400">
-            {me?.credits ?? 0} kredi
+            {t("{n} kredi", { n: me?.credits ?? 0 })}
           </span>
           <span className="shrink-0 rounded-full bg-orange-500/20 px-2.5 py-1 text-xs font-medium text-orange-400">
-            🔥 {streak} gün
+            {t("🔥 {n} gün", { n: streak })}
           </span>
         </nav>
       </header>

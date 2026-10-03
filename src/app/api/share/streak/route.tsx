@@ -4,6 +4,7 @@ import { displayStreak } from "@/lib/streak";
 import { StreakCard } from "@/lib/og/cards";
 import { parseFormat } from "@/lib/og/assets";
 import { ogResponse } from "@/lib/og/respond";
+import { getT } from "@/lib/i18n/server";
 
 export async function GET(request: Request) {
   const session = await auth();
@@ -21,10 +22,11 @@ export async function GET(request: Request) {
   const url = new URL(request.url);
   const format = parseFormat(url.searchParams.get("format"));
   const firstName = (session.user.name ?? "").split(" ")[0];
+  const t = await getT();
 
   return ogResponse(
     ({ size, logo }) => (
-      <StreakCard size={size} logo={logo} firstName={firstName} streak={streak} />
+      <StreakCard size={size} logo={logo} firstName={firstName} streak={streak} t={t} />
     ),
     format,
     "ardemy-seri.png",

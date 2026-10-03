@@ -5,16 +5,20 @@ type Message = {
   createdAt: Date;
 };
 
-export function MessageThread({
+import { getI18n } from "@/lib/i18n/server";
+import { INTL_TAG } from "@/lib/i18n/config";
+
+export async function MessageThread({
   messages,
   viewerRole,
 }: {
   messages: Message[];
   viewerRole: "ADMIN" | "STUDENT";
 }) {
+  const { locale, t } = await getI18n();
   if (messages.length === 0) {
     return (
-      <p className="p-4 text-sm text-slate-400">Henüz mesaj yok.</p>
+      <p className="p-4 text-sm text-slate-400">{t("Henüz mesaj yok.")}</p>
     );
   }
 
@@ -37,7 +41,7 @@ export function MessageThread({
                 isOwn ? "text-brand-200" : "text-slate-400"
               }`}
             >
-              {m.createdAt.toLocaleString("tr-TR")}
+              {m.createdAt.toLocaleString(INTL_TAG[locale])}
             </p>
           </div>
         );

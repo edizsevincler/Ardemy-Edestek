@@ -1,13 +1,22 @@
 // Rusça alfabe posteri (1080x1528, A4 oranı). Kurallar cards.tsx ile aynı.
 
-import { RUSSIAN_ALPHABET } from "@/lib/alphabet";
+import { alphabetFor } from "@/lib/alphabet";
 import { INSTAGRAM_HANDLE, SITE_HOST } from "@/lib/site";
 import { OG_FONT_FAMILY } from "@/lib/og/assets";
+import type { TFunction } from "@/lib/i18n/translate";
 
 export const POSTER_SIZE = { width: 1080, height: 1528 };
 const GOLD = "#e8c25a";
 
-export function AlphabetPoster({ logo }: { logo: string }) {
+export function AlphabetPoster({
+  logo,
+  locale = "tr",
+  t = (text: string) => text,
+}: {
+  logo: string;
+  locale?: string;
+  t?: TFunction;
+}) {
   return (
     <div
       style={{
@@ -25,15 +34,17 @@ export function AlphabetPoster({ logo }: { logo: string }) {
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={logo} width={84} height={84} alt="" style={{ borderRadius: 20, background: "white" }} />
         <div style={{ display: "flex", flexDirection: "column", marginLeft: 24 }}>
-          <div style={{ display: "flex", fontSize: 54, fontWeight: 700 }}>Rusça Alfabe (Kiril)</div>
+          <div style={{ display: "flex", fontSize: 54, fontWeight: 700 }}>
+            {t("Rusça Alfabe (Kiril)")}
+          </div>
           <div style={{ display: "flex", fontSize: 28, color: "#cfc4f2" }}>
-            33 harf · okunuşu · örnek kelime
+            {t("33 harf · okunuşu · örnek kelime")}
           </div>
         </div>
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", marginTop: 28, marginLeft: -5, marginRight: -5 }}>
-        {RUSSIAN_ALPHABET.map((l) => (
+        {alphabetFor(locale).map((l) => (
           <div
             key={l.upper}
             style={{

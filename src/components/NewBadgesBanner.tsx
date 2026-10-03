@@ -1,3 +1,7 @@
+"use client";
+
+import { useT } from "@/lib/i18n/client";
+
 export function NewBadgesBanner({
   badges,
   notes = [],
@@ -5,13 +9,14 @@ export function NewBadgesBanner({
   badges: { emoji: string; title: string }[];
   notes?: string[];
 }) {
+  const t = useT();
   if (badges.length === 0 && notes.length === 0) return null;
   return (
     <div className="rounded-xl border border-gold-300 bg-gradient-to-r from-gold-50 to-white p-4 text-center shadow-sm">
       {badges.length > 0 && (
         <>
           <p className="text-sm font-semibold text-brand-950">
-            🎉 Yeni rozet{badges.length > 1 ? "ler" : ""} kazandın!
+            {badges.length > 1 ? t("🎉 Yeni rozetler kazandın!") : t("🎉 Yeni rozet kazandın!")}
           </p>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
             {badges.map((b) => (

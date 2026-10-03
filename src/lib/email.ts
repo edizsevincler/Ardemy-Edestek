@@ -1,3 +1,7 @@
+import { makeT } from "@/lib/i18n/translate";
+import { getDictionary } from "@/lib/i18n/dictionary";
+import type { Locale } from "@/lib/i18n/config";
+
 const BREVO_API_KEY = process.env.BREVO_API_KEY;
 const SENDER_EMAIL = process.env.SENDER_EMAIL;
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
@@ -39,22 +43,29 @@ async function sendEmail(
   }
 }
 
+// E-posta dili, alıcının User.locale değerine göre seçilir (yöneticiye giden
+// bildirimler Türkçe kalır).
+const escapeHtml = (value: string) =>
+  value.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c] ?? c);
+
 export async function sendVerificationEmail(
   to: string,
   name: string,
-  token: string
+  token: string,
+  locale: Locale = "tr"
 ) {
+  const t = makeT(getDictionary(locale), locale);
   const verifyUrl = `${APP_URL}/verify-email?token=${token}`;
 
   await sendEmail(
     to,
     name,
-    "Ardemy Academy - E-postanızı Onaylayın",
+    t("Ardemy Academy - E-postanızı Onaylayın"),
     `
-      <p>Merhaba ${name},</p>
-      <p>Ardemy Academy'de hesap oluşturdunuz. Hesabınızı aktifleştirmek için aşağıdaki linke tıklayın:</p>
+      <p>${t("Merhaba {name},", { name: escapeHtml(name) })}</p>
+      <p>${t("Ardemy Academy'de hesap oluşturdunuz. Hesabınızı aktifleştirmek için aşağıdaki linke tıklayın:")}</p>
       <p><a href="${verifyUrl}">${verifyUrl}</a></p>
-      <p>Bu linkin süresi 24 saattir. Bu isteği siz yapmadıysanız bu e-postayı yok sayabilirsiniz.</p>
+      <p>${t("Bu linkin süresi 24 saattir. Bu isteği siz yapmadıysanız bu e-postayı yok sayabilirsiniz.")}</p>
     `
   );
 }
@@ -87,19 +98,21 @@ export async function sendStreakRewardEmail(
 export async function sendStreakReminderEmail(
   to: string,
   name: string,
-  currentStreak: number
+  currentStreak: number,
+  locale: Locale = "tr"
 ) {
+  const t = makeT(getDictionary(locale), locale);
   const url = `${APP_URL}/guest/questions`;
 
   await sendEmail(
     to,
     name,
-    `🔥 ${currentStreak} günlük serini kaybetme!`,
+    t("🔥 {n} günlük serini kaybetme!", { n: currentStreak }),
     `
-      <p>Merhaba ${name},</p>
-      <p><strong>${currentStreak} günlük</strong> çalışma serin devam ediyor ama bugün henüz bir soru/test çözmedin.</p>
-      <p>Serini korumak için bugün bitmeden en az bir soru çöz:</p>
-      <p><a href="${url}">Soru bankasına git</a></p>
+      <p>${t("Merhaba {name},", { name: escapeHtml(name) })}</p>
+      <p>${t("<strong>{n} günlük</strong> çalışma serin devam ediyor ama bugün henüz bir soru/test çözmedin.", { n: currentStreak })}</p>
+      <p>${t("Serini korumak için bugün bitmeden en az bir soru çöz:")}</p>
+      <p><a href="${url}">${t("Soru bankasına git")}</a></p>
     `
   );
 }

@@ -1,8 +1,13 @@
 import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
+import { getI18n } from "@/lib/i18n/server";
+import { INTL_TAG } from "@/lib/i18n/config";
+import { subjectLabel } from "@/lib/i18n/subject";
+import { tx } from "@/lib/i18n/translate";
 
 export default async function GuestHistoryPage() {
+  const { locale, t } = await getI18n();
   const session = await auth();
   const userId = session!.user.id;
 
@@ -22,35 +27,35 @@ export default async function GuestHistoryPage() {
   ]);
 
   const statusLabel: Record<string, string> = {
-    PAID: "Ödendi",
-    PENDING: "Beklemede",
-    FAILED: "Başarısız",
+    PAID: t(tx("Ödendi")),
+    PENDING: t(tx("Beklemede")),
+    FAILED: t(tx("Başarısız")),
   };
 
   return (
     <div className="space-y-8">
-      <h1 className="text-2xl font-semibold text-brand-950">Geçmişim</h1>
+      <h1 className="text-2xl font-semibold text-brand-950">{t("Geçmişim")}</h1>
 
       <section className="space-y-3">
         <h2 className="text-lg font-medium text-brand-950">
-          Kredi Satın Alımlarım
+          {t("Kredi Satın Alımlarım")}
         </h2>
         <div className="overflow-x-auto rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md shadow-sm">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-left text-slate-500">
-                <th className="px-4 py-2 font-medium">Paket</th>
-                <th className="px-4 py-2 font-medium">Kredi</th>
-                <th className="px-4 py-2 font-medium">Tutar</th>
-                <th className="px-4 py-2 font-medium">Durum</th>
-                <th className="px-4 py-2 font-medium">Tarih</th>
+                <th className="px-4 py-2 font-medium">{t("Paket")}</th>
+                <th className="px-4 py-2 font-medium">{t("Kredi")}</th>
+                <th className="px-4 py-2 font-medium">{t("Tutar")}</th>
+                <th className="px-4 py-2 font-medium">{t("Durum")}</th>
+                <th className="px-4 py-2 font-medium">{t("Tarih")}</th>
               </tr>
             </thead>
             <tbody>
               {purchases.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
-                    Henüz kredi satın almadınız.
+                    {t("Henüz kredi satın almadınız.")}
                   </td>
                 </tr>
               )}
@@ -59,7 +64,7 @@ export default async function GuestHistoryPage() {
                   <td className="px-4 py-2 text-slate-900">{p.package.name}</td>
                   <td className="px-4 py-2 text-slate-600">{p.credits}</td>
                   <td className="px-4 py-2 text-slate-600">
-                    {Number(p.amount).toLocaleString("tr-TR", {
+                    {Number(p.amount).toLocaleString(INTL_TAG[locale], {
                       style: "currency",
                       currency: "TRY",
                     })}
@@ -68,7 +73,7 @@ export default async function GuestHistoryPage() {
                     {statusLabel[p.status] ?? p.status}
                   </td>
                   <td className="px-4 py-2 text-slate-500">
-                    {p.createdAt.toLocaleString("tr-TR")}
+                    {p.createdAt.toLocaleString(INTL_TAG[locale])}
                   </td>
                 </tr>
               ))}
@@ -78,15 +83,15 @@ export default async function GuestHistoryPage() {
       </section>
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium text-brand-950">Açtığım Sorular</h2>
+        <h2 className="text-lg font-medium text-brand-950">{t("Açtığım Sorular")}</h2>
         <div className="overflow-x-auto rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md shadow-sm">
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-slate-100 text-left text-slate-500">
-                <th className="px-4 py-2 font-medium">Soru</th>
-                <th className="px-4 py-2 font-medium">Konu</th>
-                <th className="px-4 py-2 font-medium">Kredi</th>
-                <th className="px-4 py-2 font-medium">Açılma Tarihi</th>
+                <th className="px-4 py-2 font-medium">{t("Soru adı")}</th>
+                <th className="px-4 py-2 font-medium">{t("Konu")}</th>
+                <th className="px-4 py-2 font-medium">{t("Kredi")}</th>
+                <th className="px-4 py-2 font-medium">{t("Açılma Tarihi")}</th>
                 <th className="px-4 py-2 font-medium"></th>
               </tr>
             </thead>
@@ -94,26 +99,26 @@ export default async function GuestHistoryPage() {
               {unlocks.length === 0 && (
                 <tr>
                   <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
-                    Henüz soru açmadınız.
+                    {t("Henüz soru açmadınız.")}
                   </td>
                 </tr>
               )}
               {unlocks.map((u) => (
                 <tr key={u.id} className="border-b border-slate-50 last:border-0">
                   <td className="px-4 py-2 text-slate-900">{u.question.title}</td>
-                  <td className="px-4 py-2 text-slate-600">{u.question.subject}</td>
+                  <td className="px-4 py-2 text-slate-600">{subjectLabel(u.question.subject, t)}</td>
                   <td className="px-4 py-2 text-slate-600">
                     {u.question.creditCost}
                   </td>
                   <td className="px-4 py-2 text-slate-500">
-                    {u.unlockedAt.toLocaleString("tr-TR")}
+                    {u.unlockedAt.toLocaleString(INTL_TAG[locale])}
                   </td>
                   <td className="px-4 py-2">
                     <Link
                       href={`/guest/questions/${u.questionId}`}
                       className="text-brand-600 underline hover:text-brand-800"
                     >
-                      Görüntüle
+                      {t("Görüntüle")}
                     </Link>
                   </td>
                 </tr>

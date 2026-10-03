@@ -51,3 +51,61 @@ export const RUSSIAN_ALPHABET: RussianLetter[] = [
 export function lettersForDay(day: number) {
   return RUSSIAN_ALPHABET.filter((l) => l.day === day);
 }
+
+// İngilizce konuşanlar için okunuş (Latin transliterasyon), örnek kelimenin
+// İngilizcesi ve not. Türkçe dışındaki diller bu veriyi kullanır.
+const EN_VIEW: Record<string, { sound: string; meaning: string; note?: string }> = {
+  "А": { sound: "a", meaning: "watermelon" },
+  "Б": { sound: "b", meaning: "banana" },
+  "В": { sound: "v", meaning: "visa", note: "Looks like Latin B but sounds like V." },
+  "Г": { sound: "g", meaning: "newspaper" },
+  "Д": { sound: "d", meaning: "shower" },
+  "Е": { sound: "ye", meaning: "summer", note: "Usually sounds like \"ye\" (lyeto)." },
+  "Ё": { sound: "yo", meaning: "Christmas tree" },
+  "Ж": { sound: "zh", meaning: "wife", note: "Like the s in \"measure\"." },
+  "З": { sound: "z", meaning: "winter" },
+  "И": { sound: "ee", meaning: "game", note: "Like \"ee\" in \"see\"." },
+  "Й": { sound: "y", meaning: "May", note: "A short i; sounds like y after a vowel." },
+  "К": { sound: "k", meaning: "cat" },
+  "Л": { sound: "l", meaning: "lamp" },
+  "М": { sound: "m", meaning: "mom" },
+  "Н": { sound: "n", meaning: "nose", note: "Looks like Latin H but sounds like N." },
+  "О": { sound: "o", meaning: "house", note: "Sounds close to \"a\" when unstressed." },
+  "П": { sound: "p", meaning: "park" },
+  "Р": { sound: "r", meaning: "hand", note: "Looks like Latin P but sounds like a rolled R." },
+  "С": { sound: "s", meaning: "juice", note: "Looks like Latin C but sounds like S." },
+  "Т": { sound: "t", meaning: "cake" },
+  "У": { sound: "oo", meaning: "morning", note: "Looks like Latin Y but sounds like \"oo\"." },
+  "Ф": { sound: "f", meaning: "photo" },
+  "Х": { sound: "kh", meaning: "bread", note: "Looks like Latin X but sounds like a throaty \"kh\"." },
+  "Ц": { sound: "ts", meaning: "circus" },
+  "Ч": { sound: "ch", meaning: "tea" },
+  "Ш": { sound: "sh", meaning: "school" },
+  "Щ": { sound: "shch", meaning: "borscht" },
+  "Ъ": { sound: "-", meaning: "object", note: "Hard sign: silent, separates two sounds." },
+  "Ы": { sound: "ih", meaning: "son", note: "Like the i in \"bit\", but pronounced further back." },
+  "Ь": { sound: "-", meaning: "day", note: "Soft sign: silent, softens the previous consonant." },
+  "Э": { sound: "e", meaning: "echo", note: "Like \"e\" in \"met\"." },
+  "Ю": { sound: "yu", meaning: "south" },
+  "Я": { sound: "ya", meaning: "apple" },
+};
+
+export type LetterView = {
+  upper: string;
+  lower: string;
+  sound: string;
+  example: string;
+  meaning: string;
+  note?: string;
+};
+
+// Arayüz diline göre harf listesi: Türkçe için Türkçe okunuş/anlam, diğerleri için İngilizce.
+export function alphabetFor(locale: string): LetterView[] {
+  if (locale === "tr") return RUSSIAN_ALPHABET;
+  return RUSSIAN_ALPHABET.map((l) => ({
+    upper: l.upper,
+    lower: l.lower,
+    example: l.example,
+    ...EN_VIEW[l.upper],
+  }));
+}

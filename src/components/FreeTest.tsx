@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useState, useTransition } from "react";
 import { gradeFreeTest, type FreeTestResult } from "@/lib/free-test-actions";
 import type { FreeTestQuestion } from "@/lib/free-test";
+import { useT } from "@/lib/i18n/client";
 
 type Letter = "A" | "B" | "C" | "D";
 const OPTIONS: Letter[] = ["A", "B", "C", "D"];
@@ -15,8 +16,9 @@ export function FreeTest({
 }: {
   token: string;
   questions: FreeTestQuestion[];
-  otherLanguage: { slug: string; name: string };
+  otherLanguage: { slug: string; label: string };
 }) {
+  const t = useT();
   const [answers, setAnswers] = useState<Record<string, Letter>>({});
   const [result, setResult] = useState<FreeTestResult | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -38,7 +40,7 @@ export function FreeTest({
             key={q.id}
             className="rounded-xl border border-brand-100 bg-white p-4 shadow-sm"
           >
-            <p className="text-xs text-slate-400">{index + 1}. soru</p>
+            <p className="text-xs text-slate-400">{t("{n}. soru", { n: index + 1 })}</p>
             <p className="mt-1 font-medium text-brand-950">{q.prompt}</p>
             <div className="mt-2 space-y-1.5">
               {OPTIONS.map((opt) => {
@@ -93,21 +95,20 @@ export function FreeTest({
             {done.score >= done.total - 1 ? "🎉" : done.score >= 3 ? "👏" : "💪"}
           </p>
           <p className="text-sm text-slate-600">
-            Daha fazlası seni bekliyor: binlerce test sorusu, günlük seri,
-            rozetler ve deneme sınavları.
+            {t("Daha fazlası seni bekliyor: binlerce test sorusu, günlük seri, rozetler ve deneme sınavları.")}
           </p>
           <div className="flex flex-col items-center justify-center gap-3 sm:flex-row">
             <Link
               href="/register"
               className="w-full rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 px-6 py-3 text-sm font-semibold text-brand-950 shadow-sm transition-all duration-200 hover:scale-[1.03] active:scale-95 sm:w-auto"
             >
-              Ücretsiz Kayıt Ol — 2 kredi hediye
+              {t("Ücretsiz Kayıt Ol — 2 kredi hediye")}
             </Link>
             <Link
               href={`/dene/${otherLanguage.slug}`}
               className="w-full rounded-lg border border-brand-200 bg-white px-6 py-3 text-sm font-medium text-brand-700 hover:bg-brand-50 sm:w-auto"
             >
-              {otherLanguage.name} testini dene
+              {otherLanguage.label}
             </Link>
           </div>
         </div>
@@ -119,10 +120,10 @@ export function FreeTest({
           className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:scale-[1.03] active:scale-95 disabled:opacity-50 disabled:hover:scale-100"
         >
           {isPending
-            ? "Kontrol ediliyor..."
+            ? t("Kontrol ediliyor...")
             : answered < questions.length
-              ? `Sonucu gör (${answered}/${questions.length})`
-              : "Sonucu gör"}
+              ? t("Sonucu gör ({a}/{b})", { a: answered, b: questions.length })
+              : t("Sonucu gör")}
         </button>
       )}
     </div>

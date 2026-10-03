@@ -15,8 +15,10 @@ import { StreakFreezeCard } from "@/components/StreakFreezeCard";
 import { ReferralCard } from "@/components/ReferralCard";
 import { DailyQuestionSection } from "@/components/DailyQuestionSection";
 import { BadgesCard } from "@/components/BadgesCard";
+import { getT } from "@/lib/i18n/server";
 
 export default async function StudentHomePage() {
+  const t = await getT();
   const session = await auth();
   const studentId = session!.user.id;
 
@@ -53,21 +55,21 @@ export default async function StudentHomePage() {
   return (
     <div className="space-y-8">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold text-slate-900">Hoş geldiniz</h1>
+        <h1 className="text-2xl font-semibold text-slate-900">{t("Hoş geldiniz")}</h1>
         <div className="flex flex-wrap items-center gap-3">
           {me && (
             <div className="rounded-lg border border-slate-200 bg-white px-4 py-2 text-sm">
-              <span className="text-slate-500">Kalan: </span>
+              <span className="text-slate-500">{t("Kalan:")} </span>
               <span className="font-medium text-slate-900">
-                {formatSessionStatus(me.sessionType, me.sessionsRemaining)}
+                {formatSessionStatus(me.sessionType, me.sessionsRemaining, t)}
               </span>
             </div>
           )}
           <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-2 text-sm">
-            <span className="text-slate-500">🔥 Seri: </span>
-            <span className="font-medium text-slate-900">{streak} gün</span>
+            <span className="text-slate-500">{t("🔥 Seri:")} </span>
+            <span className="font-medium text-slate-900">{t("{n} gün", { n: streak })}</span>
             <span className="ml-1 text-xs text-slate-400">
-              ({daysToReward} gün sonra 40 dk hediye ders)
+              {t("({n} gün sonra 40 dk hediye ders)", { n: daysToReward })}
             </span>
           </div>
           {streak >= 1 && (
@@ -75,8 +77,8 @@ export default async function StudentHomePage() {
               small
               imagePath="/api/share/streak"
               filename="ardemy-seri.png"
-              label="Serimi paylaş"
-              text={`${streak} gündür her gün çalışıyorum! 🔥 Sen de dene: ${shareUrl}`}
+              label={t("Serimi paylaş")}
+              text={t("{n} gündür her gün çalışıyorum! 🔥 Sen de dene: {url}", { n: streak, url: shareUrl })}
             />
           )}
         </div>
@@ -92,10 +94,10 @@ export default async function StudentHomePage() {
       />
 
       <section className="space-y-3">
-        <h2 className="text-lg font-medium text-slate-900">Ödevlerim</h2>
+        <h2 className="text-lg font-medium text-slate-900">{t("Ödevlerim")}</h2>
         {assignments.length === 0 && (
           <p className="text-sm text-slate-500">
-            Henüz size atanmış ödev yok.
+            {t("Henüz size atanmış ödev yok.")}
           </p>
         )}
         <div className="space-y-3">
@@ -111,11 +113,11 @@ export default async function StudentHomePage() {
 
       <section className="space-y-3">
         <h2 className="text-lg font-medium text-slate-900">
-          Ders Dosyalarım
+          {t("Ders Dosyalarım")}
         </h2>
         {lessonFiles.length === 0 ? (
           <p className="text-sm text-slate-500">
-            Henüz size özel ders dosyası yok.
+            {t("Henüz size özel ders dosyası yok.")}
           </p>
         ) : (
           <LessonFilesList lessonFiles={lessonFiles} />

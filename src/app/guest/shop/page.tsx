@@ -2,8 +2,10 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { ShopItems } from "@/components/ShopItems";
+import { getT } from "@/lib/i18n/server";
 
 export default async function ShopPage() {
+  const t = await getT();
   const session = await auth();
   const userId = session!.user.id;
 
@@ -21,16 +23,15 @@ export default async function ShopPage() {
   return (
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h1 className="text-2xl font-semibold text-brand-950">🛍️ Mağaza</h1>
+        <h1 className="text-2xl font-semibold text-brand-950">{t("🛍️ Mağaza")}</h1>
         <span className="rounded-full bg-gold-100 px-3 py-1 text-sm font-medium text-gold-700">
-          {me.credits} kredi
+          {t("{n} kredi", { n: me.credits })}
         </span>
       </div>
       <p className="text-sm text-slate-600">
-        Kredilerinle profilini kişiselleştir. Satın aldığın ürünler sana ait
-        olur; istediğin zaman değiştirebilirsin. Krediye ihtiyacın varsa{" "}
+        {t("Kredilerinle profilini kişiselleştir. Satın aldığın ürünler sana ait olur; istediğin zaman değiştirebilirsin. Krediye ihtiyacın varsa")}{" "}
         <Link href="/guest/credits" className="font-medium text-brand-600 underline">
-          kredi satın alabilirsin
+          {t("kredi satın alabilirsin")}
         </Link>
         .
       </p>

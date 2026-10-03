@@ -7,6 +7,7 @@ import { ExamRunner } from "@/components/ExamRunner";
 import { ExamResultView } from "@/components/ExamResultView";
 import { EXAM_MINUTES, type ExamLetter } from "@/lib/exam-config";
 import { getReferralShareUrl } from "@/lib/referral";
+import { getT } from "@/lib/i18n/server";
 
 export default async function ExamAttemptPage({
   params,
@@ -14,6 +15,7 @@ export default async function ExamAttemptPage({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
+  const t = await getT();
   const session = await auth();
 
   const attempt = await prisma.examAttempt.findUnique({ where: { id } });
@@ -34,7 +36,7 @@ export default async function ExamAttemptPage({
     return (
       <div className="space-y-4">
         <Link href="/guest/exam" className="text-sm text-brand-600 underline">
-          ← Deneme Sınavlarım
+          {t("← Deneme Sınavlarım")}
         </Link>
         <ExamResultView
           shareUrl={shareUrl}

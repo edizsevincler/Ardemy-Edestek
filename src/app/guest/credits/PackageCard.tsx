@@ -3,6 +3,8 @@
 import { useActionState } from "react";
 import Link from "next/link";
 import { requestCreditPurchase } from "./actions";
+import { useLocale, useT } from "@/lib/i18n/client";
+import { INTL_TAG } from "@/lib/i18n/config";
 
 const initialState = { status: "idle" } as const;
 
@@ -17,6 +19,8 @@ export function PackageCard({
   credits: number;
   priceTRY: number;
 }) {
+  const t = useT();
+  const locale = useLocale();
   const [state, formAction, isPending] = useActionState(
     requestCreditPurchase,
     initialState
@@ -29,11 +33,11 @@ export function PackageCard({
         <p className="mt-2 text-3xl font-semibold text-brand-950">
           {credits}
           <span className="ml-1 text-base font-normal text-slate-500">
-            kredi
+            {t("kredi")}
           </span>
         </p>
         <p className="mt-1 text-lg font-medium text-slate-700">
-          {priceTRY.toLocaleString("tr-TR", {
+          {priceTRY.toLocaleString(INTL_TAG[locale], {
             style: "currency",
             currency: "TRY",
           })}
@@ -55,9 +59,9 @@ export function PackageCard({
               target="_blank"
               className="font-medium text-brand-600 hover:underline"
             >
-              Mesafeli Satış Sözleşmesi
+              {t("Mesafeli Satış Sözleşmesi")}
             </Link>
-            &apos;ni okudum, kabul ediyorum.
+            {t("'ni okudum, kabul ediyorum.")}
           </span>
         </label>
         <button
@@ -66,18 +70,17 @@ export function PackageCard({
           className="w-full rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 py-2.5 text-sm font-semibold text-brand-950 shadow-sm shadow-gold-600/30 transition-all duration-200 hover:from-gold-400 hover:to-gold-300 hover:scale-[1.03] hover:shadow-lg active:scale-95 disabled:opacity-60"
         >
           {isPending
-            ? "Gönderiliyor..."
+            ? t("Gönderiliyor...")
             : state.status === "success"
-              ? "Onay Bekliyor ✓"
-              : "Havaleyi Gönderdim"}
+              ? t("Onay Bekliyor ✓")
+              : t("Havaleyi Gönderdim")}
         </button>
         {state.status === "error" && (
           <p className="mt-2 text-sm text-red-600">{state.message}</p>
         )}
         {state.status === "success" && (
           <p className="mt-2 text-xs text-slate-500">
-            Talebiniz alındı. Onaylandığında kredi hesabınıza otomatik
-            eklenecek.
+            {t("Talebiniz alındı. Onaylandığında kredi hesabınıza otomatik eklenecek.")}
           </p>
         )}
       </form>
