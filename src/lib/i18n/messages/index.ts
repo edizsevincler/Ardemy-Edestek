@@ -6,7 +6,8 @@ import { common } from "./common";
 import { legal } from "./legal";
 import { panel } from "./panel";
 import { badges } from "./badges";
+import { account } from "./account";
 
 export type MessageEntry = readonly [tr: string, en: string, ru: string];
 
-export const MESSAGES: MessageEntry[] = [...common, ...legal, ...panel, ...badges];
+export const MESSAGES: MessageEntry[] = [...common, ...legal, ...panel, ...badges, ...account];

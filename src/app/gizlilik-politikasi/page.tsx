@@ -115,7 +115,7 @@ export default async function PrivacyPolicyPage() {
 
           <section className="space-y-2">
             <h2 className="text-base font-semibold text-brand-950">{t("7. Çerezler (Cookies)")}</h2>
-            <p>{t("Platform, oturumunuzu açık tutmak ve dil tercihinizi (ardemy_lang) hatırlamak için zorunlu çerezler kullanır. Ayrıca, siteye hangi bağlantıdan (ör. sosyal medya) geldiğinizi öğrenmek için 30 gün geçerli birinci taraf bir kaynak çerezi (ardemy_src) kullanılabilir; bu çerez yalnızca kayıt olduğunuzda hangi kanaldan geldiğinizi kaydetmek içindir ve üçüncü taraflarla paylaşılmaz. Reklam veya analiz amaçlı üçüncü taraf çerezleri kullanılmamaktadır.")}</p>
+            <p>{t("Platform, oturumunuzu açık tutmak ve dil tercihinizi (ardemy_lang) hatırlamak için zorunlu çerezler kullanır. Ayrıca, siteye hangi bağlantıdan (ör. sosyal medya) geldiğinizi öğrenmek için 30 gün geçerli birinci taraf bir kaynak çerezi (ardemy_src) kullanılabilir; bu çerez yalnızca kayıt olduğunuzda hangi kanaldan geldiğinizi kaydetmek içindir ve üçüncü taraflarla paylaşılmaz. Reklam veya analiz amaçlı üçüncü taraf çerezleri kullanılmamaktadır. Sitenin herkese açık sayfalarının kaç kez görüntülendiği, kişi veya cihaz bilgisi tutulmadan yalnızca toplam sayı olarak anonim biçimde sayılır.")}</p>
           </section>
 
           <section className="space-y-2">

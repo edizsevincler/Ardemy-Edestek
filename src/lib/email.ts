@@ -116,3 +116,25 @@ export async function sendStreakReminderEmail(
     `
   );
 }
+
+export async function sendPasswordResetEmail(
+  to: string,
+  name: string,
+  token: string,
+  locale: Locale = "tr"
+) {
+  const t = makeT(getDictionary(locale), locale);
+  const url = `${APP_URL}/reset-password?token=${token}`;
+
+  await sendEmail(
+    to,
+    name,
+    t("Ardemy Academy - Şifre Sıfırlama"),
+    `
+      <p>${t("Merhaba {name},", { name: escapeHtml(name) })}</p>
+      <p>${t("Hesabınız için şifre sıfırlama isteği aldık. Yeni şifre belirlemek için aşağıdaki linke tıklayın:")}</p>
+      <p><a href="${url}">${url}</a></p>
+      <p>${t("Bu linkin süresi 1 saattir. Bu isteği siz yapmadıysanız bu e-postayı yok sayabilirsiniz; şifreniz değişmez.")}</p>
+    `
+  );
+}

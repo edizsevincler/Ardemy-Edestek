@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
     "/api/share/**": ["./src/lib/og/**"],
     "/api/admin/social/**": ["./src/lib/og/**"],
     "/api/poster/**": ["./src/lib/og/**"],
+    "/pwa-icon/**": ["./src/lib/og/**"],
+    "/apple-icon": ["./src/lib/og/**"],
   },
 };
 

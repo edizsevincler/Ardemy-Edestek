@@ -1,9 +1,11 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { SITE_URL } from "@/lib/site";
 import { SourceCapture } from "@/components/SourceCapture";
+import { PageViewTracker } from "@/components/PageViewTracker";
+import { PwaRegister } from "@/components/PwaRegister";
 import { I18nProvider } from "@/lib/i18n/client";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { getI18n } from "@/lib/i18n/server";
@@ -18,6 +20,10 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const viewport: Viewport = {
+  themeColor: "#1c1147",
+};
+
 const OG_LOCALES = { tr: "tr_TR", en: "en_GB", ru: "ru_RU" } as const;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -26,6 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
     metadataBase: new URL(SITE_URL),
     title: t("Ardemy Academy — Rusça ve İngilizce Test Çöz, Pratik Yap"),
     description: t("Rusça ve İngilizce konu anlatımları, binlerce test sorusu, günlük soru, deneme sınavları ve birebir ders takibi. Kayıt ol, 2 kredi hediye."),
+    appleWebApp: { capable: true, title: "Ardemy", statusBarStyle: "black-translucent" },
     openGraph: {
       title: t("Ardemy Academy — Dil öğrenmenin en pratik yolu"),
       description: t("Rusça ve İngilizce testler, günlük soru, deneme sınavları ve birebir ders takibi."),
@@ -51,7 +58,9 @@ export default async function RootLayout({
         <I18nProvider locale={locale} dict={getDictionary(locale)}>
           <Suspense fallback={null}>
             <SourceCapture />
+            <PageViewTracker />
           </Suspense>
+          <PwaRegister />
           {children}
         </I18nProvider>
       </body>

@@ -103,6 +103,7 @@ model User {
   dailyAnswers          DailyQuestionAnswer[]
   cosmetics             UserCosmetic[]
   examAttempts          ExamAttempt[]
+  passwordResets        PasswordResetToken[]
   badges                UserBadge[]
 }
 
@@ -392,4 +393,31 @@ model ExamAttempt {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId, startedAt])
+}
+
+// Şifre sıfırlama: e-postadaki ham token yerine yalnızca SHA-256 özeti saklanır
+// (veritabanı sızsa bile link üretilemez). Süre: 1 saat, tek kullanımlık.
+model PasswordResetToken {
+  id        String   @id @default(cuid())
+  tokenHash String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+}
+
+// Ziyaret sayacı: kişi veya cihaz tanımlayıcısı TUTULMAZ; yalnızca gün/sayfa/
+// kaynak/dil bazında toplam sayfa görüntüleme sayısı (bkz. /admin/visits).
+// `source` boş kaynak için "" olarak saklanır (benzersizlik kısıtı için).
+model PageViewDaily {
+  day    String // YYYY-MM-DD (İstanbul)
+  path   String
+  source String @default("")
+  locale String @default("tr")
+  count  Int    @default(0)
+
+  @@id([day, path, source, locale])
 }

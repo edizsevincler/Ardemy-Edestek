@@ -9,6 +9,7 @@ import { UserAvatar } from "@/components/UserAvatar";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { getT } from "@/lib/i18n/server";
 import { findTitle } from "@/lib/cosmetics";
+import { InstallPrompt } from "@/components/InstallPrompt";
 
 export default async function GuestLayout({
   children,
@@ -107,6 +108,7 @@ export default async function GuestLayout({
         </nav>
       </header>
       <main className="mx-auto max-w-5xl px-4 py-6 animate-fade-in sm:px-6 sm:py-8">
+        <InstallPrompt />
         {children}
       </main>
     </div>

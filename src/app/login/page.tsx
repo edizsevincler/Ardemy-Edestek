@@ -66,6 +66,12 @@ export default function LoginPage() {
           />
         </div>
 
+        <p className="-mt-3 text-right text-xs">
+          <Link href="/forgot-password" className="font-medium text-brand-600 hover:underline">
+            {t("Şifremi unuttum")}
+          </Link>
+        </p>
+
         {errorMessage && (
           <p className="text-sm text-red-600">{errorMessage}</p>
         )}
