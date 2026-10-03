@@ -17,7 +17,7 @@ import { prisma } from "../src/lib/prisma";
 import { getOgAssets, OG_FORMATS } from "../src/lib/og/assets";
 import { QuestionCard } from "../src/lib/og/cards";
 import { InfoCard, LessonSlide, WordFrame } from "../src/lib/og/cards-extra";
-import { SITE_URL } from "../src/lib/site";
+import { INSTAGRAM_HANDLE, SITE_URL } from "../src/lib/site";
 
 const [OUT, PACK, FFMPEG] = process.argv.slice(2);
 if (!OUT || !PACK || !FFMPEG) {
@@ -27,6 +27,7 @@ if (!OUT || !PACK || !FFMPEG) {
 
 const SQ = OG_FORMATS.square;
 const ST = OG_FORMATS.story;
+const FOLLOW = `📲 Takip et: ${INSTAGRAM_HANDLE}`;
 const HASH_RU = "#rusça #rusçaöğreniyorum #dilöğrenme #ardemyacademy";
 const LINK_RU = `${SITE_URL}/dene/rusca`;
 const LINK_ANY = `${SITE_URL}/dene`;
@@ -176,6 +177,8 @@ async function main() {
     "",
     `🎁 Ücretsiz dene: ${LINK_RU}`,
     "",
+    FOLLOW,
+    "",
     HASH_RU,
     "",
     "2) HİKÂYE: 2-HIKAYE-04-ingilizce-cevap.png (dünkü İngilizce sorunun cevabı)",
@@ -267,6 +270,8 @@ async function main() {
     "",
     `🎁 Ücretsiz dene: ${LINK_RU}`,
     "",
+    FOLLOW,
+    "",
     HASH_RU,
     "",
     "2) HİKÂYE: 2-HIKAYE-mini-ders-cevabi.png (çarşamba mini ders sorusunun cevabı)",
@@ -307,6 +312,8 @@ async function main() {
     "30 günlük seride 40 dakika ücretsiz ders hediye. Bir gün kaçırırsan seri koruma devreye girer 🛡️",
     "",
     `🎁 Ücretsiz dene: ${LINK_ANY}`,
+    "",
+    FOLLOW,
     "",
     "#dilöğrenme #rusça #ingilizce #ardemyacademy",
     "",
@@ -351,7 +358,9 @@ async function main() {
       "",
       `🎁 Ücretsiz dene: ${LINK_RU}`,
       "",
-      HASH_RU,
+      FOLLOW,
+    "",
+    HASH_RU,
     ].join("\n"),
     "",
     "2) HİKÂYE: 2-HIKAYE-cevap-yarin.png — üstüne \"Soru sor\" ya da \"Test\" çıkartması eklemek isteyebilirsin.",

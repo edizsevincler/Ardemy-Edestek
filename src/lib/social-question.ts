@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { dateKey } from "@/lib/streak";
-import { SITE_URL } from "@/lib/site";
+import { INSTAGRAM_HANDLE, SITE_URL } from "@/lib/site";
 
 export const SOCIAL_LANGUAGES = ["Rusça", "İngilizce"] as const;
 
@@ -86,6 +86,7 @@ export function buildSocialCaption(language: string, question: SocialQuestion) {
     "Cevabını yorumlara yaz 👇 Doğru cevap hikayemizde!",
     "",
     `🎁 Ücretsiz dene: ${SITE_URL}/dene/${SLUGS[language]}`,
+    `📲 Takip et: ${INSTAGRAM_HANDLE}`,
     "",
     HASHTAGS[language],
   ].join("\n");

@@ -179,7 +179,7 @@ export function WordFrame({
   topic: string;
   word: string;
   meaning: string;
-  reading: string;
+  reading?: string;
 }) {
   return (
     <Frame size={size} logo={logo} footer="Kaydet ve tekrar et">
@@ -199,7 +199,7 @@ export function WordFrame({
       <div
         style={{
           display: "flex",
-          fontSize: 118,
+          fontSize: word.length > 12 ? 84 : 118,
           fontWeight: 700,
           marginTop: 70,
           textAlign: "center",
@@ -218,9 +218,11 @@ export function WordFrame({
       >
         {meaning}
       </div>
-      <div style={{ display: "flex", fontSize: 46, color: "#cfc4f2", marginTop: 28 }}>
-        {`okunuşu: ${reading}`}
-      </div>
+      {reading && (
+        <div style={{ display: "flex", fontSize: 46, color: "#cfc4f2", marginTop: 28 }}>
+          {`okunuşu: ${reading}`}
+        </div>
+      )}
     </Frame>
   );
 }

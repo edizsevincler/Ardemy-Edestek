@@ -3,7 +3,7 @@
 // birden fazla çocuğu olan her kutu display:flex olmalıdır.
 
 import type { ReactNode } from "react";
-import { SITE_HOST } from "@/lib/site";
+import { INSTAGRAM_HANDLE, SITE_HOST } from "@/lib/site";
 import { OG_FONT_FAMILY } from "@/lib/og/assets";
 
 const BG = "linear-gradient(160deg, #1c1147 0%, #2f2178 55%, #4b32b3 100%)";
@@ -113,7 +113,7 @@ export function Frame({
             color: "#cfc4f2",
           }}
         >
-          {SITE_HOST}
+          {`${INSTAGRAM_HANDLE}  ·  ${SITE_HOST}`}
         </div>
       </div>
     </div>
