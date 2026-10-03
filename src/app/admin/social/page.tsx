@@ -1,13 +1,10 @@
 import Link from "next/link";
 import { CopyLinkButton } from "@/components/CopyLinkButton";
-import { SITE_URL } from "@/lib/site";
-import { getSocialQuestion, SOCIAL_LANGUAGES } from "@/lib/social-question";
-
-const SLUGS: Record<string, string> = { Rusça: "rusca", İngilizce: "ingilizce" };
-const HASHTAGS: Record<string, string> = {
-  Rusça: "#rusça #rusçaöğreniyorum #dilöğrenme #ardemyacademy",
-  İngilizce: "#ingilizce #ingilizceöğreniyorum #dilöğrenme #ardemyacademy",
-};
+import {
+  buildSocialCaption,
+  getSocialQuestion,
+  SOCIAL_LANGUAGES,
+} from "@/lib/social-question";
 
 export default async function AdminSocialPage({
   searchParams,
@@ -27,20 +24,7 @@ export default async function AdminSocialPage({
   const query = (extra: string) =>
     `/api/admin/social/question?language=${encodeURIComponent(language)}&n=${n}${extra}`;
 
-  const caption = question
-    ? [
-        `📅 Günün ${language} sorusu!`,
-        "",
-        question.prompt,
-        ...question.options.map((o, i) => `${"ABCD"[i]}) ${o}`),
-        "",
-        "Cevabını yorumlara yaz 👇 Doğru cevap hikayemizde!",
-        "",
-        `🎁 Ücretsiz dene: ${SITE_URL}/dene/${SLUGS[language]}`,
-        "",
-        HASHTAGS[language],
-      ].join("\n")
-    : "";
+  const caption = question ? buildSocialCaption(language, question) : "";
 
   const images = [
     { title: "Soru — kare (feed)", extra: "&format=square", file: "soru-kare" },

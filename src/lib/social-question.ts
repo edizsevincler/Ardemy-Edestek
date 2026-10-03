@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { dateKey } from "@/lib/streak";
+import { SITE_URL } from "@/lib/site";
 
 export const SOCIAL_LANGUAGES = ["Rusça", "İngilizce"] as const;
 
@@ -66,4 +67,26 @@ export async function getSocialQuestion(
       subject: item.question.subject,
     },
   };
+}
+
+const SLUGS: Record<string, string> = { Rusça: "rusca", İngilizce: "ingilizce" };
+const HASHTAGS: Record<string, string> = {
+  Rusça: "#rusça #rusçaöğreniyorum #dilöğrenme #ardemyacademy",
+  İngilizce: "#ingilizce #ingilizceöğreniyorum #dilöğrenme #ardemyacademy",
+};
+
+// Instagram gönderisi için hazır açıklama metni.
+export function buildSocialCaption(language: string, question: SocialQuestion) {
+  return [
+    `📅 Günün ${language} sorusu!`,
+    "",
+    question.prompt,
+    ...question.options.map((o, i) => `${"ABCD"[i]}) ${o}`),
+    "",
+    "Cevabını yorumlara yaz 👇 Doğru cevap hikayemizde!",
+    "",
+    `🎁 Ücretsiz dene: ${SITE_URL}/dene/${SLUGS[language]}`,
+    "",
+    HASHTAGS[language],
+  ].join("\n");
 }
