@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Inter, Manrope, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { SITE_URL } from "@/lib/site";
@@ -10,9 +10,18 @@ import { I18nProvider } from "@/lib/i18n/client";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { getI18n } from "@/lib/i18n/server";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
+// Gövde metni Inter, başlıklar Manrope: ikisi de Türkçe (latin-ext) ve Rusça
+// (cyrillic) harfleri destekler.
+const inter = Inter({
+  variable: "--font-inter",
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  display: "swap",
+});
+
+const manrope = Manrope({
+  variable: "--font-manrope",
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  display: "swap",
 });
 
 const geistMono = Geist_Mono({
@@ -56,7 +65,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${manrope.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>

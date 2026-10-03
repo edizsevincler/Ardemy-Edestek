@@ -4,6 +4,8 @@ import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
 import { slugifyName, generatePassword } from "@/lib/generate";
 import { revalidatePath } from "next/cache";
+import { auth } from "@/auth";
+import { DAILY_LANGUAGES } from "@/lib/daily-languages";
 
 type CreatedAccount = { name: string; username: string; password: string };
 
@@ -140,4 +142,22 @@ export async function giftCredits(studentId: string, amount: number) {
   revalidatePath("/guest");
 
   return { credits: updated.credits };
+}
+
+// Öğrencinin Günün Sorusu dilini ayarlar; boş değer "karışık" demektir.
+export async function setDailyLanguage(studentId: string, language: string) {
+  const session = await auth();
+  if (session?.user.role !== "ADMIN") return { ok: false };
+
+  const value = (DAILY_LANGUAGES as readonly string[]).includes(language)
+    ? language
+    : null;
+  await prisma.user.update({
+    where: { id: studentId },
+    data: { dailyLanguage: value },
+  });
+
+  revalidatePath("/admin/students");
+  revalidatePath("/student");
+  return { ok: true };
 }

@@ -21,6 +21,11 @@ const nextConfig: NextConfig = {
     "/api/poster/**": ["./src/lib/og/**"],
     "/pwa-icon/**": ["./src/lib/og/**"],
     "/apple-icon": ["./src/lib/og/**"],
+    "/opengraph-image": ["./src/lib/og/**"],
+    "/dene/opengraph-image": ["./src/lib/og/**"],
+    "/dene/[language]/opengraph-image": ["./src/lib/og/**"],
+    "/link/opengraph-image": ["./src/lib/og/**"],
+    "/rusca-alfabe/opengraph-image": ["./src/lib/og/**"],
   },
 };
 
