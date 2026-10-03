@@ -86,6 +86,14 @@ export default async function Home() {
                 Zaten hesabım var
               </Link>
             </div>
+            <p className="mt-4">
+              <Link
+                href="/dene"
+                className="text-sm font-medium text-gold-300 underline underline-offset-4 hover:text-gold-400"
+              >
+                Önce ücretsiz dene — kayıt olmadan 5 soruluk test çöz →
+              </Link>
+            </p>
             <p className="mt-4 inline-block rounded-full bg-gold-400/20 px-4 py-1.5 text-sm font-medium text-gold-300">
               🎁 Kayıt olunca {SIGNUP_BONUS_CREDITS} kredi hediye — kart bilgisi
               gerekmez

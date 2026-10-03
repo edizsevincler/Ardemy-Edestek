@@ -9,6 +9,8 @@ import {
   FREEZE_MAX,
   FREEZE_PRICE_CREDITS,
 } from "@/lib/streak";
+import { ShareButton } from "@/components/ShareButton";
+import { getReferralShareUrl } from "@/lib/referral";
 import { StreakFreezeCard } from "@/components/StreakFreezeCard";
 import { ReferralCard } from "@/components/ReferralCard";
 import { DailyQuestionSection } from "@/components/DailyQuestionSection";
@@ -44,6 +46,7 @@ export default async function StudentHomePage() {
     }),
   ]);
 
+  const shareUrl = await getReferralShareUrl(studentId);
   const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate, me.streakFreezes) : 0;
   const daysToReward = nextStreakMilestone(streak) - streak;
 
@@ -67,6 +70,15 @@ export default async function StudentHomePage() {
               ({daysToReward} gün sonra 40 dk hediye ders)
             </span>
           </div>
+          {streak >= 1 && (
+            <ShareButton
+              small
+              imagePath="/api/share/streak"
+              filename="ardemy-seri.png"
+              label="Serimi paylaş"
+              text={`${streak} gündür her gün çalışıyorum! 🔥 Sen de dene: ${shareUrl}`}
+            />
+          )}
         </div>
       </div>
 

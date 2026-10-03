@@ -24,11 +24,13 @@ export function ExamRunner({
   language,
   questions,
   remainingMs,
+  shareUrl,
 }: {
   attemptId: string;
   language: string;
   questions: ExamRunnerQuestion[];
   remainingMs: number;
+  shareUrl: string;
 }) {
   const storageKey = `exam-answers-${attemptId}`;
   const [answers, setAnswers] = useState<Record<string, ExamLetter>>({});
@@ -111,7 +113,7 @@ export function ExamRunner({
     return (
       <div className="space-y-4">
         <NewBadgesBanner badges={done.newBadges} notes={done.notes} />
-        <ExamResultView result={done.result} />
+        <ExamResultView result={done.result} shareUrl={shareUrl} />
       </div>
     );
   }

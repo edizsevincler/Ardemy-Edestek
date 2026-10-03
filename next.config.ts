@@ -1,7 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  // Paylaşım/sosyal medya görselleri (next/og) yazı tiplerini ve logoyu
+  // çalışma anında dosyadan okur; Vercel'e eksiksiz taşınmaları için açıkça
+  // dahil edilir.
+  outputFileTracingIncludes: {
+    "/api/share/**": ["./src/lib/og/**"],
+    "/api/admin/social/**": ["./src/lib/og/**"],
+  },
 };
 
 export default nextConfig;

@@ -1,7 +1,12 @@
 import { getBadges } from "@/lib/badges";
+import { getReferralShareUrl } from "@/lib/referral";
+import { ShareButton } from "@/components/ShareButton";
 
 export async function BadgesCard({ userId }: { userId: string }) {
-  const badges = await getBadges(userId);
+  const [badges, shareUrl] = await Promise.all([
+    getBadges(userId),
+    getReferralShareUrl(userId),
+  ]);
   const earnedCount = badges.filter((b) => b.earned).length;
 
   return (
@@ -37,6 +42,16 @@ export async function BadgesCard({ userId }: { userId: string }) {
                 ? b.description
                 : `${b.description} (${Math.min(b.current, b.target)}/${b.target})`}
             </p>
+            {b.earned && (
+              <div className="mt-2">
+                <ShareButton
+                  small
+                  imagePath={`/api/share/badge/${b.id}`}
+                  filename={`ardemy-rozet-${b.id}.png`}
+                  text={`Ardemy Academy'de "${b.title}" rozetini kazandım! ${b.emoji} Sen de dene: ${shareUrl}`}
+                />
+              </div>
+            )}
           </div>
         ))}
       </div>

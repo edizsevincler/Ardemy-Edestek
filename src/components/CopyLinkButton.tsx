@@ -2,7 +2,13 @@
 
 import { useState } from "react";
 
-export function CopyLinkButton({ text }: { text: string }) {
+export function CopyLinkButton({
+  text,
+  label = "Linki Kopyala",
+}: {
+  text: string;
+  label?: string;
+}) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -21,7 +27,7 @@ export function CopyLinkButton({ text }: { text: string }) {
       onClick={handleCopy}
       className="shrink-0 rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:from-brand-500 hover:to-brand-400 hover:scale-[1.03] hover:shadow-lg active:scale-95"
     >
-      {copied ? "Kopyalandı ✓" : "Linki Kopyala"}
+      {copied ? "Kopyalandı ✓" : label}
     </button>
   );
 }

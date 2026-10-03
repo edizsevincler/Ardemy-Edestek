@@ -7,6 +7,8 @@ import {
   FREEZE_MAX,
   FREEZE_PRICE_CREDITS,
 } from "@/lib/streak";
+import { ShareButton } from "@/components/ShareButton";
+import { getReferralShareUrl } from "@/lib/referral";
 import { StreakFreezeCard } from "@/components/StreakFreezeCard";
 import { ReferralCard } from "@/components/ReferralCard";
 import { DailyQuestionSection } from "@/components/DailyQuestionSection";
@@ -27,6 +29,7 @@ export default async function GuestHomePage() {
     prisma.questionUnlock.count({ where: { userId: session!.user.id } }),
     prisma.question.count({ where: { isPublished: true } }),
   ]);
+  const shareUrl = await getReferralShareUrl(session!.user.id);
   const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate, me.streakFreezes) : 0;
   const daysToReward = nextStreakMilestone(streak) - streak;
 
@@ -61,6 +64,17 @@ export default async function GuestHomePage() {
           <p className="mt-1 text-xs text-slate-500">
             {daysToReward} gün sonra 40 dk hediye ders!
           </p>
+          {streak >= 1 && (
+            <div className="mt-2">
+              <ShareButton
+                small
+                imagePath="/api/share/streak"
+                filename="ardemy-seri.png"
+                label="Serimi paylaş"
+                text={`${streak} gündür her gün çalışıyorum! 🔥 Sen de dene: ${shareUrl}`}
+              />
+            </div>
+          )}
         </div>
       </div>
 

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ExamResultData } from "@/lib/exam-config";
+import { ShareButton } from "@/components/ShareButton";
 
 const OPTIONS = ["A", "B", "C", "D"] as const;
 
@@ -10,7 +11,13 @@ function verdict(percent: number) {
   return "Çalışmaya devam — yanlışlarına göz at 📚";
 }
 
-export function ExamResultView({ result }: { result: ExamResultData }) {
+export function ExamResultView({
+  result,
+  shareUrl,
+}: {
+  result: ExamResultData;
+  shareUrl: string;
+}) {
   const percent = Math.round((result.score / Math.max(result.total, 1)) * 100);
 
   return (
@@ -23,7 +30,13 @@ export function ExamResultView({ result }: { result: ExamResultData }) {
         <p className="text-sm text-slate-600">
           %{percent} · {verdict(percent)}
         </p>
-        <div className="mt-3 flex flex-wrap justify-center gap-3">
+        <div className="mt-3 flex flex-wrap items-start justify-center gap-3">
+          <ShareButton
+            imagePath={`/api/share/exam/${result.attemptId}`}
+            filename="ardemy-deneme-sonucu.png"
+            label="Sonucumu paylaş"
+            text={`${result.language} deneme sınavında ${result.score}/${result.total} yaptım! 🎉 Sen de dene: ${shareUrl}`}
+          />
           <Link
             href="/guest/exam"
             className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm transition-all duration-200 hover:scale-[1.03] active:scale-95"

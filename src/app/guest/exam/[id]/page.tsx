@@ -6,6 +6,7 @@ import { buildExamReview } from "@/lib/exam";
 import { ExamRunner } from "@/components/ExamRunner";
 import { ExamResultView } from "@/components/ExamResultView";
 import { EXAM_MINUTES, type ExamLetter } from "@/lib/exam-config";
+import { getReferralShareUrl } from "@/lib/referral";
 
 export default async function ExamAttemptPage({
   params,
@@ -19,6 +20,7 @@ export default async function ExamAttemptPage({
   if (!attempt || attempt.userId !== session!.user.id) notFound();
 
   const questionIds = attempt.questionIds as string[];
+  const shareUrl = await getReferralShareUrl(attempt.userId);
 
   if (attempt.submittedAt) {
     const review = await buildExamReview(
@@ -35,7 +37,9 @@ export default async function ExamAttemptPage({
           ← Deneme Sınavlarım
         </Link>
         <ExamResultView
+          shareUrl={shareUrl}
           result={{
+            attemptId: attempt.id,
             score: attempt.score ?? 0,
             total: attempt.total,
             language: attempt.language,
@@ -73,6 +77,7 @@ export default async function ExamAttemptPage({
       language={attempt.language}
       questions={questions}
       remainingMs={remainingMs}
+      shareUrl={shareUrl}
     />
   );
 }

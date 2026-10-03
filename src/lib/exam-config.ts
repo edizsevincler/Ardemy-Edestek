@@ -32,6 +32,7 @@ export type ExamReviewItem = {
 };
 
 export type ExamResultData = {
+  attemptId: string;
   score: number;
   total: number;
   language: string;

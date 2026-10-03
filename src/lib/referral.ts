@@ -2,6 +2,8 @@ import { prisma } from "@/lib/prisma";
 import { generateReferralCode } from "@/lib/generate";
 import { Prisma } from "@/generated/prisma/client";
 
+import { SITE_URL } from "@/lib/site";
+
 export const REFERRAL_REWARD_CREDITS = 3;
 
 // Referans kodu ilk ihtiyaç duyulduğunda (öğrenci/misafir panelini ilk
@@ -63,4 +65,10 @@ export async function grantReferralRewardIfEligible(userId: string) {
       data: { credits: { increment: REFERRAL_REWARD_CREDITS } },
     }),
   ]);
+}
+
+// Paylaşım metinlerine eklenen kişisel davet linki.
+export async function getReferralShareUrl(userId: string): Promise<string> {
+  const code = await getOrCreateReferralCode(userId);
+  return `${SITE_URL}/register?ref=${code}`;
 }

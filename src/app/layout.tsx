@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { SITE_URL } from "@/lib/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -13,8 +14,18 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Ardemy Academy",
-  description: "Ardemy Academy öğrenci destek platformu",
+  metadataBase: new URL(SITE_URL),
+  title: "Ardemy Academy — Rusça ve İngilizce Test Çöz, Pratik Yap",
+  description:
+    "Rusça ve İngilizce konu anlatımları, binlerce test sorusu, günlük soru, deneme sınavları ve birebir ders takibi. Kayıt ol, 2 kredi hediye.",
+  openGraph: {
+    title: "Ardemy Academy — Dil öğrenmenin en pratik yolu",
+    description:
+      "Rusça ve İngilizce testler, günlük soru, deneme sınavları ve birebir ders takibi.",
+    siteName: "Ardemy Academy",
+    locale: "tr_TR",
+    type: "website",
+  },
 };
 
 export default function RootLayout({

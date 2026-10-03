@@ -48,7 +48,7 @@ export default async function GuestCreditsPage() {
         </p>
         <p className="text-brand-600">
           Almak istediğiniz paket için havaleyi gönderdikten sonra aşağıdan
-          "Havaleyi Gönderdim" butonuna basın; dekontu tarafımıza iletin
+          &quot;Havaleyi Gönderdim&quot; butonuna basın; dekontu tarafımıza iletin
           {WHATSAPP_LINK ? (
             <>
               {" "}

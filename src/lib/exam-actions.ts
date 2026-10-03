@@ -172,7 +172,13 @@ export async function submitExam(
 
   return {
     status: "success",
-    result: { score, total: questionIds.length, language: attempt.language, review },
+    result: {
+      attemptId,
+      score,
+      total: questionIds.length,
+      language: attempt.language,
+      review,
+    },
     newBadges,
     streakNotes: streakNotes(activity),
   };
