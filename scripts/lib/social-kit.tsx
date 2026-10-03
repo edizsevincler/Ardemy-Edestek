@@ -97,6 +97,7 @@ export function wordFrame(props: {
   word: string;
   meaning: string;
   reading?: string;
+  note?: string;
 }): Build {
   return function Word({ size, logo }) {
     return <WordFrame size={size} logo={logo} {...props} />;
