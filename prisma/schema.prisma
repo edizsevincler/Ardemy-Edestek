@@ -421,3 +421,11 @@ model PageViewDaily {
 
   @@id([day, path, source, locale])
 }
+
+// Hatalı giriş denemeleri: aynı kullanıcı adı/e-posta için 15 dakikada 8 hatalı
+// denemeden sonra giriş geçici olarak kilitlenir (şifre tahminini zorlaştırır).
+model LoginThrottle {
+  key         String   @id
+  failures    Int      @default(0)
+  windowStart DateTime @default(now())
+}

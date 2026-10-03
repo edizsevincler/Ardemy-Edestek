@@ -138,3 +138,9 @@ export async function sendPasswordResetEmail(
     `
   );
 }
+
+// Sunucu hatası gibi acil durumlarda yöneticiye (Türkçe) uyarı e-postası.
+export async function sendAdminAlertEmail(subject: string, text: string) {
+  const html = `<pre style="font-family:monospace;white-space:pre-wrap">${escapeHtml(text)}</pre>`;
+  await sendEmail(ADMIN_NOTIFICATION_EMAIL, "Ediz Sevinçler", subject, html);
+}

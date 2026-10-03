@@ -1,6 +1,17 @@
 import type { NextConfig } from "next";
 
+// Tarayıcıya ek koruma talimatları (HSTS Vercel tarafından zaten ekleniyor).
+const securityHeaders = [
+  { key: "X-Content-Type-Options", value: "nosniff" },
+  { key: "X-Frame-Options", value: "SAMEORIGIN" },
+  { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+  { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+];
+
 const nextConfig: NextConfig = {
+  async headers() {
+    return [{ source: "/:path*", headers: securityHeaders }];
+  },
   // Paylaşım/sosyal medya görselleri (next/og) yazı tiplerini ve logoyu
   // çalışma anında dosyadan okur; Vercel'e eksiksiz taşınmaları için açıkça
   // dahil edilir.

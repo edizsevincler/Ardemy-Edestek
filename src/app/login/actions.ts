@@ -4,10 +4,15 @@ import { signIn } from "@/auth";
 import { AuthError } from "next-auth";
 import { prisma } from "@/lib/prisma";
 import { getT } from "@/lib/i18n/server";
+import { isLoginLocked, LOGIN_LOCK_MINUTES } from "@/lib/login-throttle";
 
 export async function authenticate(_prevState: string | undefined, formData: FormData) {
   const t = await getT();
   const username = String(formData.get("username") ?? "");
+
+  if (await isLoginLocked(username)) {
+    return t("Çok fazla hatalı deneme yapıldı. {n} dakika sonra tekrar deneyin.", { n: LOGIN_LOCK_MINUTES });
+  }
 
   const existing = await prisma.user.findFirst({
     where: { OR: [{ username }, { email: username }] },

@@ -10,6 +10,8 @@ import { PrismaPg } from "@prisma/adapter-pg";
 import { buildExamQuestions } from "./lib/exam-lib";
 import { EXAM_EN } from "./data/exam-en";
 import { EXAM_RU } from "./data/exam-ru";
+import { EXAM_EN_2 } from "./data/exam-en-2";
+import { EXAM_RU_2 } from "./data/exam-ru-2";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
@@ -21,8 +23,8 @@ async function main() {
   const bank = new Set(existing.map((q) => norm(q.prompt)));
 
   const sets = [
-    { language: "İngilizce", rows: buildExamQuestions("İngilizce", EXAM_EN) },
-    { language: "Rusça", rows: buildExamQuestions("Rusça", EXAM_RU) },
+    { language: "İngilizce", rows: buildExamQuestions("İngilizce", [...EXAM_EN, ...EXAM_EN_2]) },
+    { language: "Rusça", rows: buildExamQuestions("Rusça", [...EXAM_RU, ...EXAM_RU_2]) },
   ];
 
   for (const { language, rows } of sets) {

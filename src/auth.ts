@@ -2,6 +2,11 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
+import {
+  clearLoginFailures,
+  isLoginLocked,
+  recordLoginFailure,
+} from "@/lib/login-throttle";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
@@ -21,15 +26,25 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
+        // Kilitliyse şifre denemesine hiç izin verilmez (şifre tahminini zorlaştırır).
+        if (await isLoginLocked(username)) return null;
+
         const user = await prisma.user.findFirst({
           where: {
             OR: [{ username }, { email: username }],
           },
         });
-        if (!user) return null;
+        if (!user) {
+          await recordLoginFailure(username);
+          return null;
+        }
 
         const valid = await verifyPassword(password, user.passwordHash);
-        if (!valid) return null;
+        if (!valid) {
+          await recordLoginFailure(username);
+          return null;
+        }
+        await clearLoginFailures(username);
 
         await prisma.user.update({
           where: { id: user.id },

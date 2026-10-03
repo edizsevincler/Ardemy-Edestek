@@ -23,6 +23,8 @@ export const account: MessageEntry[] = [
   ["Hesabınız için şifre sıfırlama isteği aldık. Yeni şifre belirlemek için aşağıdaki linke tıklayın:", "We received a request to reset the password for your account. Click the link below to set a new password:", "Мы получили запрос на сброс пароля для вашего аккаунта. Чтобы задать новый пароль, перейдите по ссылке ниже:"],
   ["Bu linkin süresi 1 saattir. Bu isteği siz yapmadıysanız bu e-postayı yok sayabilirsiniz; şifreniz değişmez.", "This link is valid for 1 hour. If you did not make this request, you can ignore this e-mail; your password will not change.", "Ссылка действительна 1 час. Если вы не отправляли этот запрос, просто проигнорируйте письмо — пароль не изменится."],
 
+  ["Çok fazla hatalı deneme yapıldı. {n} dakika sonra tekrar deneyin.", "Too many failed attempts. Please try again in {n} {n#minute|minutes}.", "Слишком много неудачных попыток. Повторите через {n} {n#минуту|минуты|минут}."],
+
   // ── Ana ekrana ekle (PWA) ──
   ["📲 Uygulama gibi kullan", "📲 Use it like an app", "📲 Используйте как приложение"],
   ["Siteyi ana ekranına ekle: tek dokunuşla aç, günlük sorunu ve serini kaçırma.", "Add the site to your home screen: open it with one tap and never miss your daily question or streak.", "Добавьте сайт на главный экран: открывайте одним касанием и не пропускайте вопрос дня и серию."],
