@@ -9,7 +9,7 @@ import { UnlockButton } from "../UnlockButton";
 import { slugify } from "@/lib/slugify";
 import { getI18n } from "@/lib/i18n/server";
 import { INTL_TAG } from "@/lib/i18n/config";
-import { subjectLabel } from "@/lib/i18n/subject";
+import { questionTitleLabel, subjectLabel } from "@/lib/i18n/subject";
 
 export default async function GuestQuestionDetailPage({
   params,
@@ -48,7 +48,7 @@ export default async function GuestQuestionDetailPage({
         {subjectLabel(question.subject, t)}
       </p>
       <h1 className="mt-1 text-xl font-semibold text-brand-950">
-        {question.title}
+        {questionTitleLabel(question.title, t)}
       </h1>
     </div>
   );
@@ -157,7 +157,7 @@ export default async function GuestQuestionDetailPage({
               <iframe
                 src={`/api/questions/${question.id}/preview`}
                 className="mt-4 h-[50vh] w-full rounded-lg border border-slate-200"
-                title={t("{title} — önizleme", { title: question.title })}
+                title={t("{title} — önizleme", { title: questionTitleLabel(question.title, t) })}
               />
               <p className="mt-2 text-xs text-slate-400">
                 {t("Sadece ilk sayfa gösteriliyor")}
@@ -201,7 +201,7 @@ export default async function GuestQuestionDetailPage({
             <iframe
               src={`/api/questions/${question.id}/file`}
               className="mt-4 h-[75vh] w-full rounded-lg border border-slate-200"
-              title={question.title}
+              title={questionTitleLabel(question.title, t)}
             />
           )}
 

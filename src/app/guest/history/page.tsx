@@ -3,7 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getI18n } from "@/lib/i18n/server";
 import { INTL_TAG } from "@/lib/i18n/config";
-import { subjectLabel } from "@/lib/i18n/subject";
+import { questionTitleLabel, subjectLabel } from "@/lib/i18n/subject";
 import { tx } from "@/lib/i18n/translate";
 
 export default async function GuestHistoryPage() {
@@ -105,7 +105,7 @@ export default async function GuestHistoryPage() {
               )}
               {unlocks.map((u) => (
                 <tr key={u.id} className="border-b border-slate-50 last:border-0">
-                  <td className="px-4 py-2 text-slate-900">{u.question.title}</td>
+                  <td className="px-4 py-2 text-slate-900">{questionTitleLabel(u.question.title, t)}</td>
                   <td className="px-4 py-2 text-slate-600">{subjectLabel(u.question.subject, t)}</td>
                   <td className="px-4 py-2 text-slate-600">
                     {u.question.creditCost}

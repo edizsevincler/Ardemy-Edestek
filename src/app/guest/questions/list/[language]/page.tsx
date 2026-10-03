@@ -6,7 +6,7 @@ import { UnlockButton } from "../../UnlockButton";
 import { FlagIcon } from "@/components/FlagIcon";
 import { slugify } from "@/lib/slugify";
 import { getT } from "@/lib/i18n/server";
-import { subjectLabel } from "@/lib/i18n/subject";
+import { questionTitleLabel, subjectLabel } from "@/lib/i18n/subject";
 import type { TFunction } from "@/lib/i18n/translate";
 
 type QuestionItem = {
@@ -86,7 +86,7 @@ function QuestionSection({
                     className="flex items-center justify-between gap-4 rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-4 shadow-sm"
                   >
                     <p className="font-medium text-brand-950">
-                      {isUnlocked ? q.title : "🔒 " + q.title}
+                      {isUnlocked ? questionTitleLabel(q.title, t) : "🔒 " + questionTitleLabel(q.title, t)}
                       {q.pageCount ? (
                         <span className="ml-1 font-normal text-slate-500">
                           {t("({n} sayfa)", { n: q.pageCount })}
