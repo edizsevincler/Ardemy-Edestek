@@ -235,3 +235,42 @@ export function WordFrame({
     </Frame>
   );
 }
+
+// Instagram "Öne Çıkanlar" kapağı: yuvarlak kırpılacağı için tek bir büyük simge,
+// tam ortada ve kenarlardan uzakta durur.
+export function HighlightCover({
+  size,
+  emoji,
+}: {
+  size: Size;
+  emoji: string;
+}) {
+  return (
+    <div
+      style={{
+        width: size.width,
+        height: size.height,
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        background: "linear-gradient(160deg, #1c1147 0%, #2f2178 55%, #4b32b3 100%)",
+      }}
+    >
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          width: 640,
+          height: 640,
+          borderRadius: 9999,
+          background: "rgba(232,194,90,0.18)",
+          border: "10px solid #e8c25a",
+          fontSize: 340,
+        }}
+      >
+        {emoji}
+      </div>
+    </div>
+  );
+}

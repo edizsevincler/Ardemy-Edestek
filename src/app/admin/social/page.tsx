@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CopyLinkButton } from "@/components/CopyLinkButton";
+import { nextMonday } from "@/lib/social-week-pack";
 import {
   buildSocialCaption,
   getSocialQuestion,
@@ -44,6 +45,36 @@ export default async function AdminSocialPage({
           paylaş, cevap görselini hikâyeye veya ertesi güne koy.
         </p>
       </div>
+
+      <form
+        action="/api/admin/social/week"
+        method="get"
+        className="flex flex-wrap items-end gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm"
+      >
+        <div className="space-y-1">
+          <label htmlFor="start" className="block text-sm font-medium text-slate-700">
+            📦 Haftalık soru paketi (zip)
+          </label>
+          <p className="text-xs text-slate-500">
+            Pazartesi Rusça, Salı İngilizce, Cumartesi zor soru görselleri; cevap
+            hikâyeleri ve açıklamalar. Hafta başlangıç tarihini (Pazartesi) seç.
+          </p>
+          <input
+            id="start"
+            name="start"
+            type="date"
+            required
+            defaultValue={nextMonday()}
+            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm"
+          />
+        </div>
+        <button
+          type="submit"
+          className="rounded-lg bg-gradient-to-r from-brand-600 to-brand-500 px-4 py-2 text-sm font-medium text-white shadow-sm"
+        >
+          ⬇️ Paketi indir
+        </button>
+      </form>
 
       <div className="flex flex-wrap items-center gap-2">
         {SOCIAL_LANGUAGES.map((l) => (

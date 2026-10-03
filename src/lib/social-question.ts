@@ -91,3 +91,57 @@ export function buildSocialCaption(language: string, question: SocialQuestion) {
     HASHTAGS[language],
   ].join("\n");
 }
+
+// Haftalık paket için: verilen tohuma göre deterministik, birbirinden uzak
+// `count` soru seçer (aynı tohum aynı soruları verir). `subjectIncludes`
+// verilirse yalnızca o konuyu içeren sorular aranır; yoksa tümünden seçilir.
+export async function pickSocialQuestions(
+  language: string,
+  seed: string,
+  count: number,
+  subjectIncludes?: string
+): Promise<SocialQuestion[]> {
+  const items = await prisma.quizItem.findMany({
+    where: {
+      question: {
+        isPublished: true,
+        type: "QUIZ",
+        subject: subjectIncludes
+          ? { startsWith: language, contains: subjectIncludes }
+          : { startsWith: language },
+      },
+    },
+    orderBy: { id: "asc" },
+    select: {
+      id: true,
+      prompt: true,
+      optionA: true,
+      optionB: true,
+      optionC: true,
+      optionD: true,
+      correct: true,
+      question: { select: { subject: true } },
+    },
+  });
+  const fits = items.filter(
+    (i) =>
+      i.prompt.length <= 90 &&
+      [i.optionA, i.optionB, i.optionC, i.optionD].every((o) => o.length <= 38)
+  );
+  if (fits.length === 0) return [];
+
+  const start = hashString(`${seed}:${language}:${subjectIncludes ?? ""}`) % fits.length;
+  const stride = Math.max(1, Math.floor(fits.length / (count + 1)));
+  const picked: SocialQuestion[] = [];
+  for (let k = 0; k < count; k++) {
+    const item = fits[(start + k * stride) % fits.length];
+    picked.push({
+      id: item.id,
+      prompt: item.prompt,
+      options: [item.optionA, item.optionB, item.optionC, item.optionD],
+      correct: ["A", "B", "C", "D"].indexOf(item.correct),
+      subject: item.question.subject,
+    });
+  }
+  return picked;
+}
