@@ -6,6 +6,11 @@ import { join } from "node:path";
 // sahip fontlar satori'de sırayla yedek (fallback) olarak denenir.
 // Dosya yolları nft'nin izleyebilmesi için düz string olarak yazıldı.
 
+// Her alt küme ayrı bir aile olarak kaydedilir; kullanım tarafında
+// OG_FONT_FAMILY ile sırayla yedek verilir (böylece kalın metinde de doğru
+// ağırlıktaki glif seçilir).
+export const OG_FONT_FAMILY = "Inter, Inter Ext, Inter Cyr";
+
 type OgFont = {
   name: string;
   data: Buffer;
@@ -26,20 +31,20 @@ async function load() {
     read("inter-cyrillic-700-normal.woff"),
     readFile(join(process.cwd(), "src/lib/og/logo.jpg"), "base64"),
   ]);
-  const font = (data: Buffer, weight: 400 | 700): OgFont => ({
-    name: "Inter",
+  const font = (name: string, data: Buffer, weight: 400 | 700): OgFont => ({
+    name,
     data,
     weight,
     style: "normal",
   });
   return {
     fonts: [
-      font(l4, 400),
-      font(e4, 400),
-      font(c4, 400),
-      font(l7, 700),
-      font(e7, 700),
-      font(c7, 700),
+      font("Inter", l4, 400),
+      font("Inter", l7, 700),
+      font("Inter Ext", e4, 400),
+      font("Inter Ext", e7, 700),
+      font("Inter Cyr", c4, 400),
+      font("Inter Cyr", c7, 700),
     ],
     logo: `data:image/jpeg;base64,${logo}`,
   };

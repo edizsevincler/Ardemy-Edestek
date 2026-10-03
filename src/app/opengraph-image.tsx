@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { getOgAssets } from "@/lib/og/assets";
+import { getOgAssets, OG_FONT_FAMILY } from "@/lib/og/assets";
 import { SITE_HOST } from "@/lib/site";
 
 export const alt = "Ardemy Academy — dil öğrenmenin en pratik yolu";
@@ -20,7 +20,7 @@ export default async function Image() {
           alignItems: "center",
           background: "linear-gradient(160deg, #1c1147 0%, #2f2178 55%, #4b32b3 100%)",
           color: "white",
-          fontFamily: "Inter",
+          fontFamily: OG_FONT_FAMILY,
           textAlign: "center",
           padding: 60,
         }}

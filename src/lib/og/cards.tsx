@@ -4,13 +4,14 @@
 
 import type { ReactNode } from "react";
 import { SITE_HOST } from "@/lib/site";
+import { OG_FONT_FAMILY } from "@/lib/og/assets";
 
 const BG = "linear-gradient(160deg, #1c1147 0%, #2f2178 55%, #4b32b3 100%)";
 const GOLD = "#e8c25a";
 
 type Size = { width: number; height: number };
 
-function Frame({
+export function Frame({
   size,
   logo,
   children,
@@ -32,7 +33,7 @@ function Frame({
         justifyContent: "space-between",
         background: BG,
         color: "white",
-        fontFamily: "Inter",
+        fontFamily: OG_FONT_FAMILY,
         padding: story ? "120px 80px" : "72px 80px",
         position: "relative",
       }}
@@ -269,6 +270,7 @@ export function QuestionCard({
   options,
   correct,
   reveal,
+  label,
 }: {
   size: Size;
   logo: string;
@@ -277,6 +279,7 @@ export function QuestionCard({
   options: string[];
   correct: number;
   reveal: boolean;
+  label?: string;
 }) {
   const story = size.height > size.width;
   const promptSize = prompt.length > 70 ? 56 : prompt.length > 40 ? 68 : 80;
@@ -301,7 +304,9 @@ export function QuestionCard({
           fontWeight: 700,
         }}
       >
-        {reveal ? `Günün ${language} Sorusu — Cevap` : `Günün ${language} Sorusu`}
+        {reveal
+          ? `${label ?? `Günün ${language} Sorusu`} — Cevap`
+          : (label ?? `Günün ${language} Sorusu`)}
       </div>
       <div
         style={{
