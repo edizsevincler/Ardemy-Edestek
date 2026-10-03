@@ -105,3 +105,34 @@ export async function pickFreeTestQuestions(
   );
   return items.filter((i): i is FreeTestQuestion => i !== null);
 }
+
+// Ana sayfadaki canlı örnek için tek bir rastgele soru + kendi imzalı token'ı
+// (gradeFreeTest ile aynı akışla değerlendirilir).
+export async function pickDemoQuestion(
+  language: string
+): Promise<{ question: FreeTestQuestion; token: string } | null> {
+  const where = {
+    question: {
+      isPublished: true,
+      type: "QUIZ" as const,
+      subject: { startsWith: language },
+    },
+  };
+  const count = await prisma.quizItem.count({ where });
+  if (count === 0) return null;
+  const question = await prisma.quizItem.findFirst({
+    where,
+    orderBy: { id: "asc" },
+    skip: Math.floor(Math.random() * count),
+    select: {
+      id: true,
+      prompt: true,
+      optionA: true,
+      optionB: true,
+      optionC: true,
+      optionD: true,
+    },
+  });
+  if (!question) return null;
+  return { question, token: makeFreeTestToken([question.id]) };
+}

@@ -10,6 +10,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { getT } from "@/lib/i18n/server";
 import { findTitle } from "@/lib/cosmetics";
 import { InstallPrompt } from "@/components/InstallPrompt";
+import { BottomNav } from "@/components/BottomNav";
 
 export default async function GuestLayout({
   children,
@@ -76,41 +77,60 @@ export default async function GuestLayout({
           {isStudent && (
             <Link
               href="/student"
-              className="shrink-0 transition hover:text-gold-400"
+              className="hidden shrink-0 transition hover:text-gold-400 sm:block"
             >
               {t("← Öğrenci Paneli")}
             </Link>
           )}
-          <Link href="/guest" className="shrink-0 transition hover:text-gold-400">
+          <Link href="/guest" className="hidden shrink-0 transition hover:text-gold-400 sm:block">
             {t("Panel")}
           </Link>
-          <Link href="/guest/questions" className="shrink-0 transition hover:text-gold-400">
+          <Link href="/guest/questions" className="hidden shrink-0 transition hover:text-gold-400 sm:block">
             {t("İçerikler")}
           </Link>
-          <Link href="/guest/exam" className="shrink-0 transition hover:text-gold-400">
+          <Link href="/guest/exam" className="hidden shrink-0 transition hover:text-gold-400 sm:block">
             {t("Deneme Sınavı")}
           </Link>
-          <Link href="/guest/shop" className="shrink-0 transition hover:text-gold-400">
+          <Link href="/guest/shop" className="hidden shrink-0 transition hover:text-gold-400 sm:block">
             {t("Mağaza")}
           </Link>
-          <Link href="/guest/credits" className="shrink-0 transition hover:text-gold-400">
+          <Link href="/guest/credits" className="hidden shrink-0 transition hover:text-gold-400 sm:block">
             {t("Kredi Satın Al")}
           </Link>
-          <Link href="/guest/history" className="shrink-0 transition hover:text-gold-400">
+          <Link href="/guest/history" className="hidden shrink-0 transition hover:text-gold-400 sm:block">
             {t("Geçmişim")}
           </Link>
-          <span className="shrink-0 rounded-full bg-gold-500/20 px-2.5 py-1 text-xs font-medium text-gold-400">
+          <Link
+            href="/guest/credits"
+            className="shrink-0 rounded-full bg-gold-500/20 px-2.5 py-1 text-xs font-medium text-gold-400 transition hover:bg-gold-500/30"
+          >
             {t("{n} kredi", { n: me?.credits ?? 0 })}
-          </span>
-          <span className="shrink-0 rounded-full bg-orange-500/20 px-2.5 py-1 text-xs font-medium text-orange-400">
+          </Link>
+          <span
+            className={`shrink-0 rounded-full bg-orange-500/20 px-2.5 py-1 text-xs font-medium text-orange-400 ${
+              streak > 0 ? "animate-ember" : ""
+            }`}
+          >
             {t("🔥 {n} gün", { n: streak })}
           </span>
         </nav>
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-6 animate-fade-in sm:px-6 sm:py-8">
+      <main className="mx-auto max-w-5xl px-4 py-6 pb-24 animate-fade-in sm:px-6 sm:py-8 sm:pb-8">
         <InstallPrompt />
         {children}
       </main>
+      <BottomNav
+        items={[
+          ...(isStudent
+            ? [{ href: "/student", label: t("Öğrenci"), icon: "student" as const, exact: true }]
+            : []),
+          { href: "/guest", label: t("Panel"), icon: "home" as const, exact: true },
+          { href: "/guest/questions", label: t("İçerikler"), icon: "book" as const },
+          { href: "/guest/exam", label: t("Deneme"), icon: "exam" as const },
+          { href: "/guest/shop", label: t("Mağaza"), icon: "shop" as const },
+          { href: "/guest/history", label: t("Geçmişim"), icon: "history" as const },
+        ]}
+      />
     </div>
   );
 }

@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { answerDailyQuestion } from "@/lib/daily-question-actions";
 import { NewBadgesBanner } from "@/components/NewBadgesBanner";
+import { Celebration } from "@/components/Celebration";
 import { useT } from "@/lib/i18n/client";
 import { subjectLabel } from "@/lib/i18n/subject";
 import type { DailyItem, DailyOption, DailyResult } from "@/lib/daily-question";
@@ -24,6 +25,8 @@ export function DailyQuestionCard({
   const [error, setError] = useState<string | null>(null);
   const [newBadges, setNewBadges] = useState<{ emoji: string; title: string }[]>([]);
   const [notes, setNotes] = useState<string[]>([]);
+  // Sayfa yüklenirken değil, cevap şimdi verildiğinde animasyon oynasın.
+  const [justAnswered, setJustAnswered] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   function submit() {
@@ -42,11 +45,13 @@ export function DailyQuestionCard({
       });
       setNewBadges(res.newBadges);
       setNotes(res.streakNotes);
+      setJustAnswered(true);
     });
   }
 
   return (
     <div className="rounded-xl border border-gold-200 bg-gold-50/60 p-5 shadow-sm">
+      {justAnswered && result?.correct && newBadges.length === 0 && <Celebration count={24} />}
       <div className="flex flex-wrap items-center justify-between gap-2">
         <h2 className="font-medium text-brand-950">{t("📅 Günün Sorusu")}</h2>
         <span className="text-xs text-slate-500">{subjectLabel(item.subject, t)}</span>
@@ -59,9 +64,9 @@ export function DailyQuestionCard({
           let style = "border-slate-200 bg-white hover:border-brand-300";
           if (result) {
             if (opt === result.correctOption) {
-              style = "border-green-400 bg-green-50";
+              style = `border-green-400 bg-green-50 ${justAnswered ? "animate-pop" : ""}`;
             } else if (opt === result.selected) {
-              style = "border-red-400 bg-red-50";
+              style = `border-red-400 bg-red-50 ${justAnswered ? "animate-shake" : ""}`;
             } else {
               style = "border-slate-200 bg-white opacity-70";
             }
@@ -71,12 +76,13 @@ export function DailyQuestionCard({
           return (
             <label
               key={opt}
-              className={`flex items-center gap-2 rounded-lg border p-2 text-sm transition-colors ${style} ${
+              className={`flex min-h-12 items-center gap-3 rounded-lg border p-3 text-sm transition-colors sm:min-h-0 sm:gap-2 sm:p-2 ${style} ${
                 result ? "cursor-default" : "cursor-pointer"
               }`}
             >
               <input
                 type="radio"
+                className="h-5 w-5 shrink-0 accent-brand-600 sm:h-4 sm:w-4"
                 name="daily-question"
                 disabled={!!result || isPending}
                 checked={selected === opt}

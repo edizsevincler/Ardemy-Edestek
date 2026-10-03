@@ -35,6 +35,15 @@ body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Telefonda çift dokunuşla yakınlaştırma gecikmesi olmasın */
+a,
+button,
+label,
+summary {
+  touch-action: manipulation;
 }
 
 @layer utilities {
@@ -67,5 +76,136 @@ body {
   .animate-float-slow-delayed {
     animation: float-slow 9s ease-in-out infinite;
     animation-delay: -4.5s;
+  }
+
+  /* Doğru cevap / rozet: yaylanarak büyüyüp yerine oturur */
+  @keyframes pop {
+    0% {
+      transform: scale(0.85);
+      opacity: 0;
+    }
+    55% {
+      transform: scale(1.06);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+  .animate-pop {
+    animation: pop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Yanlış cevap: kısa bir sallanma */
+  @keyframes shake {
+    0%,
+    100% {
+      transform: translateX(0);
+    }
+    20% {
+      transform: translateX(-6px);
+    }
+    40% {
+      transform: translateX(5px);
+    }
+    60% {
+      transform: translateX(-4px);
+    }
+    80% {
+      transform: translateX(2px);
+    }
+  }
+  .animate-shake {
+    animation: shake 0.45s ease-in-out;
+  }
+
+  /* Seri etiketi: sıcak bir parıltı */
+  @keyframes ember {
+    0%,
+    100% {
+      box-shadow: 0 0 0 0 rgba(251, 146, 60, 0);
+    }
+    50% {
+      box-shadow: 0 0 12px 2px rgba(251, 146, 60, 0.45);
+    }
+  }
+  .animate-ember {
+    animation: ember 2.4s ease-in-out infinite;
+  }
+
+  /* Alev emojisi hafifçe titrer */
+  @keyframes flicker {
+    0%,
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+    25% {
+      transform: scale(1.12) rotate(-4deg);
+    }
+    50% {
+      transform: scale(0.96) rotate(3deg);
+    }
+    75% {
+      transform: scale(1.08) rotate(-2deg);
+    }
+  }
+  .animate-flicker {
+    display: inline-block;
+    animation: flicker 1.6s ease-in-out infinite;
+  }
+
+  /* Rozet kazanılınca: dönerek belirir */
+  @keyframes badge-in {
+    0% {
+      transform: scale(0.3) rotate(-14deg);
+      opacity: 0;
+    }
+    60% {
+      transform: scale(1.12) rotate(4deg);
+      opacity: 1;
+    }
+    100% {
+      transform: scale(1) rotate(0deg);
+    }
+  }
+  .animate-badge-in {
+    animation: badge-in 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  }
+
+  /* Konfeti parçaları (bkz. components/Celebration.tsx) */
+  @keyframes confetti-fall {
+    0% {
+      transform: translate3d(0, -10vh, 0) rotate(0deg);
+      opacity: 1;
+    }
+    100% {
+      transform: translate3d(var(--confetti-x), 105vh, 0) rotate(var(--confetti-r));
+      opacity: 0.9;
+    }
+  }
+  .confetti-piece {
+    position: absolute;
+    top: 0;
+    width: 9px;
+    height: 14px;
+    border-radius: 2px;
+    animation: confetti-fall var(--confetti-d) cubic-bezier(0.25, 0.6, 0.45, 1) var(--confetti-delay) forwards;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .confetti-piece,
+    .animate-pop,
+    .animate-shake,
+    .animate-ember,
+    .animate-flicker,
+    .animate-badge-in,
+    .animate-fade-in,
+    .animate-float-slow,
+    .animate-float-slow-delayed {
+      animation: none;
+    }
+    .confetti-piece {
+      display: none;
+    }
   }
 }

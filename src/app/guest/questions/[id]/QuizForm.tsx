@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { submitQuiz } from "./actions";
 import { NewBadgesBanner } from "@/components/NewBadgesBanner";
+import { Celebration } from "@/components/Celebration";
 import { useT } from "@/lib/i18n/client";
 
 type OptionLetter = "A" | "B" | "C" | "D";
@@ -42,6 +43,7 @@ export function QuizForm({
   const [error, setError] = useState<string | null>(null);
   const [newBadges, setNewBadges] = useState<{ emoji: string; title: string }[]>([]);
   const [notes, setNotes] = useState<string[]>([]);
+  const [justFinished, setJustFinished] = useState(false);
   const [isPending, startTransition] = useTransition();
 
   const answeredCount = Object.keys(answers).length;
@@ -57,6 +59,7 @@ export function QuizForm({
       setResult(res);
       setNewBadges(res.newBadges);
       setNotes(res.streakNotes);
+      setJustFinished(true);
     });
   }
 
@@ -66,14 +69,18 @@ export function QuizForm({
     setError(null);
     setNewBadges([]);
     setNotes([]);
+    setJustFinished(false);
   }
 
   return (
     <div className="space-y-4">
       <NewBadgesBanner badges={newBadges} notes={notes} />
+      {justFinished && result && newBadges.length === 0 && result.score >= result.total * 0.8 && (
+        <Celebration count={result.score === result.total ? 48 : 28} />
+      )}
 
       {result && (
-        <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 text-center">
+        <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 text-center animate-pop">
           <p className="text-lg font-semibold text-brand-950">
             {t("{a} doğru, {b} yanlış", { a: result.score, b: result.total - result.score })}
           </p>
@@ -100,18 +107,19 @@ export function QuizForm({
                 let optionClass = "border-slate-200 hover:border-brand-300";
                 if (graded) {
                   if (opt === graded.selected && graded.correct) {
-                    optionClass = "border-green-400 bg-green-50";
+                    optionClass = `border-green-400 bg-green-50 ${justFinished ? "animate-pop" : ""}`;
                   } else if (opt === graded.selected && !graded.correct) {
-                    optionClass = "border-red-400 bg-red-50";
+                    optionClass = `border-red-400 bg-red-50 ${justFinished ? "animate-shake" : ""}`;
                   }
                 }
                 return (
                   <label
                     key={opt}
-                    className={`flex cursor-pointer items-center gap-2 rounded-lg border p-2 text-sm transition-colors ${optionClass}`}
+                    className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm transition-colors sm:min-h-0 sm:gap-2 sm:p-2 ${optionClass}`}
                   >
                     <input
                       type="radio"
+                className="h-5 w-5 shrink-0 accent-brand-600 sm:h-4 sm:w-4"
                       name={item.id}
                       checked={isSelected}
                       onChange={() =>

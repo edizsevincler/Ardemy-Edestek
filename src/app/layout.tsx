@@ -22,6 +22,7 @@ const geistMono = Geist_Mono({
 
 export const viewport: Viewport = {
   themeColor: "#1c1147",
+  viewportFit: "cover",
 };
 
 const OG_LOCALES = { tr: "tr_TR", en: "en_GB", ru: "ru_RU" } as const;

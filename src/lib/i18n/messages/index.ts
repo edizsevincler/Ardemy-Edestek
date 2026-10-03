@@ -8,7 +8,8 @@ import { panel } from "./panel";
 import { badges } from "./badges";
 import { account } from "./account";
 import { titles } from "./titles";
+import { design } from "./design";
 
 export type MessageEntry = readonly [tr: string, en: string, ru: string];
 
-export const MESSAGES: MessageEntry[] = [...common, ...legal, ...panel, ...badges, ...account, ...titles];
+export const MESSAGES: MessageEntry[] = [...common, ...legal, ...panel, ...badges, ...account, ...titles, ...design];

@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { gradeFreeTest, type FreeTestResult } from "@/lib/free-test-actions";
 import type { FreeTestQuestion } from "@/lib/free-test";
 import { useT } from "@/lib/i18n/client";
+import { Celebration } from "@/components/Celebration";
 
 type Letter = "A" | "B" | "C" | "D";
 const OPTIONS: Letter[] = ["A", "B", "C", "D"];
@@ -60,12 +61,13 @@ export function FreeTest({
                 return (
                   <label
                     key={opt}
-                    className={`flex items-center gap-2 rounded-lg border p-2 text-sm transition-colors ${style} ${
+                    className={`flex min-h-12 items-center gap-3 rounded-lg border p-3 text-sm transition-colors sm:min-h-0 sm:gap-2 sm:p-2 ${style} ${
                       done ? "cursor-default" : "cursor-pointer"
                     }`}
                   >
                     <input
                       type="radio"
+                      className="h-5 w-5 shrink-0 accent-brand-600 sm:h-4 sm:w-4"
                       name={`free-${q.id}`}
                       checked={checked}
                       disabled={!!done || isPending}
@@ -89,7 +91,8 @@ export function FreeTest({
       )}
 
       {done ? (
-        <div className="space-y-3 rounded-xl border border-gold-300 bg-gradient-to-r from-gold-50 to-white p-5 text-center shadow-sm">
+        <div className="space-y-3 rounded-xl border border-gold-300 bg-gradient-to-r from-gold-50 to-white p-5 text-center shadow-sm animate-pop">
+          {done.score >= done.total - 1 && <Celebration count={32} />}
           <p className="text-2xl font-semibold text-brand-950">
             {done.score} / {done.total}{" "}
             {done.score >= done.total - 1 ? "🎉" : done.score >= 3 ? "👏" : "💪"}

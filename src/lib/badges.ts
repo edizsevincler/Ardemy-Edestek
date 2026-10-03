@@ -173,6 +173,15 @@ async function computeBadges(userId: string) {
 }
 
 // Panelde gösterim için: kazanılanlar önce.
+// Ana sayfadaki rozet vitrini için: seçilen rozetlerin çevrilmemiş tanımları
+// (gösterirken t() ile çevrilir).
+export function previewBadges(ids: string[]) {
+  return ids
+    .map((id) => DEFINITIONS.find((d) => d.id === id))
+    .filter((d): d is Definition => !!d)
+    .map(({ id, emoji, title, description }) => ({ id, emoji, title, description }));
+}
+
 export async function getBadges(userId: string): Promise<Badge[]> {
   const t = await getT();
   const { badges } = await computeBadges(userId);

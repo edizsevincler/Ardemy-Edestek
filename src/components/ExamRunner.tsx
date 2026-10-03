@@ -156,7 +156,7 @@ export function ExamRunner({
                 return (
                   <label
                     key={opt}
-                    className={`flex cursor-pointer items-center gap-2 rounded-lg border p-2 text-sm transition-colors ${
+                    className={`flex min-h-12 cursor-pointer items-center gap-3 rounded-lg border p-3 text-sm transition-colors sm:min-h-0 sm:gap-2 sm:p-2 ${
                       checked
                         ? "border-brand-500 bg-brand-50"
                         : "border-slate-200 bg-white hover:border-brand-300"
@@ -164,6 +164,7 @@ export function ExamRunner({
                   >
                     <input
                       type="radio"
+                      className="h-5 w-5 shrink-0 accent-brand-600 sm:h-4 sm:w-4"
                       name={`q-${q.id}`}
                       checked={checked}
                       disabled={isPending}
