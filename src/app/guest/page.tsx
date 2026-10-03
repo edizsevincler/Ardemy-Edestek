@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { displayStreak, nextStreakMilestone } from "@/lib/streak";
+import {
+  displayStreak,
+  nextStreakMilestone,
+  FREEZE_MAX,
+  FREEZE_PRICE_CREDITS,
+} from "@/lib/streak";
+import { StreakFreezeCard } from "@/components/StreakFreezeCard";
 import { ReferralCard } from "@/components/ReferralCard";
 import { DailyQuestionSection } from "@/components/DailyQuestionSection";
 import { BadgesCard } from "@/components/BadgesCard";
@@ -11,12 +17,17 @@ export default async function GuestHomePage() {
   const [me, unlockedCount, questionCount] = await Promise.all([
     prisma.user.findUnique({
       where: { id: session!.user.id },
-      select: { credits: true, currentStreak: true, lastStreakDate: true },
+      select: {
+        credits: true,
+        currentStreak: true,
+        lastStreakDate: true,
+        streakFreezes: true,
+      },
     }),
     prisma.questionUnlock.count({ where: { userId: session!.user.id } }),
     prisma.question.count({ where: { isPublished: true } }),
   ]);
-  const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate) : 0;
+  const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate, me.streakFreezes) : 0;
   const daysToReward = nextStreakMilestone(streak) - streak;
 
   return (
@@ -54,6 +65,13 @@ export default async function GuestHomePage() {
       </div>
 
       <DailyQuestionSection userId={session!.user.id} />
+
+      <StreakFreezeCard
+        freezes={me?.streakFreezes ?? 0}
+        max={FREEZE_MAX}
+        price={FREEZE_PRICE_CREDITS}
+        credits={me?.credits ?? 0}
+      />
 
       <div className="flex gap-3">
         <Link

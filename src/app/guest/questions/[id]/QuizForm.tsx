@@ -39,6 +39,7 @@ export function QuizForm({
   const [result, setResult] = useState(existingSubmission);
   const [error, setError] = useState<string | null>(null);
   const [newBadges, setNewBadges] = useState<{ emoji: string; title: string }[]>([]);
+  const [notes, setNotes] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
 
   const answeredCount = Object.keys(answers).length;
@@ -53,6 +54,7 @@ export function QuizForm({
       }
       setResult(res);
       setNewBadges(res.newBadges);
+      setNotes(res.streakNotes);
     });
   }
 
@@ -61,11 +63,12 @@ export function QuizForm({
     setResult(null);
     setError(null);
     setNewBadges([]);
+    setNotes([]);
   }
 
   return (
     <div className="space-y-4">
-      <NewBadgesBanner badges={newBadges} />
+      <NewBadgesBanner badges={newBadges} notes={notes} />
 
       {result && (
         <div className="rounded-xl border border-brand-200 bg-brand-50 p-4 text-center">

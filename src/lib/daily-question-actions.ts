@@ -3,7 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { Prisma } from "@/generated/prisma/client";
-import { dateKey, recordStreakActivity } from "@/lib/streak";
+import { dateKey, recordStreakActivity, streakNotes } from "@/lib/streak";
 import { awardBadges } from "@/lib/badges";
 import {
   getDailyLanguage,
@@ -19,6 +19,7 @@ type AnswerResult =
       correct: boolean;
       correctOption: DailyOption;
       newBadges: { emoji: string; title: string }[];
+      streakNotes: string[];
     };
 
 export async function answerDailyQuestion(
@@ -69,11 +70,17 @@ export async function answerDailyQuestion(
     throw error;
   }
 
-  await recordStreakActivity(userId);
+  const activity = await recordStreakActivity(userId);
   const newBadges = await awardBadges(userId).catch(() => []);
 
   revalidatePath("/guest");
   revalidatePath("/student");
 
-  return { status: "success", correct, correctOption: full.correct, newBadges };
+  return {
+    status: "success",
+    correct,
+    correctOption: full.correct,
+    newBadges,
+    streakNotes: streakNotes(activity),
+  };
 }

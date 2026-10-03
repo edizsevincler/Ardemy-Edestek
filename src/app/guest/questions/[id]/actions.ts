@@ -3,7 +3,7 @@
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile } from "@/lib/storage";
-import { recordStreakActivity } from "@/lib/streak";
+import { recordStreakActivity, streakNotes } from "@/lib/streak";
 import { awardBadges } from "@/lib/badges";
 import { revalidatePath } from "next/cache";
 
@@ -90,6 +90,7 @@ type SubmitQuizResult =
       total: number;
       answers: { itemId: string; selected: QuizOptionLetter; correct: boolean }[];
       newBadges: { emoji: string; title: string }[];
+      streakNotes: string[];
     };
 
 export async function submitQuiz(
@@ -143,7 +144,7 @@ export async function submitQuiz(
     },
   });
 
-  await recordStreakActivity(session.user.id);
+  const activity = await recordStreakActivity(session.user.id);
   const newBadges = await awardBadges(session.user.id).catch(() => []);
 
   revalidatePath(`/guest/questions/${questionId}`);
@@ -154,5 +155,6 @@ export async function submitQuiz(
     total: items.length,
     answers: graded as { itemId: string; selected: QuizOptionLetter; correct: boolean }[],
     newBadges,
+    streakNotes: streakNotes(activity),
   };
 }

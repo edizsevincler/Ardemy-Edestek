@@ -23,9 +23,14 @@ export default async function GuestLayout({
 
   const me = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { credits: true, currentStreak: true, lastStreakDate: true },
+    select: {
+        credits: true,
+        currentStreak: true,
+        lastStreakDate: true,
+        streakFreezes: true,
+      },
   });
-  const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate) : 0;
+  const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate, me.streakFreezes) : 0;
 
   return (
     <div className="min-h-screen bg-background">

@@ -1,10 +1,10 @@
 import { prisma } from "@/lib/prisma";
-import { dateKey } from "@/lib/streak";
+import { dateKey, displayStreak } from "@/lib/streak";
 import { sendStreakReminderEmail } from "@/lib/email";
 
 // Vercel Cron her gün 20:00 (Türkiye saati) civarında bu endpoint'i çağırır
 // (bkz. vercel.json). Serisi olan ama bugün henüz aktivite yapmamış her
-// kullanıcıya (e-postası varsa) bir hatırlatma gönderir.
+// kullanıcıya (e-postası varsa ve serisi hâlâ canlıysa) hatırlatma gönderir.
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
   if (
@@ -22,7 +22,14 @@ export async function GET(request: Request) {
       lastStreakDate: { not: null },
       email: { not: null },
     },
-    select: { id: true, name: true, email: true, currentStreak: true, lastStreakDate: true },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      currentStreak: true,
+      lastStreakDate: true,
+      streakFreezes: true,
+    },
   });
 
   let sent = 0;
@@ -30,6 +37,12 @@ export async function GET(request: Request) {
     if (!user.email || !user.lastStreakDate) continue;
     // Bugün zaten aktivite yapmışsa hatırlatmaya gerek yok.
     if (dateKey(user.lastStreakDate) === todayKey) continue;
+    // Serisi zaten kopmuşsa (koruma da yetmiyorsa) hatırlatmak anlamsız.
+    if (
+      displayStreak(user.currentStreak, user.lastStreakDate, user.streakFreezes) === 0
+    ) {
+      continue;
+    }
 
     try {
       await sendStreakReminderEmail(user.email, user.name, user.currentStreak);

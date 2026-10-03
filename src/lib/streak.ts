@@ -4,6 +4,11 @@ import { sendStreakRewardEmail } from "@/lib/email";
 const TIMEZONE = "Europe/Istanbul";
 const MILESTONE = 30;
 
+// Seri koruma: kaçırılan günü otomatik kurtarır.
+export const FREEZE_PRICE_CREDITS = 1;
+export const FREEZE_MAX = 3;
+const FREEZE_EVERY_DAYS = 7; // her 7. seri gününde 1 bedava koruma
+
 export function dateKey(date: Date): string {
   return new Intl.DateTimeFormat("en-CA", {
     timeZone: TIMEZONE,
@@ -13,15 +18,24 @@ export function dateKey(date: Date): string {
   }).format(date);
 }
 
-function daysBetweenKeys(a: string, b: string): number {
+export function daysBetweenKeys(a: string, b: string): number {
   return Math.round(
     (Date.parse(`${b}T00:00:00Z`) - Date.parse(`${a}T00:00:00Z`)) / 86_400_000
   );
 }
 
+export type StreakActivityResult = {
+  freezesUsed: number;
+  freezeEarned: boolean;
+};
+
 // Bir soru/test çözüldüğünde çağrılır. Aynı gün içinde tekrar çağrılırsa
 // (yeniden gönderim gibi) hiçbir şey değişmez — günde bir kez sayılır.
-export async function recordStreakActivity(userId: string) {
+export async function recordStreakActivity(
+  userId: string
+): Promise<StreakActivityResult> {
+  const none = { freezesUsed: 0, freezeEarned: false };
+
   const user = await prisma.user.findUnique({
     where: { id: userId },
     select: {
@@ -31,19 +45,37 @@ export async function recordStreakActivity(userId: string) {
       longestStreak: true,
       lastStreakDate: true,
       lastRewardStreak: true,
+      streakFreezes: true,
     },
   });
-  if (!user) return;
+  if (!user) return none;
 
   const todayKey = dateKey(new Date());
   const lastKey = user.lastStreakDate ? dateKey(user.lastStreakDate) : null;
 
-  if (lastKey === todayKey) return;
+  if (lastKey === todayKey) return none;
 
-  const newStreak =
-    lastKey && daysBetweenKeys(lastKey, todayKey) === 1
-      ? user.currentStreak + 1
-      : 1;
+  const diff = lastKey ? daysBetweenKeys(lastKey, todayKey) : null;
+  let newStreak = 1;
+  let freezesUsed = 0;
+  if (diff === 1) {
+    newStreak = user.currentStreak + 1;
+  } else if (diff !== null && diff > 1 && user.currentStreak > 0) {
+    // Kaçırılan her gün için bir koruma gerekir; hepsini karşılayamıyorsa
+    // seri zaten kaybedilir ve korumalar harcanmaz.
+    const missedDays = diff - 1;
+    if (user.streakFreezes >= missedDays) {
+      newStreak = user.currentStreak + 1;
+      freezesUsed = missedDays;
+    }
+  }
+
+  const continued = newStreak > user.currentStreak;
+  const freezesAfterUse = user.streakFreezes - freezesUsed;
+  const freezeEarned =
+    continued &&
+    newStreak % FREEZE_EVERY_DAYS === 0 &&
+    freezesAfterUse < FREEZE_MAX;
 
   let lastRewardStreak = user.lastRewardStreak;
   const newMilestones: number[] = [];
@@ -59,6 +91,7 @@ export async function recordStreakActivity(userId: string) {
       longestStreak: Math.max(user.longestStreak, newStreak),
       lastStreakDate: new Date(),
       lastRewardStreak,
+      streakFreezes: freezesAfterUse + (freezeEarned ? 1 : 0),
     },
   });
 
@@ -71,17 +104,37 @@ export async function recordStreakActivity(userId: string) {
       // zaten görünür — akışı bozmasın.
     });
   }
+
+  return { freezesUsed, freezeEarned };
+}
+
+// Kullanıcıya gösterilecek seri koruma mesajları.
+export function streakNotes(r: StreakActivityResult): string[] {
+  const notes: string[] = [];
+  if (r.freezesUsed > 0) {
+    notes.push(
+      `🛡️ Seri korumanız devreye girdi${
+        r.freezesUsed > 1 ? ` (${r.freezesUsed} gün)` : ""
+      } — serin kurtuldu!`
+    );
+  }
+  if (r.freezeEarned) {
+    notes.push(`🎁 ${FREEZE_EVERY_DAYS} günlük seri: 1 seri koruma kazandın!`);
+  }
+  return notes;
 }
 
 // Streak DB'de güncel olsa bile bir gün atlanmışsa panelde 0 gösterilmeli
-// (gerçek sıfırlama ancak bir sonraki aktivitede yazılır).
+// (gerçek sıfırlama ancak bir sonraki aktivitede yazılır). Seri koruma varsa
+// kaçırılan günleri karşıladığı sürece seri hâlâ canlıdır.
 export function displayStreak(
   currentStreak: number,
-  lastStreakDate: Date | null
+  lastStreakDate: Date | null,
+  freezes = 0
 ): number {
   if (!lastStreakDate) return 0;
   const diff = daysBetweenKeys(dateKey(lastStreakDate), dateKey(new Date()));
-  return diff <= 1 ? currentStreak : 0;
+  return diff <= 1 + freezes ? currentStreak : 0;
 }
 
 // Bir sonraki ödül kaç günde (30, 60, 90...) verilecek.

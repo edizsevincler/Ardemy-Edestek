@@ -20,6 +20,7 @@ export function DailyQuestionCard({
   const [result, setResult] = useState<DailyResult | null>(initialResult);
   const [error, setError] = useState<string | null>(null);
   const [newBadges, setNewBadges] = useState<{ emoji: string; title: string }[]>([]);
+  const [notes, setNotes] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
 
   function submit() {
@@ -37,6 +38,7 @@ export function DailyQuestionCard({
         correctOption: res.correctOption,
       });
       setNewBadges(res.newBadges);
+      setNotes(res.streakNotes);
     });
   }
 
@@ -87,9 +89,9 @@ export function DailyQuestionCard({
 
       {error && <p className="mt-3 text-sm text-red-600">{error}</p>}
 
-      {newBadges.length > 0 && (
+      {(newBadges.length > 0 || notes.length > 0) && (
         <div className="mt-3">
-          <NewBadgesBanner badges={newBadges} />
+          <NewBadgesBanner badges={newBadges} notes={notes} />
         </div>
       )}
 

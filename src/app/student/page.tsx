@@ -3,7 +3,13 @@ import { prisma } from "@/lib/prisma";
 import { AssignmentCard } from "./AssignmentCard";
 import { LessonFilesList } from "./LessonFilesList";
 import { formatSessionStatus } from "@/lib/session-status";
-import { displayStreak, nextStreakMilestone } from "@/lib/streak";
+import {
+  displayStreak,
+  nextStreakMilestone,
+  FREEZE_MAX,
+  FREEZE_PRICE_CREDITS,
+} from "@/lib/streak";
+import { StreakFreezeCard } from "@/components/StreakFreezeCard";
 import { ReferralCard } from "@/components/ReferralCard";
 import { DailyQuestionSection } from "@/components/DailyQuestionSection";
 import { BadgesCard } from "@/components/BadgesCard";
@@ -20,6 +26,8 @@ export default async function StudentHomePage() {
         sessionsRemaining: true,
         currentStreak: true,
         lastStreakDate: true,
+        streakFreezes: true,
+        credits: true,
       },
     }),
     prisma.assignment.findMany({
@@ -36,7 +44,7 @@ export default async function StudentHomePage() {
     }),
   ]);
 
-  const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate) : 0;
+  const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate, me.streakFreezes) : 0;
   const daysToReward = nextStreakMilestone(streak) - streak;
 
   return (
@@ -63,6 +71,13 @@ export default async function StudentHomePage() {
       </div>
 
       <DailyQuestionSection userId={studentId} />
+
+      <StreakFreezeCard
+        freezes={me?.streakFreezes ?? 0}
+        max={FREEZE_MAX}
+        price={FREEZE_PRICE_CREDITS}
+        credits={me?.credits ?? 0}
+      />
 
       <section className="space-y-3">
         <h2 className="text-lg font-medium text-slate-900">Ödevlerim</h2>
