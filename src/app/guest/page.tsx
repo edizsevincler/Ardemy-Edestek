@@ -2,6 +2,7 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import {
+  dateKey,
   displayStreak,
   nextStreakMilestone,
   FREEZE_MAX,
@@ -10,6 +11,7 @@ import {
 import { ShareButton } from "@/components/ShareButton";
 import { getReferralShareUrl } from "@/lib/referral";
 import { StreakFreezeCard } from "@/components/StreakFreezeCard";
+import { StreakCard } from "@/components/StreakCard";
 import { ReferralCard } from "@/components/ReferralCard";
 import { DailyQuestionSection } from "@/components/DailyQuestionSection";
 import { BadgesCard } from "@/components/BadgesCard";
@@ -33,13 +35,14 @@ export default async function GuestHomePage() {
   ]);
   const shareUrl = await getReferralShareUrl(session!.user.id);
   const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate, me.streakFreezes) : 0;
-  const daysToReward = nextStreakMilestone(streak) - streak;
+  const milestone = nextStreakMilestone(streak);
+  const doneToday = !!me?.lastStreakDate && dateKey(me.lastStreakDate) === dateKey(new Date());
 
   return (
     <div className="space-y-6">
       <h1 className="text-2xl font-semibold text-brand-950">{t("Hoş geldiniz")}</h1>
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
         <div className="rounded-xl border border-brand-100 bg-white transition-shadow duration-200 hover:shadow-md p-5 shadow-sm">
           <p className="text-sm text-slate-500">{t("Kredi bakiyeniz")}</p>
           <p className="mt-1 text-2xl font-semibold text-brand-950">
@@ -58,27 +61,19 @@ export default async function GuestHomePage() {
             {questionCount}
           </p>
         </div>
-        <div className="rounded-xl border border-orange-200 bg-orange-50 p-5 shadow-sm">
-          <p className="text-sm text-slate-500">{t("🔥 Çalışma seriniz")}</p>
-          <p className="mt-1 text-2xl font-semibold text-brand-950">
-            {t("{n} gün", { n: streak })}
-          </p>
-          <p className="mt-1 text-xs text-slate-500">
-            {t("{n} gün sonra 40 dk hediye ders!", { n: daysToReward })}
-          </p>
-          {streak >= 1 && (
-            <div className="mt-2">
-              <ShareButton
-                small
-                imagePath="/api/share/streak"
-                filename="ardemy-seri.png"
-                label={t("Serimi paylaş")}
-                text={t("{n} gündür her gün çalışıyorum! 🔥 Sen de dene: {url}", { n: streak, url: shareUrl })}
-              />
-            </div>
-          )}
-        </div>
       </div>
+
+      <StreakCard streak={streak} milestone={milestone} doneToday={doneToday}>
+        {streak >= 1 && (
+          <ShareButton
+            small
+            imagePath="/api/share/streak"
+            filename="ardemy-seri.png"
+            label={t("Serimi paylaş")}
+            text={t("{n} gündür her gün çalışıyorum! 🔥 Sen de dene: {url}", { n: streak, url: shareUrl })}
+          />
+        )}
+      </StreakCard>
 
       <DailyQuestionSection userId={session!.user.id} />
 

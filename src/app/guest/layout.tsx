@@ -7,6 +7,7 @@ import { prisma } from "@/lib/prisma";
 import { displayStreak } from "@/lib/streak";
 import { UserAvatar } from "@/components/UserAvatar";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { getT } from "@/lib/i18n/server";
 import { findTitle } from "@/lib/cosmetics";
 import { InstallPrompt } from "@/components/InstallPrompt";
@@ -69,6 +70,7 @@ export default async function GuestLayout({
             </div>
           </div>
           <div className="flex shrink-0 items-center gap-2">
+            <ThemeToggle />
             <LanguageSwitcher tone="dark" />
             <SignOutButton />
           </div>
@@ -115,7 +117,7 @@ export default async function GuestLayout({
           </span>
         </nav>
       </header>
-      <main className="mx-auto max-w-5xl px-4 py-6 pb-24 animate-fade-in sm:px-6 sm:py-8 sm:pb-8">
+      <main className="mx-auto max-w-5xl px-4 py-6 pb-24 sm:px-6 sm:py-8 sm:pb-8">
         <InstallPrompt />
         {children}
       </main>

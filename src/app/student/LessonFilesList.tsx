@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useLocale, useT } from "@/lib/i18n/client";
 import { INTL_TAG } from "@/lib/i18n/config";
+import { EmptyState } from "@/components/EmptyState";
 
 type LessonFile = {
   id: string;
@@ -37,7 +38,7 @@ export function LessonFilesList({ lessonFiles }: { lessonFiles: LessonFile[] }) 
       />
 
       {filtered.length === 0 ? (
-        <p className="text-sm text-slate-500">{t("Eşleşen ders dosyası bulunamadı.")}</p>
+        <EmptyState icon="files" text={t("Eşleşen ders dosyası bulunamadı.")} compact />
       ) : (
         <div className="space-y-2">
           {filtered.map((f) => (

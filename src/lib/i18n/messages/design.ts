@@ -43,4 +43,12 @@ export const design: MessageEntry[] = [
 
   // ── Ana sayfa: alt kısım ──
   ["Instagram'da takip et: @edizsevincler", "Follow on Instagram: @edizsevincler", "Подписывайтесь в Instagram: @edizsevincler"],
+  // ── Koyu mod, seri kartı, deneme sonucu ──
+  ["Koyu moda geç", "Switch to dark mode", "Включить тёмную тему"],
+  ["Açık moda geç", "Switch to light mode", "Включить светлую тему"],
+  ["✓ Bugün tamamlandı", "✓ Done for today", "✓ На сегодня выполнено"],
+  ["Serin sürsün: bugünkü soruyu çöz", "Keep your streak alive: answer today's question", "Сохраните серию: ответьте на сегодняшний вопрос"],
+  ["Doğru", "Correct", "Верно"],
+  ["Yanlış", "Wrong", "Неверно"],
+  ["Boş", "Blank", "Пропущено"],
 ];

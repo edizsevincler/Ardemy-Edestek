@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { ExamStartButtons } from "@/components/ExamStartButtons";
 import { getI18n } from "@/lib/i18n/server";
 import { INTL_TAG } from "@/lib/i18n/config";
+import { EmptyState } from "@/components/EmptyState";
 import {
   EXAM_LANGUAGES,
   EXAM_MINUTES,
@@ -83,9 +84,7 @@ export default async function ExamHomePage() {
               </Link>
             </div>
           ) : languages.length === 0 ? (
-            <p className="text-sm text-slate-500">
-              {t("Deneme soruları çok yakında eklenecek.")}
-            </p>
+            <EmptyState icon="exam" text={t("Deneme soruları çok yakında eklenecek.")} compact />
           ) : (
             <ExamStartButtons
               languages={languages}
@@ -106,7 +105,7 @@ export default async function ExamHomePage() {
           )}
         </h2>
         {attempts.length === 0 ? (
-          <p className="text-sm text-slate-500">{t("Henüz deneme sınavı çözmedin.")}</p>
+          <EmptyState icon="exam" text={t("Henüz deneme sınavı çözmedin.")} />
         ) : (
           <div className="overflow-x-auto rounded-xl border border-brand-100 bg-white shadow-sm">
             <table className="w-full text-sm">

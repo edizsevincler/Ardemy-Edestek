@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { SignOutButton } from "@/components/SignOutButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { Logo } from "@/components/Logo";
 import { prisma } from "@/lib/prisma";
 
@@ -39,7 +40,10 @@ export default async function AdminLayout({
               </p>
             </div>
           </div>
-          <SignOutButton />
+          <div className="flex shrink-0 items-center gap-2">
+            <ThemeToggle />
+            <SignOutButton />
+          </div>
         </div>
         <nav className="-mx-4 mt-3 flex gap-x-4 gap-y-2 overflow-x-auto whitespace-nowrap px-4 text-sm text-brand-100 sm:mx-0 sm:flex-wrap sm:px-0">
           <Link href="/admin" className="shrink-0 transition hover:text-gold-400">

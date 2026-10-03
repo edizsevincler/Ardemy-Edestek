@@ -4,18 +4,21 @@ import { AssignmentCard } from "./AssignmentCard";
 import { LessonFilesList } from "./LessonFilesList";
 import { formatSessionStatus } from "@/lib/session-status";
 import {
+  dateKey,
   displayStreak,
   nextStreakMilestone,
   FREEZE_MAX,
   FREEZE_PRICE_CREDITS,
 } from "@/lib/streak";
 import { ShareButton } from "@/components/ShareButton";
+import { StreakCard } from "@/components/StreakCard";
 import { getReferralShareUrl } from "@/lib/referral";
 import { StreakFreezeCard } from "@/components/StreakFreezeCard";
 import { ReferralCard } from "@/components/ReferralCard";
 import { DailyQuestionSection } from "@/components/DailyQuestionSection";
 import { BadgesCard } from "@/components/BadgesCard";
 import { getT } from "@/lib/i18n/server";
+import { EmptyState } from "@/components/EmptyState";
 
 export default async function StudentHomePage() {
   const t = await getT();
@@ -50,7 +53,8 @@ export default async function StudentHomePage() {
 
   const shareUrl = await getReferralShareUrl(studentId);
   const streak = me ? displayStreak(me.currentStreak, me.lastStreakDate, me.streakFreezes) : 0;
-  const daysToReward = nextStreakMilestone(streak) - streak;
+  const milestone = nextStreakMilestone(streak);
+  const doneToday = !!me?.lastStreakDate && dateKey(me.lastStreakDate) === dateKey(new Date());
 
   return (
     <div className="space-y-8">
@@ -65,24 +69,20 @@ export default async function StudentHomePage() {
               </span>
             </div>
           )}
-          <div className="rounded-lg border border-orange-200 bg-orange-50 px-4 py-2 text-sm">
-            <span className="text-slate-500">{t("🔥 Seri:")} </span>
-            <span className="font-medium text-slate-900">{t("{n} gün", { n: streak })}</span>
-            <span className="ml-1 text-xs text-slate-400">
-              {t("({n} gün sonra 40 dk hediye ders)", { n: daysToReward })}
-            </span>
-          </div>
-          {streak >= 1 && (
-            <ShareButton
-              small
-              imagePath="/api/share/streak"
-              filename="ardemy-seri.png"
-              label={t("Serimi paylaş")}
-              text={t("{n} gündür her gün çalışıyorum! 🔥 Sen de dene: {url}", { n: streak, url: shareUrl })}
-            />
-          )}
         </div>
       </div>
+
+      <StreakCard streak={streak} milestone={milestone} doneToday={doneToday}>
+        {streak >= 1 && (
+          <ShareButton
+            small
+            imagePath="/api/share/streak"
+            filename="ardemy-seri.png"
+            label={t("Serimi paylaş")}
+            text={t("{n} gündür her gün çalışıyorum! 🔥 Sen de dene: {url}", { n: streak, url: shareUrl })}
+          />
+        )}
+      </StreakCard>
 
       <DailyQuestionSection userId={studentId} />
 
@@ -96,9 +96,7 @@ export default async function StudentHomePage() {
       <section className="space-y-3">
         <h2 className="text-lg font-medium text-slate-900">{t("Ödevlerim")}</h2>
         {assignments.length === 0 && (
-          <p className="text-sm text-slate-500">
-            {t("Henüz size atanmış ödev yok.")}
-          </p>
+          <EmptyState icon="tasks" text={t("Henüz size atanmış ödev yok.")} />
         )}
         <div className="space-y-3">
           {assignments.map((a) => (
@@ -116,9 +114,7 @@ export default async function StudentHomePage() {
           {t("Ders Dosyalarım")}
         </h2>
         {lessonFiles.length === 0 ? (
-          <p className="text-sm text-slate-500">
-            {t("Henüz size özel ders dosyası yok.")}
-          </p>
+          <EmptyState icon="files" text={t("Henüz size özel ders dosyası yok.")} />
         ) : (
           <LessonFilesList lessonFiles={lessonFiles} />
         )}

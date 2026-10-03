@@ -1,10 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { useT } from "@/lib/i18n/client";
 import type { TFunction } from "@/lib/i18n/translate";
 import type { ExamResultData } from "@/lib/exam-config";
 import { ShareButton } from "@/components/ShareButton";
+import { ScoreDonut } from "@/components/ScoreDonut";
+import { Celebration } from "@/components/Celebration";
 
 const OPTIONS = ["A", "B", "C", "D"] as const;
 
@@ -25,15 +28,39 @@ export function ExamResultView({
   const t = useT();
   const percent = Math.round((result.score / Math.max(result.total, 1)) * 100);
   const lang = t(result.language);
+  const blank = result.review.filter((q) => q.selected === null).length;
+  const wrong = Math.max(result.total - result.score - blank, 0);
+
+  // Yüksek skorda konfeti: aynı sonuç bu oturumda yalnızca bir kez kutlanır.
+  const [celebrate, setCelebrate] = useState(false);
+  useEffect(() => {
+    if (percent < 70) return;
+    const key = `ardemy_exam_celebrated_${result.attemptId}`;
+    try {
+      if (sessionStorage.getItem(key)) return;
+    } catch {
+      return;
+    }
+    const timer = setTimeout(() => {
+      try {
+        sessionStorage.setItem(key, "1");
+      } catch {
+        // önemli değil
+      }
+      setCelebrate(true);
+    }, 700);
+    return () => clearTimeout(timer);
+  }, [percent, result.attemptId]);
 
   return (
     <div className="space-y-4">
       <div className="rounded-xl border border-brand-200 bg-brand-50 p-5 text-center">
+        {celebrate && <Celebration count={percent >= 90 ? 56 : 36} />}
         <p className="text-sm text-slate-500">{t("{lang} Deneme Sınavı", { lang })}</p>
-        <p className="mt-1 text-3xl font-semibold text-brand-950">
-          {result.score} / {result.total}
-        </p>
-        <p className="text-sm text-slate-600">
+        <div className="mt-3">
+          <ScoreDonut correct={result.score} wrong={wrong} blank={blank} />
+        </div>
+        <p className="mt-3 text-sm text-slate-600">
           %{percent} · {verdict(percent, t)}
         </p>
         <div className="mt-3 flex flex-wrap items-start justify-center gap-3">

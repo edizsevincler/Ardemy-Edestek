@@ -10,8 +10,11 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
+}
 
-  /* Ardemy marka tonları — logodaki indigo/mordan türetildi */
+/* Ardemy marka tonları — logodaki indigo/mordan türetildi. Koyu modda bazıları
+   aşağıdaki :root.dark bloğunda yeniden tanımlanabilsin diye "inline" değil. */
+@theme {
   --color-brand-950: #1c1147;
   --color-brand-900: #241a5e;
   --color-brand-800: #2f2178;
@@ -29,6 +32,106 @@
   --color-gold-400: #e8c25a;
   --color-gold-300: #f1d98a;
   --color-gold-50: #fbf3e0;
+}
+
+/* ── Koyu mod ──
+   <html class="dark"> ile açılır (bkz. components/ThemeToggle.tsx ve layout.tsx).
+   Tailwind'in gri/durum renk değişkenleri ters çevrilir; aynı sınıfın hem zemin
+   hem metin olarak kullanıldığı birkaç yer (bg-white, text-brand-*) aşağıda
+   sınıf bazında düzeltilir. */
+:root.dark {
+  color-scheme: dark;
+  --background: #0d0a21;
+  --foreground: #ebe8f7;
+  --surface: #181237;
+  --ink: #ebe8f7;
+
+  --color-brand-50: #221b47;
+  --color-gold-50: #2a2210;
+
+  --color-slate-50: #15102e;
+  --color-slate-100: #1f1840;
+  --color-slate-200: #2d2455;
+  --color-slate-300: #44397a;
+  --color-slate-400: #8b84b5;
+  --color-slate-500: #a7a1c8;
+  --color-slate-600: #bfbad8;
+  --color-slate-700: #d3cfe5;
+  --color-slate-800: #e4e1f1;
+  --color-slate-900: #f1effa;
+
+  --color-red-50: #3a1520;
+  --color-red-100: #4a1b29;
+  --color-red-200: #6e2a3c;
+  --color-red-600: #f87171;
+  --color-red-700: #fca5a5;
+  --color-red-800: #fecaca;
+  --color-red-900: #fee2e2;
+
+  --color-green-50: #11291d;
+  --color-green-200: #1f5a3a;
+  --color-green-300: #2a7a50;
+  --color-green-600: #4ade80;
+  --color-green-700: #86efac;
+
+  --color-emerald-50: #0f2a22;
+  --color-emerald-200: #1c5a48;
+  --color-emerald-600: #34d399;
+  --color-emerald-700: #6ee7b7;
+  --color-emerald-800: #a7f3d0;
+  --color-emerald-900: #d1fae5;
+
+  --color-orange-50: #36200d;
+  --color-orange-200: #6b3d14;
+
+  --color-sky-50: #0e2433;
+  --color-sky-200: #1d4d6b;
+  --color-sky-700: #7dd3fc;
+  --color-sky-800: #bae6fd;
+}
+
+:root.dark .bg-white,
+:root.dark .bg-white\/95,
+:root.dark .bg-white\/80,
+:root.dark .bg-white\/60 {
+  background-color: var(--surface);
+}
+:root.dark .to-white {
+  --tw-gradient-to: var(--surface);
+}
+:root.dark .text-brand-950,
+:root.dark .text-brand-900,
+:root.dark .text-brand-800 {
+  color: var(--ink);
+}
+:root.dark .text-brand-700,
+:root.dark .text-brand-600 {
+  color: #b9aaf6;
+}
+:root.dark .text-brand-500 {
+  color: #a08bf0;
+}
+/* Altın zemindeki koyu yazı koyu kalmalı */
+:root.dark [class*="from-gold-"].text-brand-950,
+:root.dark [class*="bg-gold-4"].text-brand-950,
+:root.dark [class*="bg-gold-5"].text-brand-950 {
+  color: #1c1147;
+}
+:root.dark .bg-brand-100 {
+  background-color: #2c2358;
+}
+:root.dark .border-brand-100 {
+  border-color: #2d2558;
+}
+:root.dark .border-brand-200 {
+  border-color: #3b3274;
+}
+:root.dark .ring-brand-100,
+:root.dark .focus\:ring-brand-100:focus {
+  --tw-ring-color: #3b3274;
+}
+:root.dark .hover\:bg-brand-100:hover {
+  background-color: #2c2358;
 }
 
 body {
@@ -200,6 +303,7 @@ summary {
     .animate-flicker,
     .animate-badge-in,
     .animate-fade-in,
+    .animate-pulse,
     .animate-float-slow,
     .animate-float-slow-delayed {
       animation: none;

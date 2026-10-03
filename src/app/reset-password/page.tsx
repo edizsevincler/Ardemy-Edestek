@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { Logo } from "@/components/Logo";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { AuthShell } from "@/components/AuthShell";
 import { getT } from "@/lib/i18n/server";
 import { ResetForm } from "./ResetForm";
 import { hashResetToken } from "@/lib/password-reset";
@@ -22,12 +22,7 @@ export default async function ResetPasswordPage({
   const valid = !!record && record.expiresAt > new Date();
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-brand-950 via-brand-800 to-brand-600 px-4 py-10">
-      <div className="pointer-events-none absolute -top-32 -left-32 h-80 w-80 rounded-full bg-gold-400/20 blur-3xl animate-float-slow" />
-      <div className="pointer-events-none absolute -bottom-32 -right-16 h-96 w-96 rounded-full bg-brand-400/30 blur-3xl animate-float-slow-delayed" />
-      <div className="absolute right-4 top-4">
-        <LanguageSwitcher tone="dark" />
-      </div>
+    <AuthShell>
 
       {valid && token ? (
         <ResetForm token={token} />
@@ -48,6 +43,6 @@ export default async function ResetPasswordPage({
           </Link>
         </div>
       )}
-    </main>
+    </AuthShell>
   );
 }

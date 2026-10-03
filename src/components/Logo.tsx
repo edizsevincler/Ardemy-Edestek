@@ -10,7 +10,7 @@ export function Logo({
   return (
     <div
       className={`flex items-center justify-center rounded-xl bg-white p-1.5 shadow-sm ${className}`}
-      style={{ width: size, height: size }}
+      style={{ width: size, height: size, backgroundColor: "#fff" }}
     >
       <Image
         src="/logo.jpg"

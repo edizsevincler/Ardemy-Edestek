@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { FlagIcon } from "@/components/FlagIcon";
 import { slugify } from "@/lib/slugify";
 import { getT } from "@/lib/i18n/server";
+import { EmptyState } from "@/components/EmptyState";
 
 function languageOf(subject: string) {
   return subject.split(" - ")[0].trim();
@@ -58,9 +59,7 @@ export default async function GuestQuestionsLandingPage() {
       <h1 className="text-2xl font-semibold text-brand-950">{t("İçerikler")}</h1>
 
       {languages.length === 0 ? (
-        <p className="text-sm text-slate-500">
-          {t("Şu anda yayınlanmış içerik bulunmuyor.")}
-        </p>
+        <EmptyState icon="book" text={t("Şu anda yayınlanmış içerik bulunmuyor.")} />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
           {languages.map(({ language, topicCount, soruCount }) => (

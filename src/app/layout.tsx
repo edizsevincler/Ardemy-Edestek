@@ -25,6 +25,9 @@ export const viewport: Viewport = {
   viewportFit: "cover",
 };
 
+// Sayfa boyanmadan önce kayıtlı/cihaz temasını uygular (yanıp sönmeyi önler).
+const THEME_SCRIPT = `try{var t=localStorage.getItem("ardemy_theme");if(t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`;
+
 const OG_LOCALES = { tr: "tr_TR", en: "en_GB", ru: "ru_RU" } as const;
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -54,7 +57,11 @@ export default async function RootLayout({
     <html
       lang={locale}
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <I18nProvider locale={locale} dict={getDictionary(locale)}>
           <Suspense fallback={null}>

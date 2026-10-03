@@ -5,6 +5,7 @@ import { getI18n } from "@/lib/i18n/server";
 import { INTL_TAG } from "@/lib/i18n/config";
 import { questionTitleLabel, subjectLabel } from "@/lib/i18n/subject";
 import { tx } from "@/lib/i18n/translate";
+import { EmptyState } from "@/components/EmptyState";
 
 export default async function GuestHistoryPage() {
   const { locale, t } = await getI18n();
@@ -54,8 +55,8 @@ export default async function GuestHistoryPage() {
             <tbody>
               {purchases.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
-                    {t("Henüz kredi satın almadınız.")}
+                  <td colSpan={5}>
+                    <EmptyState icon="coins" text={t("Henüz kredi satın almadınız.")} compact />
                   </td>
                 </tr>
               )}
@@ -98,8 +99,8 @@ export default async function GuestHistoryPage() {
             <tbody>
               {unlocks.length === 0 && (
                 <tr>
-                  <td colSpan={5} className="px-4 py-6 text-center text-slate-400">
-                    {t("Henüz soru açmadınız.")}
+                  <td colSpan={5}>
+                    <EmptyState icon="book" text={t("Henüz soru açmadınız.")} compact />
                   </td>
                 </tr>
               )}

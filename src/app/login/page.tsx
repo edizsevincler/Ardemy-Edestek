@@ -4,7 +4,7 @@ import { useActionState } from "react";
 import Link from "next/link";
 import { authenticate } from "./actions";
 import { Logo } from "@/components/Logo";
-import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { AuthShell } from "@/components/AuthShell";
 import { useT } from "@/lib/i18n/client";
 
 export default function LoginPage() {
@@ -15,13 +15,7 @@ export default function LoginPage() {
   );
 
   return (
-    <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-br from-brand-950 via-brand-800 to-brand-600 px-4">
-      <div className="pointer-events-none absolute -top-32 -left-32 h-80 w-80 rounded-full bg-gold-400/20 blur-3xl animate-float-slow" />
-      <div className="pointer-events-none absolute -bottom-32 -right-16 h-96 w-96 rounded-full bg-brand-400/30 blur-3xl animate-float-slow-delayed" />
-
-      <div className="absolute right-4 top-4">
-        <LanguageSwitcher tone="dark" />
-      </div>
+    <AuthShell>
 
       <form
         action={formAction}
@@ -91,15 +85,6 @@ export default function LoginPage() {
           </Link>
         </p>
       </form>
-
-      <div className="absolute bottom-4 flex gap-4 text-xs text-white/70">
-        <Link href="/gizlilik-politikasi" className="hover:text-white hover:underline">
-          {t("Gizlilik Politikası")}
-        </Link>
-        <Link href="/mesafeli-satis-sozlesmesi" className="hover:text-white hover:underline">
-          {t("Mesafeli Satış Sözleşmesi")}
-        </Link>
-      </div>
-    </main>
+    </AuthShell>
   );
 }

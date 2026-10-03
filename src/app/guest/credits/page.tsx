@@ -2,6 +2,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { PackageCard } from "./PackageCard";
 import { getT } from "@/lib/i18n/server";
+import { EmptyState } from "@/components/EmptyState";
 
 const BANK_TRANSFER_INFO =
   process.env.BANK_TRANSFER_INFO ??
@@ -72,9 +73,7 @@ export default async function GuestCreditsPage() {
       </div>
 
       {packages.length === 0 ? (
-        <p className="text-sm text-slate-500">
-          {t("Şu anda satışta paket bulunmuyor.")}
-        </p>
+        <EmptyState icon="coins" text={t("Şu anda satışta paket bulunmuyor.")} />
       ) : (
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
           {packages.map((p) => (

@@ -7,6 +7,7 @@ type Message = {
 
 import { getI18n } from "@/lib/i18n/server";
 import { INTL_TAG } from "@/lib/i18n/config";
+import { EmptyState } from "@/components/EmptyState";
 
 export async function MessageThread({
   messages,
@@ -18,7 +19,7 @@ export async function MessageThread({
   const { locale, t } = await getI18n();
   if (messages.length === 0) {
     return (
-      <p className="p-4 text-sm text-slate-400">{t("Henüz mesaj yok.")}</p>
+      <EmptyState icon="inbox" text={t("Henüz mesaj yok.")} compact />
     );
   }
 
