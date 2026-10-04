@@ -32,7 +32,7 @@ export function BottomNav({ items }: { items: BottomNavItem[] }) {
   const t = useT();
   return (
     <nav
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-brand-950/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.25)] backdrop-blur sm:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-brand-950 pb-[env(safe-area-inset-bottom)] shadow-[0_-4px_16px_rgba(0,0,0,0.25)] sm:hidden"
       aria-label={t("Menü")}
     >
       <ul className="mx-auto flex max-w-lg items-stretch justify-around">

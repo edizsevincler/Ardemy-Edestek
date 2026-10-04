@@ -125,7 +125,7 @@ export function ExamRunner({
 
   return (
     <div className="space-y-4">
-      <div className="sticky top-0 z-10 -mx-4 flex items-center justify-between gap-3 border-b border-brand-100 bg-white/95 px-4 py-2 backdrop-blur sm:mx-0 sm:rounded-xl sm:border">
+      <div className="sticky top-0 z-10 -mx-4 flex items-center justify-between gap-3 border-b border-brand-100 bg-white px-4 py-2 sm:mx-0 sm:rounded-xl sm:border">
         <span className="text-sm text-slate-600">
           {t("{a}/{b} cevaplandı", { a: answered, b: questions.length })}
         </span>

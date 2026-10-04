@@ -243,7 +243,7 @@ summary {
     }
   }
   .animate-ember {
-    animation: ember 2.4s ease-in-out infinite;
+    box-shadow: 0 0 10px 1px rgba(251, 146, 60, 0.35);
   }
 
   /* Alev emojisi hafifçe titrer */
@@ -264,7 +264,7 @@ summary {
   }
   .animate-flicker {
     display: inline-block;
-    animation: flicker 1.6s ease-in-out infinite;
+    animation: flicker 1.6s ease-in-out 2;
   }
 
   /* Rozet kazanılınca: dönerek belirir */
@@ -303,6 +303,14 @@ summary {
     height: 14px;
     border-radius: 2px;
     animation: confetti-fall var(--confetti-d) cubic-bezier(0.25, 0.6, 0.45, 1) var(--confetti-delay) forwards;
+  }
+
+  /* Küçük ekranlarda büyük bulanık dairelerin sürekli hareketi telefonu yorar. */
+  @media (max-width: 640px) {
+    .animate-float-slow,
+    .animate-float-slow-delayed {
+      animation: none;
+    }
   }
 
   @media (prefers-reduced-motion: reduce) {

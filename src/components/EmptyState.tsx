@@ -80,9 +80,7 @@ export function EmptyState({
         compact ? "py-4" : "rounded-xl border border-dashed border-brand-200 bg-white/60 px-4 py-8"
       }`}
     >
-      <div className="animate-float-slow">
-        <Art icon={icon} />
-      </div>
+      <Art icon={icon} />
       <p className="text-sm text-slate-500">{text}</p>
     </div>
   );

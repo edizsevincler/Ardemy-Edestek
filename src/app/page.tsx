@@ -323,7 +323,7 @@ export default async function Home() {
               {badges.map((b) => (
                 <div
                   key={b.id}
-                  className="rounded-xl border border-white/15 bg-white/10 p-4 backdrop-blur"
+                  className="rounded-xl border border-white/15 bg-white/10 p-4"
                 >
                   <p className="text-3xl">{b.emoji}</p>
                   <p className="mt-2 text-sm font-semibold text-white">{t(b.title)}</p>
