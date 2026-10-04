@@ -1,6 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
 import { prisma } from "@/lib/prisma";
 import { tx } from "@/lib/i18n/translate";
+import { ttlCached } from "@/lib/ttl-cache";
 
 export const FREE_TEST_SIZE = 5;
 
@@ -118,7 +119,9 @@ export async function pickDemoQuestion(
       subject: { startsWith: language },
     },
   };
-  const count = await prisma.quizItem.count({ where });
+  const count = await ttlCached(`demo-count:${language}`, 10 * 60 * 1000, () =>
+    prisma.quizItem.count({ where })
+  );
   if (count === 0) return null;
   const question = await prisma.quizItem.findFirst({
     where,

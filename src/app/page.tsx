@@ -14,6 +14,7 @@ import { HomeDemo, type DemoSet } from "@/components/HomeDemo";
 import { pickDemoQuestion } from "@/lib/free-test";
 import { previewBadges } from "@/lib/badges";
 import { tx } from "@/lib/i18n/translate";
+import { ttlCached } from "@/lib/ttl-cache";
 
 const FEATURES = [
   { emoji: "📅", title: tx("Günün Sorusu ve seri"), text: tx("Her gün yeni bir soru çöz, serini koru; hediye ödüller kazan.") },
@@ -44,29 +45,28 @@ export default async function Home() {
     redirect("/student");
   }
 
-  const [topicCount, packages] = await Promise.all([
-    prisma.question.count({ where: { isPublished: true, type: "TOPIC" } }),
-    prisma.creditPackage.findMany({
-      where: { isActive: true },
-      orderBy: { credits: "asc" },
-      take: 3,
-    }),
-  ]);
-  const quizzes = await prisma.question.findMany({
-    where: { isPublished: true, type: "QUIZ" },
-    select: { id: true },
+  // Herkese aynı olan sayılar 10 dakika önbellekte tutulur (sayfa her açılışta
+  // 5 ayrı sorgu atmasın). Demo sorusu her ziyarette yeniden seçilir.
+  const stats = await ttlCached("home-stats", 10 * 60 * 1000, async () => {
+    const [topicCount, packages, quizCount, quizItemCount, openQuestionCount] = await Promise.all([
+      prisma.question.count({ where: { isPublished: true, type: "TOPIC" } }),
+      prisma.creditPackage.findMany({
+        where: { isActive: true },
+        orderBy: { credits: "asc" },
+        take: 3,
+      }),
+      prisma.question.count({ where: { isPublished: true, type: "QUIZ" } }),
+      prisma.quizItem.count({ where: { question: { isPublished: true, type: "QUIZ" } } }),
+      prisma.question.count({ where: { isPublished: true, type: "QUESTION" } }),
+    ]);
+    return { topicCount, packages, quizCount, totalSoruCount: quizItemCount + openQuestionCount };
   });
-  const [quizQuestionCount, openQuestionCount] = await Promise.all([
-    prisma.quizItem.count({ where: { questionId: { in: quizzes.map((q) => q.id) } } }),
-    prisma.question.count({ where: { isPublished: true, type: "QUESTION" } }),
-  ]);
+  const { topicCount, packages, quizCount, totalSoruCount } = stats;
   const demoResults = await Promise.all([pickDemoQuestion("Rusça"), pickDemoQuestion("İngilizce")]);
   const demoSets: DemoSet[] = [];
   if (demoResults[0]) demoSets.push({ language: "Rusça", ...demoResults[0] });
   if (demoResults[1]) demoSets.push({ language: "İngilizce", ...demoResults[1] });
   const badges = previewBadges(SHOWCASE_BADGES);
-  const quizCount = quizzes.length;
-  const totalSoruCount = quizQuestionCount + openQuestionCount;
 
   return (
     <div className="flex min-h-screen flex-col bg-background">

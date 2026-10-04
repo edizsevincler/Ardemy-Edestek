@@ -3,6 +3,9 @@
 :root {
   --background: #f7f6fb;
   --foreground: #171717;
+  /* Erişilebilirlik: açık temada slate-400 yazı beyaz zeminde 2.6:1 kalıyordu;
+     biraz koyulaştırıldı (≈4.7:1). Koyu tema aşağıda kendi değerini tanımlar. */
+  --color-slate-400: #66778f;
 }
 
 @theme inline {
@@ -10,7 +13,6 @@
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
   --font-heading: var(--font-manrope);
-  --font-mono: var(--font-geist-mono);
 }
 
 /* Ardemy marka tonları — logodaki indigo/mordan türetildi. Koyu modda bazıları

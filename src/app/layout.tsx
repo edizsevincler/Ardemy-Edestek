@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, Manrope, Geist_Mono } from "next/font/google";
+import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { Suspense } from "react";
 import { SITE_URL } from "@/lib/site";
@@ -11,7 +11,9 @@ import { getDictionary } from "@/lib/i18n/dictionary";
 import { getI18n } from "@/lib/i18n/server";
 
 // Gövde metni Inter, başlıklar Manrope: ikisi de Türkçe (latin-ext) ve Rusça
-// (cyrillic) harfleri destekler.
+// (cyrillic) harfleri destekler. (Kiril harflerini ayrı bir aileye bölmeyi
+// denedim: aynı dosyalar iki kez indiği için yavaşlattı. Geist Mono ise
+// kullanılmadığı için kaldırıldı.)
 const inter = Inter({
   variable: "--font-inter",
   subsets: ["latin", "latin-ext", "cyrillic"],
@@ -22,11 +24,6 @@ const manrope = Manrope({
   variable: "--font-manrope",
   subsets: ["latin", "latin-ext", "cyrillic"],
   display: "swap",
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
 });
 
 export const viewport: Viewport = {
@@ -65,7 +62,7 @@ export default async function RootLayout({
   return (
     <html
       lang={locale}
-      className={`${inter.variable} ${manrope.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${inter.variable} ${manrope.variable} h-full antialiased`}
       suppressHydrationWarning
     >
       <head>
