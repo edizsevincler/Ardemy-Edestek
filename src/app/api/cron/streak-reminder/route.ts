@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { dateKey, displayStreak } from "@/lib/streak";
 import { sendStreakReminderEmail } from "@/lib/email";
 import { isLocale } from "@/lib/i18n/config";
+import { claimEmail, releaseEmail } from "@/lib/reminders";
 
 // Vercel Cron her gün 20:00 (Türkiye saati) civarında bu endpoint'i çağırır
 // (bkz. vercel.json). Serisi olan ama bugün henüz aktivite yapmamış her
@@ -22,6 +23,7 @@ export async function GET(request: Request) {
       currentStreak: { gt: 0 },
       lastStreakDate: { not: null },
       email: { not: null },
+      emailReminders: true,
     },
     select: {
       id: true,
@@ -46,8 +48,12 @@ export async function GET(request: Request) {
       continue;
     }
 
+    // Aynı gün ikinci kez gitmesin (cron iki kez tetiklense bile).
+    if (!(await claimEmail(user.id, "streak-risk", todayKey))) continue;
+
     try {
       await sendStreakReminderEmail(
+        user.id,
         user.email,
         user.name,
         user.currentStreak,
@@ -56,6 +62,7 @@ export async function GET(request: Request) {
       sent++;
     } catch {
       // Bir kullanıcıya gönderim başarısız olsa bile diğerlerini engellemesin.
+      await releaseEmail(user.id, "streak-risk", todayKey);
     }
   }
 

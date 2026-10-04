@@ -4,6 +4,9 @@ import { Logo } from "@/components/Logo";
 import { AuthShell } from "@/components/AuthShell";
 import { getT } from "@/lib/i18n/server";
 import { tx } from "@/lib/i18n/translate";
+import { sendWelcomeEmail } from "@/lib/email";
+import { isLocale } from "@/lib/i18n/config";
+import { claimEmail, releaseEmail } from "@/lib/reminders";
 
 async function verifyToken(token: string | undefined) {
   if (!token) return "missing" as const;
@@ -25,6 +28,25 @@ async function verifyToken(token: string | undefined) {
     }),
     prisma.verificationToken.delete({ where: { id: record.id } }),
   ]);
+
+  // Karşılama e-postası (bir kez; hata verirse onayı etkilemez).
+  const user = await prisma.user.findUnique({
+    where: { id: record.userId },
+    select: { id: true, name: true, email: true, locale: true, emailReminders: true },
+  });
+  if (user?.email && user.emailReminders && (await claimEmail(user.id, "welcome"))) {
+    try {
+      await sendWelcomeEmail(
+        user.id,
+        user.email,
+        user.name,
+        isLocale(user.locale) ? user.locale : "tr"
+      );
+    } catch (error) {
+      await releaseEmail(user.id, "welcome");
+      console.error("Karşılama e-postası gönderilemedi:", error);
+    }
+  }
 
   return "success" as const;
 }

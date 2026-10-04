@@ -90,6 +90,10 @@ model User {
   // karışık; o dilde yayında test yoksa da karışık seçime düşer.
   dailyLanguage String?
 
+  // Hatırlatma e-postaları (seri uyarısı, ilk test daveti). Kullanıcı e-postadaki
+  // "abonelikten çık" linkiyle kapatabilir; hesap/şifre e-postaları etkilenmez.
+  emailReminders Boolean @default(true)
+
   assignments           Assignment[]
   assignmentSubmissions AssignmentSubmission[]
   lessonFiles           LessonFile[]
@@ -105,6 +109,7 @@ model User {
   examAttempts          ExamAttempt[]
   passwordResets        PasswordResetToken[]
   badges                UserBadge[]
+  emailLogs             EmailLog[]
 }
 
 // GUEST kaydı sırasında e-postanın gerçekten kullanıcıya ait olduğunu
@@ -428,4 +433,18 @@ model LoginThrottle {
   key         String   @id
   failures    Int      @default(0)
   windowStart DateTime @default(now())
+}
+
+// Gönderilen hatırlatma/karşılama e-postalarının kaydı: aynı e-posta aynı
+// kullanıcıya aynı gün (veya tek seferlikse hiç) ikinci kez gitmesin diye.
+model EmailLog {
+  id     String   @id @default(cuid())
+  kind   String // "welcome" | "first-test" | "streak-risk"
+  dayKey String   @default("") // günlük e-postalarda YYYY-MM-DD, tek seferliklerde boş
+  sentAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, kind, dayKey])
 }
