@@ -55,7 +55,7 @@ const escapeHtml = (value: string) =>
 // Hatırlatma/karşılama e-postalarının altındaki "abonelikten çık" bağlantısı.
 // Hesap e-postaları (onay, şifre sıfırlama) buna ihtiyaç duymaz.
 function unsubscribeFooter(userId: string, t: ReturnType<typeof makeT>) {
-  return `<p style="color:#888;font-size:12px">${t("Bu hatırlatma e-postalarını almak istemiyorsan")} <a href="${unsubscribeUrl(userId)}">${t("abonelikten çık")}</a>.</p>`;
+  return `<p style="color:#888;font-size:12px">${t("Bu hatırlatma e-postalarını almak istemiyorsan")} <a href="${unsubscribeUrl(userId)}">${t("buraya tıkla")}</a>.</p>`;
 }
 
 function unsubscribeHeaders(userId: string) {

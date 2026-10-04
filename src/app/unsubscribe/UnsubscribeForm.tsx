@@ -45,7 +45,7 @@ export function UnsubscribeForm({ userId, token }: { userId: string; token: stri
         disabled={isPending}
         className="w-full rounded-lg bg-gradient-to-r from-gold-500 to-gold-400 py-2.5 text-sm font-semibold text-brand-950 shadow-sm transition-all duration-200 hover:scale-[1.03] active:scale-95 disabled:opacity-60"
       >
-        {isPending ? t("Kaydediliyor...") : t("Evet, abonelikten çık")}
+        {isPending ? t("Kaydediliyor...") : t("Evet, bu e-postaları alma")}
       </button>
     </form>
   );

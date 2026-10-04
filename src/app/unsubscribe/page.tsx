@@ -20,7 +20,7 @@ export default async function UnsubscribePage({
     <AuthShell>
       <div className="relative w-full max-w-sm space-y-4 rounded-2xl bg-white p-8 text-center shadow-2xl ring-1 ring-black/5">
         <Logo size={64} />
-        <h1 className="text-xl font-semibold text-brand-950">{t("E-posta aboneliği")}</h1>
+        <h1 className="text-xl font-semibold text-brand-950">{t("E-posta tercihleri")}</h1>
         {valid ? (
           <UnsubscribeForm userId={u} token={token} />
         ) : (
