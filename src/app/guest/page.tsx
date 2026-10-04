@@ -12,6 +12,7 @@ import { ShareButton } from "@/components/ShareButton";
 import { getReferralShareUrl } from "@/lib/referral";
 import { StreakFreezeCard } from "@/components/StreakFreezeCard";
 import { StreakCard } from "@/components/StreakCard";
+import { PushReminderCard } from "@/components/PushReminderCard";
 import { ReferralCard } from "@/components/ReferralCard";
 import { DailyQuestionSection } from "@/components/DailyQuestionSection";
 import { BadgesCard } from "@/components/BadgesCard";
@@ -28,6 +29,7 @@ export default async function GuestHomePage() {
         currentStreak: true,
         lastStreakDate: true,
         streakFreezes: true,
+        reminderHour: true,
       },
     }),
     prisma.questionUnlock.count({ where: { userId: session!.user.id } }),
@@ -74,6 +76,8 @@ export default async function GuestHomePage() {
           />
         )}
       </StreakCard>
+
+      <PushReminderCard initialHour={me?.reminderHour ?? 20} publicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? null} />
 
       <DailyQuestionSection userId={session!.user.id} />
 

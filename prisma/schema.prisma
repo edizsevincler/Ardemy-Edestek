@@ -94,6 +94,11 @@ model User {
   // "abonelikten çık" linkiyle kapatabilir; hesap/şifre e-postaları etkilenmez.
   emailReminders Boolean @default(true)
 
+  // Telefon/tarayıcı bildirimi (web push) hatırlatma saati: Türkiye saatiyle 0-23.
+  // Bildirim, kullanıcının bu saatte (veya sonraki 2 saat içinde) bugün henüz
+  // günün sorusunu çözmediyse gönderilir. Cihaz kayıtları PushSubscription'da.
+  reminderHour Int @default(20)
+
   assignments           Assignment[]
   assignmentSubmissions AssignmentSubmission[]
   lessonFiles           LessonFile[]
@@ -111,6 +116,7 @@ model User {
   badges                UserBadge[]
   emailLogs             EmailLog[]
   questionReports       QuestionReport[]
+  pushSubscriptions     PushSubscription[]
 }
 
 // GUEST kaydı sırasında e-postanın gerçekten kullanıcıya ait olduğunu
@@ -469,4 +475,19 @@ model QuestionReport {
 
   @@unique([userId, kind, itemId])
   @@index([status, createdAt])
+}
+
+// Bir kullanıcının bildirim izni verdiği cihaz/tarayıcı (bir kullanıcının birden
+// fazla cihazı olabilir). `endpoint` cihaza özgüdür ve benzersizdir.
+model PushSubscription {
+  id        String   @id @default(cuid())
+  endpoint  String   @unique
+  p256dh    String
+  auth      String
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
 }

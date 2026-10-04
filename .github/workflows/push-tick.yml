@@ -1,0 +1,13 @@
+# Her saat başı günlük hatırlatma bildirimlerini tetikler. Vercel ücretsiz planı
+# günde bir kez çalışan cron'a izin verdiği için saatlik zamanlayıcı burada.
+name: push-tick
+on:
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+jobs:
+  tick:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Bildirim zamanlayıcısını çağır
+        run: curl -fsS --max-time 90 "https://ardemy-edestek.vercel.app/api/cron/push-tick"

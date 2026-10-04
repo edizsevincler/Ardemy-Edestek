@@ -3,6 +3,7 @@ import { dateKey, displayStreak } from "@/lib/streak";
 import { sendStreakReminderEmail } from "@/lib/email";
 import { isLocale } from "@/lib/i18n/config";
 import { claimEmail, releaseEmail } from "@/lib/reminders";
+import { runPushTick } from "@/lib/push-tick";
 
 // Vercel Cron her gün 20:00 (Türkiye saati) civarında bu endpoint'i çağırır
 // (bkz. vercel.json). Serisi olan ama bugün henüz aktivite yapmamış her
@@ -66,5 +67,13 @@ export async function GET(request: Request) {
     }
   }
 
-  return Response.json({ checked: candidates.length, sent });
+  // Saatlik zamanlayıcı (GitHub Actions) çalışmasa da bildirimler gitsin.
+  let push: unknown = null;
+  try {
+    push = await runPushTick();
+  } catch (error) {
+    push = { error: String(error) };
+  }
+
+  return Response.json({ checked: candidates.length, sent, push });
 }

@@ -101,4 +101,21 @@ export const design: MessageEntry[] = [
   // ── E-posta onayı sonrası otomatik giriş ──
   ["Otomatik giriş yapılamadı, lütfen giriş yapın.", "Automatic sign-in failed, please log in.", "Не удалось войти автоматически, пожалуйста, войдите вручную."],
   ["E-postanı daha önce onayladıysan doğrudan giriş yapabilirsin.", "If you've already confirmed your e-mail, you can simply log in.", "Если вы уже подтвердили e-mail, просто войдите в аккаунт."],
+  // ── Günlük hatırlatma bildirimi (web push) ──
+  ["🔔 Günlük hatırlatma", "🔔 Daily reminder", "🔔 Ежедневное напоминание"],
+  ["Şimdi değil", "Not now", "Не сейчас"],
+  ["Günün sorusunu unutma: seçtiğin saatte telefonuna bildirim gelsin. Bugünkü soruyu çözdüysen rahatsız etmeyiz.", "Never forget the Daily Question: get a notification on your phone at the time you choose. If you've already answered today's question, we won't bother you.", "Не забывайте про вопрос дня: уведомление придёт на телефон в выбранное время. Если вы уже ответили на сегодняшний вопрос, мы вас не побеспокоим."],
+  ["Bildirimi aç", "Turn on notifications", "Включить уведомления"],
+  ["✓ Açık. Her gün bu saatte hatırlatılırsın:", "✓ On. You'll be reminded every day at this time:", "✓ Включено. Напоминание приходит каждый день в это время:"],
+  ["Hatırlatma saati", "Reminder time", "Время напоминания"],
+  ["Bildirim açılamadı, biraz sonra tekrar dene.", "Notifications could not be turned on, please try again shortly.", "Не удалось включить уведомления, повторите попытку чуть позже."],
+  ["Bildirim kapatılamadı, biraz sonra tekrar dene.", "Notifications could not be turned off, please try again shortly.", "Не удалось отключить уведомления, повторите попытку чуть позже."],
+  ["iPhone'da bildirim için siteyi ana ekrana ekle (Paylaş → Ana Ekrana Ekle), sonra uygulamayı oradan aç.", "On iPhone, add the site to your home screen (Share → Add to Home Screen) and open it from there to get notifications.", "На iPhone для уведомлений добавьте сайт на главный экран (Поделиться → На экран «Домой») и откройте его оттуда."],
+  ["Bildirimler tarayıcı ayarlarından kapatılmış. Açmak için adres çubuğundaki kilit simgesine dokunup bildirimlere izin ver.", "Notifications are blocked in your browser settings. To turn them on, tap the lock icon in the address bar and allow notifications.", "Уведомления заблокированы в настройках браузера. Чтобы включить, нажмите на значок замка в адресной строке и разрешите уведомления."],
+  ["🔥 {n} günlük serin tehlikede", "🔥 Your {n}-day streak is at risk", "🔥 Ваша серия в {n} {n#день|дня|дней} под угрозой"],
+  ["Bugünün sorusunu çöz, serin sürsün.", "Answer today's question to keep your streak going.", "Ответьте на сегодняшний вопрос, чтобы сохранить серию."],
+  ["📅 Günün sorusu seni bekliyor", "📅 Today's question is waiting for you", "📅 Вас ждёт вопрос дня"],
+  ["Sadece 1 dakika: bugünün sorusunu çöz.", "Just 1 minute: answer today's question.", "Всего 1 минута: ответьте на сегодняшний вопрос."],
+  ["Tarayıcı veya telefon bildirimi için izin verirseniz, cihazınıza günlük hatırlatma bildirimleri gönderilir; bu amaçla cihazınızın bildirim adresi saklanır. Bildirimleri panelinizden veya tarayıcı ayarlarından dilediğiniz zaman kapatabilirsiniz.", "If you allow browser or phone notifications, daily reminder notifications are sent to your device; your device's notification address is stored for this purpose. You can turn notifications off at any time from your dashboard or browser settings.", "Если вы разрешите уведомления в браузере или на телефоне, на ваше устройство будут приходить ежедневные напоминания; для этого сохраняется адрес уведомлений устройства. Уведомления можно отключить в любой момент в личном кабинете или в настройках браузера."],
+  ["Bildirim açılıyor...", "Turning on notifications...", "Включаем уведомления..."],
 ];

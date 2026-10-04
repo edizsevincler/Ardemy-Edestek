@@ -1,3 +1,4 @@
+import { runPushTick } from "@/lib/push-tick";
 import { runFirstTestInvites, sendWeeklyBackup, sendWeeklySummary } from "@/lib/cron-tasks";
 
 // Vercel Cron her gün 08:00 UTC (11:00 Türkiye) çağırır (bkz. vercel.json).
@@ -25,6 +26,12 @@ export async function GET(request: Request) {
     result.firstTest = await runFirstTestInvites();
   } catch (error) {
     result.firstTest = { error: String(error) };
+  }
+
+  try {
+    result.push = await runPushTick();
+  } catch (error) {
+    result.push = { error: String(error) };
   }
 
   if (runWeekly) {

@@ -12,6 +12,7 @@ import {
 } from "@/lib/streak";
 import { ShareButton } from "@/components/ShareButton";
 import { StreakCard } from "@/components/StreakCard";
+import { PushReminderCard } from "@/components/PushReminderCard";
 import { getReferralShareUrl } from "@/lib/referral";
 import { StreakFreezeCard } from "@/components/StreakFreezeCard";
 import { ReferralCard } from "@/components/ReferralCard";
@@ -35,6 +36,7 @@ export default async function StudentHomePage() {
         lastStreakDate: true,
         streakFreezes: true,
         credits: true,
+        reminderHour: true,
       },
     }),
     prisma.assignment.findMany({
@@ -83,6 +85,8 @@ export default async function StudentHomePage() {
           />
         )}
       </StreakCard>
+
+      <PushReminderCard initialHour={me?.reminderHour ?? 20} publicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? null} />
 
       <DailyQuestionSection userId={studentId} />
 
