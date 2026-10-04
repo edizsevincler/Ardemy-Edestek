@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { getUserActivity, timeAgoTr } from "@/lib/activity";
 import { ResetPasswordButton } from "./ResetPasswordButton";
 
 export default async function AdminGuestsPage() {
@@ -6,6 +7,7 @@ export default async function AdminGuestsPage() {
     where: { role: "GUEST" },
     orderBy: { createdAt: "desc" },
   });
+  const activity = await getUserActivity(guests);
 
   return (
     <div className="space-y-6">
@@ -20,13 +22,18 @@ export default async function AdminGuestsPage() {
               <th className="px-4 py-2 font-medium">Kredi</th>
               <th className="px-4 py-2 font-medium">Kayıt Tarihi</th>
               <th className="px-4 py-2 font-medium">Son Giriş</th>
+              <th className="px-4 py-2 font-medium">Son Aktiflik</th>
+              <th className="px-4 py-2 font-medium" title="Çözülen test / günün sorusu / deneme sınavı">
+                Test · Günlük · Deneme
+              </th>
+              <th className="px-4 py-2 font-medium">Seri</th>
               <th className="px-4 py-2 font-medium">İşlem</th>
             </tr>
           </thead>
           <tbody>
             {guests.length === 0 && (
               <tr>
-                <td colSpan={6} className="px-4 py-6 text-center text-slate-400">
+                <td colSpan={9} className="px-4 py-6 text-center text-slate-400">
                   Henüz misafir kaydı yok.
                 </td>
               </tr>
@@ -43,6 +50,22 @@ export default async function AdminGuestsPage() {
                   {g.lastLoginAt
                     ? g.lastLoginAt.toLocaleString("tr-TR")
                     : "Henüz giriş yapmadı"}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-slate-600">
+                  {activity.get(g.id)?.lastActiveAt ? (
+                    <span title={activity.get(g.id)!.lastActiveAt!.toLocaleString("tr-TR")}>
+                      {timeAgoTr(activity.get(g.id)!.lastActiveAt!)}
+                    </span>
+                  ) : (
+                    <span className="text-slate-400">Hiç etkinlik yok</span>
+                  )}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-slate-600">
+                  {activity.get(g.id)?.tests ?? 0} · {activity.get(g.id)?.dailies ?? 0} ·{" "}
+                  {activity.get(g.id)?.exams ?? 0}
+                </td>
+                <td className="px-4 py-2 whitespace-nowrap text-slate-600">
+                  {g.currentStreak > 0 ? `🔥 ${g.currentStreak}` : "-"}
                 </td>
                 <td className="px-4 py-2">
                   <ResetPasswordButton userId={g.id} userName={g.name} />

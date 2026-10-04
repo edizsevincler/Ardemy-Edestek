@@ -4,7 +4,7 @@ import { randomBytes } from "crypto";
 import { cookies } from "next/headers";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
-import { sendVerificationEmail } from "@/lib/email";
+import { sendAdminAlertEmail, sendVerificationEmail } from "@/lib/email";
 import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
 import { sanitizeSource, SOURCE_COOKIE } from "@/lib/source";
 import { getI18n } from "@/lib/i18n/server";
@@ -100,6 +100,24 @@ export async function registerGuest(
       status: "error",
       message: t("Onay e-postası gönderilemedi. Lütfen birazdan tekrar deneyin."),
     };
+  }
+
+  // Yöneticiye "yeni kayıt" bildirimi (kayıt akışını asla engellemez).
+  try {
+    await sendAdminAlertEmail(
+      `🆕 Ardemy'de yeni kayıt: ${name}`,
+      [
+        `Ad Soyad: ${name}`,
+        `E-posta: ${email}`,
+        `Kaynak: ${signupSource ?? "doğrudan / bilinmiyor"}`,
+        `Dil: ${locale}`,
+        `Zaman: ${new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}`,
+        "",
+        "E-posta doğrulaması henüz yapılmamış olabilir; Admin > Misafirler sayfasından takip edebilirsiniz.",
+      ].join("\n")
+    );
+  } catch (error) {
+    console.error("Yeni kayıt bildirimi gönderilemedi:", error);
   }
 
   return { status: "success" };

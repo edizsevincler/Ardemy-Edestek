@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
+import { getRecentActivity, timeAgoTr } from "@/lib/activity";
 
 export default async function AdminHomePage() {
   const [
@@ -9,6 +10,7 @@ export default async function AdminHomePage() {
     topQuestions,
     recentGuests,
     recentSubmissions,
+    activity,
   ] = await Promise.all([
     prisma.user.count({ where: { role: "STUDENT" } }),
     prisma.user.count({ where: { role: "GUEST" } }),
@@ -34,6 +36,7 @@ export default async function AdminHomePage() {
         assignment: { select: { title: true } },
       },
     }),
+    getRecentActivity(15),
   ]);
 
   const sections = [
@@ -169,6 +172,32 @@ export default async function AdminHomePage() {
             ))}
           </ul>
         </div>
+      </div>
+
+      <div className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm">
+        <h2 className="font-medium text-brand-950">Son hareketler</h2>
+        <p className="text-xs text-slate-400">
+          Kayıtlı kullanıcıların son etkinlikleri (kayıt, test, günün sorusu, deneme, kredi).
+        </p>
+        <ul className="mt-3 divide-y divide-slate-100 text-sm">
+          {activity.length === 0 && (
+            <li className="py-2 text-slate-400">Henüz hareket yok.</li>
+          )}
+          {activity.map((event, index) => (
+            <li key={index} className="flex items-start justify-between gap-3 py-2">
+              <span className="min-w-0 text-slate-700">
+                <span className="mr-2">{event.emoji}</span>
+                {event.text}
+              </span>
+              <span
+                className="shrink-0 text-xs text-slate-400"
+                title={event.at.toLocaleString("tr-TR")}
+              >
+                {timeAgoTr(event.at)}
+              </span>
+            </li>
+          ))}
+        </ul>
       </div>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
