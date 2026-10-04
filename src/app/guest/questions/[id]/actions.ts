@@ -91,7 +91,7 @@ type SubmitQuizResult =
       score: number;
       total: number;
       answers: { itemId: string; selected: QuizOptionLetter; correct: boolean }[];
-      newBadges: { emoji: string; title: string }[];
+      newBadges: { id: string; emoji: string; title: string }[];
       streakNotes: string[];
     };
 

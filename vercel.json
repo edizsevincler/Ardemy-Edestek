@@ -5,7 +5,7 @@
       "schedule": "0 17 * * *"
     },
     {
-      "path": "/api/cron/first-test",
+      "path": "/api/cron/daily",
       "schedule": "0 8 * * *"
     }
   ]

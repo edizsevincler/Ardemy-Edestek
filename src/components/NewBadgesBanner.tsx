@@ -2,13 +2,17 @@
 
 import { useT } from "@/lib/i18n/client";
 import { Celebration } from "@/components/Celebration";
+import { ShareButton } from "@/components/ShareButton";
 
 export function NewBadgesBanner({
   badges,
   notes = [],
+  shareUrl,
 }: {
-  badges: { emoji: string; title: string }[];
+  badges: { id: string; emoji: string; title: string }[];
   notes?: string[];
+  // Verilirse her yeni rozetin altında "Paylaş" düğmesi çıkar (arkadaş linkiyle).
+  shareUrl?: string;
 }) {
   const t = useT();
   if (badges.length === 0 && notes.length === 0) return null;
@@ -22,13 +26,23 @@ export function NewBadgesBanner({
           </p>
           <div className="mt-2 flex flex-wrap items-center justify-center gap-2">
             {badges.map((b, i) => (
-              <span
-                key={b.title}
+              <div
+                key={b.id}
                 style={{ animationDelay: `${0.25 + i * 0.15}s` }}
-                className="animate-badge-in rounded-full border border-gold-200 bg-white px-3 py-1 text-sm font-medium text-brand-950"
+                className="animate-badge-in flex flex-col items-center gap-1.5"
               >
-                {b.emoji} {b.title}
-              </span>
+                <span className="rounded-full border border-gold-200 bg-white px-3 py-1 text-sm font-medium text-brand-950">
+                  {b.emoji} {b.title}
+                </span>
+                {shareUrl && (
+                  <ShareButton
+                    small
+                    imagePath={`/api/share/badge/${b.id}`}
+                    filename={`ardemy-rozet-${b.id}.png`}
+                    text={t("Ardemy Academy'de \"{title}\" rozetini kazandım! {emoji} Sen de dene: {url}", { title: b.title, emoji: b.emoji, url: shareUrl })}
+                  />
+                )}
+              </div>
             ))}
           </div>
         </>

@@ -13,7 +13,9 @@ const OPTIONS: DailyOption[] = ["A", "B", "C", "D"];
 export function DailyQuestionCard({
   item,
   initialResult,
+  shareUrl,
 }: {
+  shareUrl: string;
   item: DailyItem;
   initialResult: DailyResult | null;
 }) {
@@ -23,7 +25,7 @@ export function DailyQuestionCard({
   );
   const [result, setResult] = useState<DailyResult | null>(initialResult);
   const [error, setError] = useState<string | null>(null);
-  const [newBadges, setNewBadges] = useState<{ emoji: string; title: string }[]>([]);
+  const [newBadges, setNewBadges] = useState<{ id: string; emoji: string; title: string }[]>([]);
   const [notes, setNotes] = useState<string[]>([]);
   // Sayfa yüklenirken değil, cevap şimdi verildiğinde animasyon oynasın.
   const [justAnswered, setJustAnswered] = useState(false);
@@ -100,7 +102,7 @@ export function DailyQuestionCard({
 
       {(newBadges.length > 0 || notes.length > 0) && (
         <div className="mt-3">
-          <NewBadgesBanner badges={newBadges} notes={notes} />
+          <NewBadgesBanner badges={newBadges} notes={notes} shareUrl={shareUrl} />
         </div>
       )}
 

@@ -18,7 +18,8 @@ async function sendEmail(
   toName: string,
   subject: string,
   html: string,
-  headers?: Record<string, string>
+  headers?: Record<string, string>,
+  attachments?: { name: string; content: string }[]
 ) {
   if (!BREVO_API_KEY || !SENDER_EMAIL) {
     console.log(`[email devre dışı] ${to} — ${subject}`);
@@ -38,6 +39,7 @@ async function sendEmail(
       subject,
       htmlContent: html,
       ...(headers ? { headers } : {}),
+      ...(attachments ? { attachment: attachments } : {}),
     }),
   });
 
@@ -214,4 +216,14 @@ export async function sendPasswordResetEmail(
 export async function sendAdminAlertEmail(subject: string, text: string) {
   const html = `<pre style="font-family:monospace;white-space:pre-wrap">${escapeHtml(text)}</pre>`;
   await sendEmail(ADMIN_NOTIFICATION_EMAIL, "Ediz Sevinçler", subject, html);
+}
+
+// Yöneticiye HTML biçimli bildirim (haftalık özet, yedek...). `attachments`
+// içeriği base64 olmalıdır.
+export async function sendAdminHtmlEmail(
+  subject: string,
+  html: string,
+  attachments?: { name: string; content: string }[]
+) {
+  await sendEmail(ADMIN_NOTIFICATION_EMAIL, "Ediz Sevinçler", subject, html, undefined, attachments);
 }

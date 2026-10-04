@@ -267,6 +267,71 @@ export function BadgeCard({
   );
 }
 
+export function ProgressCard({
+  size,
+  logo,
+  firstName,
+  tests,
+  badges,
+  streak,
+  t = makeT(null),
+}: {
+  size: Size;
+  logo: string;
+  firstName: string;
+  tests: number;
+  badges: number;
+  streak: number;
+  t?: TFunction;
+}) {
+  const story = size.height > size.width;
+  const stats = [
+    { value: tests, label: t("Çözülen test"), emoji: "📝" },
+    { value: badges, label: t("Rozet"), emoji: "🏅" },
+    { value: streak, label: t("Günlük seri"), emoji: "🔥" },
+  ];
+  return (
+    <Frame size={size} logo={logo} footer={t("Sen de başla")}>
+      <div style={{ display: "flex", fontSize: 60, fontWeight: 700 }}>
+        {t("{name} Ardemy'de ilerliyor 🚀", { name: firstName })}
+      </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: story ? "column" : "row",
+          alignItems: "center",
+          justifyContent: "center",
+          marginTop: 56,
+        }}
+      >
+        {stats.map((stat) => (
+          <div
+            key={stat.label}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              justifyContent: "center",
+              width: 300,
+              padding: "28px 0",
+              margin: story ? "18px 0" : "0 18px",
+              borderRadius: 36,
+              background: "rgba(255,255,255,0.10)",
+              border: "3px solid rgba(232,194,90,0.5)",
+            }}
+          >
+            <div style={{ display: "flex", fontSize: 64 }}>{stat.emoji}</div>
+            <div style={{ display: "flex", fontSize: 120, fontWeight: 700, color: GOLD, lineHeight: 1.1 }}>
+              {stat.value}
+            </div>
+            <div style={{ display: "flex", fontSize: 38, color: "#e7e1fa" }}>{stat.label}</div>
+          </div>
+        ))}
+      </div>
+    </Frame>
+  );
+}
+
 const LETTERS = ["A", "B", "C", "D"] as const;
 
 export function QuestionCard({

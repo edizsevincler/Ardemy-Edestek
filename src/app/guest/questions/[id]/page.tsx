@@ -9,6 +9,7 @@ import { UnlockButton } from "../UnlockButton";
 import { slugify } from "@/lib/slugify";
 import { getI18n } from "@/lib/i18n/server";
 import { INTL_TAG } from "@/lib/i18n/config";
+import { getReferralShareUrl } from "@/lib/referral";
 import { questionTitleLabel, subjectLabel } from "@/lib/i18n/subject";
 
 export default async function GuestQuestionDetailPage({
@@ -112,6 +113,7 @@ export default async function GuestQuestionDetailPage({
 
         <ProtectedContent watermarkText={watermarkText}>
           <QuizForm
+            shareUrl={await getReferralShareUrl(userId)}
             questionId={question.id}
             items={items}
             existingSubmission={

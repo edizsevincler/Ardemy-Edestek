@@ -25,7 +25,7 @@ type SubmitResult =
   | {
       status: "success";
       result: ExamResultData;
-      newBadges: { emoji: string; title: string }[];
+      newBadges: { id: string; emoji: string; title: string }[];
       streakNotes: string[];
     };
 

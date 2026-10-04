@@ -19,7 +19,7 @@ type AnswerResult =
       status: "success";
       correct: boolean;
       correctOption: DailyOption;
-      newBadges: { emoji: string; title: string }[];
+      newBadges: { id: string; emoji: string; title: string }[];
       streakNotes: string[];
     };
 

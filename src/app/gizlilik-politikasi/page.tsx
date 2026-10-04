@@ -84,6 +84,7 @@ export default async function PrivacyPolicyPage() {
           <section className="space-y-2">
             <h2 className="text-base font-semibold text-brand-950">{t("3. İşlenme Amaçları ve Hukuki Sebep")}</h2>
             <p>{t("Kişisel verileriniz; hesabınızın oluşturulması ve kimlik doğrulaması, size özel ders/ödev içeriklerinin sunulması, soru bankası ve kredi sisteminin işletilmesi, ödeme süreçlerinin yürütülmesi, sizinle iletişim kurulması ve yasal yükümlülüklerin yerine getirilmesi amaçlarıyla, KVKK m.5'te sayılan \"bir sözleşmenin kurulması veya ifasıyla doğrudan doğruya ilgili olma\" ve \"veri sorumlusunun meşru menfaati\" hukuki sebeplerine dayanılarak işlenmektedir.")}</p>
+            <p>{t("Hesap e-postalarına (e-posta onayı, şifre sıfırlama) ek olarak, platformu kullanmanıza yardımcı olmak amacıyla karşılama, çalışma serisi hatırlatması ve ilk test daveti gibi hatırlatma e-postaları gönderebiliriz. Bu e-postaların altındaki bağlantıdan dilediğiniz zaman hatırlatma e-postalarını almayı bırakabilirsiniz; hesabınıza ilişkin zorunlu e-postalar bundan etkilenmez.")}</p>
           </section>
 
           <section className="space-y-2">
@@ -121,6 +122,7 @@ export default async function PrivacyPolicyPage() {
           <section className="space-y-2">
             <h2 className="text-base font-semibold text-brand-950">{t("8. Veri Güvenliği")}</h2>
             <p>{t("Şifreniz geri döndürülemez biçimde (hash'lenerek) saklanır, tüm bağlantılar şifreli (HTTPS) olarak sağlanır ve verilerinize yalnızca yetkili erişimle ulaşılabilir. Buna rağmen internet üzerinden hiçbir veri iletiminin %100 güvenli olmadığını hatırlatırız.")}</p>
+            <p>{t("Veri kaybını önlemek amacıyla veritabanının yedekleri düzenli olarak alınır; yedekler yalnızca Veri Sorumlusu tarafından saklanır ve yetkisiz kişilerle paylaşılmaz.")}</p>
           </section>
 
           <section className="space-y-2">

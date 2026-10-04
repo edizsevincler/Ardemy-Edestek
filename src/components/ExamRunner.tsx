@@ -44,7 +44,7 @@ export function ExamRunner({
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState<{
     result: ExamResultData;
-    newBadges: { emoji: string; title: string }[];
+    newBadges: { id: string; emoji: string; title: string }[];
     notes: string[];
   } | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -114,7 +114,7 @@ export function ExamRunner({
   if (done) {
     return (
       <div className="space-y-4">
-        <NewBadgesBanner badges={done.newBadges} notes={done.notes} />
+        <NewBadgesBanner badges={done.newBadges} notes={done.notes} shareUrl={shareUrl} />
         <ExamResultView result={done.result} shareUrl={shareUrl} />
       </div>
     );

@@ -202,7 +202,7 @@ export async function getBadges(userId: string): Promise<Badge[]> {
 // kutlama göstermek için döndürür.
 export async function awardBadges(
   userId: string
-): Promise<{ emoji: string; title: string }[]> {
+): Promise<{ id: string; emoji: string; title: string }[]> {
   const { badges, persistedIds } = await computeBadges(userId);
   const fresh = badges.filter((b) => b.qualifiesNow && !persistedIds.has(b.id));
   if (fresh.length === 0) return [];
@@ -212,5 +212,5 @@ export async function awardBadges(
     skipDuplicates: true,
   });
   const t = await getT();
-  return fresh.map((b) => ({ emoji: b.emoji, title: t(b.title) }));
+  return fresh.map((b) => ({ id: b.id, emoji: b.emoji, title: t(b.title) }));
 }

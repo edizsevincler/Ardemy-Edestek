@@ -69,4 +69,14 @@ export const design: MessageEntry[] = [
   ["Kaydediliyor...", "Saving...", "Сохраняем..."],
   ["Hatırlatma e-postaları kapatıldı. Şifre sıfırlama gibi hesabınla ilgili önemli e-postalar yine gelir.", "Reminder e-mails have been turned off. Important account e-mails, such as password resets, will still be sent.", "Напоминания отключены. Важные письма по аккаунту, например о сбросе пароля, по-прежнему будут приходить."],
   ["Bu bağlantı geçersiz.", "This link is invalid.", "Эта ссылка недействительна."],
+  // ── Gizlilik politikası eklemeleri, ilerleme kartı ──
+  ["Hesap e-postalarına (e-posta onayı, şifre sıfırlama) ek olarak, platformu kullanmanıza yardımcı olmak amacıyla karşılama, çalışma serisi hatırlatması ve ilk test daveti gibi hatırlatma e-postaları gönderebiliriz. Bu e-postaların altındaki bağlantıdan dilediğiniz zaman hatırlatma e-postalarını almayı bırakabilirsiniz; hesabınıza ilişkin zorunlu e-postalar bundan etkilenmez.", "In addition to account e-mails (e-mail confirmation, password reset), we may send reminder e-mails such as a welcome message, study-streak reminders and an invitation to take your first test, to help you get the most out of the platform. You can stop receiving reminder e-mails at any time using the link at the bottom of these e-mails; mandatory account e-mails are not affected.", "Помимо служебных писем (подтверждение e-mail, сброс пароля), мы можем отправлять напоминания: приветственное письмо, напоминания о серии занятий и приглашение пройти первый тест, чтобы вам было удобнее пользоваться платформой. Вы можете в любой момент отказаться от напоминаний по ссылке внизу письма; обязательные письма по аккаунту это не затрагивает."],
+  ["Veri kaybını önlemek amacıyla veritabanının yedekleri düzenli olarak alınır; yedekler yalnızca Veri Sorumlusu tarafından saklanır ve yetkisiz kişilerle paylaşılmaz.", "To prevent data loss, backups of the database are taken regularly; backups are kept only by the Data Controller and are not shared with unauthorized persons.", "Чтобы избежать потери данных, резервные копии базы данных создаются регулярно; они хранятся только у Оператора данных и не передаются посторонним лицам."],
+  ["İlerlememi paylaş", "Share my progress", "Поделиться прогрессом"],
+  ["Ardemy Academy'de {tests} test çözdüm, {badges} rozet topladım! 🚀 Sen de dene: {url}", "I've solved {tests} tests and collected {badges} badges on Ardemy Academy! 🚀 Try it too: {url}", "Я прошёл(а) {tests} тестов и собрал(а) {badges} наград в Ardemy Academy! 🚀 Попробуй и ты: {url}"],
+  ["Çözülen test", "Tests solved", "Пройдено тестов"],
+  ["Rozet", "Badges", "Награды"],
+  ["Günlük seri", "Day streak", "Дней подряд"],
+  ["Sen de başla", "Start yours too", "Начните и вы"],
+  ["{name} Ardemy'de ilerliyor 🚀", "{name} is making progress on Ardemy 🚀", "{name} делает успехи в Ardemy 🚀"],
 ];

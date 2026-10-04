@@ -26,7 +26,9 @@ export function QuizForm({
   questionId,
   items,
   existingSubmission,
+  shareUrl,
 }: {
+  shareUrl: string;
   questionId: string;
   items: Item[];
   existingSubmission: { score: number; total: number; answers: GradedAnswer[] } | null;
@@ -41,7 +43,7 @@ export function QuizForm({
   });
   const [result, setResult] = useState(existingSubmission);
   const [error, setError] = useState<string | null>(null);
-  const [newBadges, setNewBadges] = useState<{ emoji: string; title: string }[]>([]);
+  const [newBadges, setNewBadges] = useState<{ id: string; emoji: string; title: string }[]>([]);
   const [notes, setNotes] = useState<string[]>([]);
   const [justFinished, setJustFinished] = useState(false);
   const [isPending, startTransition] = useTransition();
@@ -74,7 +76,7 @@ export function QuizForm({
 
   return (
     <div className="space-y-4">
-      <NewBadgesBanner badges={newBadges} notes={notes} />
+      <NewBadgesBanner badges={newBadges} notes={notes} shareUrl={shareUrl} />
       {justFinished && result && newBadges.length === 0 && result.score >= result.total * 0.8 && (
         <Celebration count={result.score === result.total ? 48 : 28} />
       )}
