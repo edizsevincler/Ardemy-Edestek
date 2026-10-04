@@ -84,4 +84,18 @@ export const design: MessageEntry[] = [
   ["Ardemy Academy eğitmeni", "Ardemy Academy instructor", "Преподаватель Ardemy Academy"],
   ["Ardemy Academy'yi işleten eğitmen. Rusça ve İngilizce öğrenmek isteyenler için birebir ders takibini ve bu platformu yürütür; sorularınızı doğrudan ona yazabilirsiniz.", "The instructor who runs Ardemy Academy. He manages one-to-one lesson tracking and this platform for people who want to learn Russian and English; you can write your questions to him directly.", "Преподаватель, который ведёт Ardemy Academy. Он занимается индивидуальным сопровождением занятий и этой платформой для тех, кто хочет выучить русский и английский; вопросы можно писать ему напрямую."],
   ["Öğrenciler ne diyor?", "What do students say?", "Что говорят ученики?"],
+  // ── Soruyu bildir ──
+  ["🚩 Soruyu bildir", "🚩 Report this question", "🚩 Сообщить об ошибке в вопросе"],
+  ["Sorunun neresi hatalı?", "What's wrong with this question?", "Что не так с этим вопросом?"],
+  ["Doğru cevap yanlış işaretlenmiş", "The correct answer is marked wrong", "Правильный ответ отмечен неверно"],
+  ["Birden fazla şık doğru olabilir", "More than one option could be correct", "Правильными могут быть несколько вариантов"],
+  ["Soru anlaşılmıyor", "The question is unclear", "Вопрос непонятен"],
+  ["Yazım hatası var", "There is a typo", "Есть опечатка"],
+  ["Diğer", "Other", "Другое"],
+  ["Eklemek istediğin not (isteğe bağlı)", "Anything you'd like to add (optional)", "Что хотите добавить (необязательно)"],
+  ["Vazgeç", "Cancel", "Отмена"],
+  ["Teşekkürler! Bildirimin için sağ ol, inceleyeceğiz.", "Thank you! We'll look into your report.", "Спасибо! Мы проверим ваше сообщение."],
+  ["Bildirim için giriş yapmalısın.", "You need to log in to send a report.", "Чтобы отправить сообщение, нужно войти в аккаунт."],
+  ["Bildirim gönderilemedi, biraz sonra tekrar dene.", "The report could not be sent, please try again shortly.", "Не удалось отправить сообщение, повторите попытку чуть позже."],
+  ["Bugün çok fazla bildirim gönderdin, yarın tekrar dene.", "You've sent too many reports today, please try again tomorrow.", "Сегодня вы отправили слишком много сообщений, попробуйте завтра."],
 ];

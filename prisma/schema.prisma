@@ -110,6 +110,7 @@ model User {
   passwordResets        PasswordResetToken[]
   badges                UserBadge[]
   emailLogs             EmailLog[]
+  questionReports       QuestionReport[]
 }
 
 // GUEST kaydı sırasında e-postanın gerçekten kullanıcıya ait olduğunu
@@ -447,4 +448,25 @@ model EmailLog {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([userId, kind, dayKey])
+}
+
+// Öğrencilerin "soruyu bildir" ile gönderdiği hatalı/belirsiz soru bildirimleri.
+// Soru metni o anki haliyle snapshot'ta saklanır (soru sonradan düzenlense
+// veya silinse de yönetici neyin bildirildiğini görebilsin).
+model QuestionReport {
+  id         String    @id @default(cuid())
+  kind       String // "quiz" (QuizItem) | "exam" (ExamQuestion)
+  itemId     String
+  reason     String
+  note       String?
+  snapshot   Json
+  status     String    @default("OPEN") // "OPEN" | "RESOLVED"
+  createdAt  DateTime  @default(now())
+  resolvedAt DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, kind, itemId])
+  @@index([status, createdAt])
 }

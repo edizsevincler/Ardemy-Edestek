@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { submitQuiz } from "./actions";
 import { NewBadgesBanner } from "@/components/NewBadgesBanner";
 import { Celebration } from "@/components/Celebration";
+import { ReportQuestionButton } from "@/components/ReportQuestionButton";
 import { useT } from "@/lib/i18n/client";
 
 type OptionLetter = "A" | "B" | "C" | "D";
@@ -135,6 +136,7 @@ export function QuizForm({
                 );
               })}
             </div>
+            {graded && <ReportQuestionButton kind="quiz" itemId={item.id} />}
           </div>
         );
       })}

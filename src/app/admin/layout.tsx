@@ -16,13 +16,14 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  const [unreadCount, pendingPaymentsCount, pendingStreakRewardsCount] =
+  const [unreadCount, pendingPaymentsCount, pendingStreakRewardsCount, openReportsCount] =
     await Promise.all([
       prisma.message.count({
         where: { senderRole: "STUDENT", read: false },
       }),
       prisma.creditPurchase.count({ where: { status: "PENDING" } }),
       prisma.streakReward.count({ where: { fulfilled: false } }),
+      prisma.questionReport.count({ where: { status: "OPEN" } }),
     ]);
 
   return (
@@ -112,6 +113,17 @@ export default async function AdminLayout({
             className="shrink-0 transition hover:text-gold-400"
           >
             📣 Sosyal Medya
+          </Link>
+          <Link
+            href="/admin/reports"
+            className="flex shrink-0 items-center gap-1.5 transition hover:text-gold-400"
+          >
+            🚩 Soru Bildirimleri
+            {openReportsCount > 0 && (
+              <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-medium text-white">
+                {openReportsCount}
+              </span>
+            )}
           </Link>
           <Link
             href="/admin/inactive-users"

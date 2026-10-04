@@ -16,6 +16,11 @@ export async function notifyServerError(
   context: ErrorContext
 ) {
   const message = err instanceof Error ? err.message : String(err);
+  // Ziyaretçi sayfa yüklenirken sekmeyi kapattı / başka sayfaya geçti: gerçek
+  // bir hata değil, uyarı e-postası gerektirmez.
+  if (/destination stream closed early|aborted|ECONNRESET|socket hang up|client disconnected/i.test(message)) {
+    return;
+  }
   const digest =
     typeof err === "object" && err !== null && "digest" in err
       ? String((err as { digest: unknown }).digest)

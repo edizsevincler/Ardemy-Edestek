@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { answerDailyQuestion } from "@/lib/daily-question-actions";
 import { NewBadgesBanner } from "@/components/NewBadgesBanner";
 import { Celebration } from "@/components/Celebration";
+import { ReportQuestionButton } from "@/components/ReportQuestionButton";
 import { useT } from "@/lib/i18n/client";
 import { subjectLabel } from "@/lib/i18n/subject";
 import type { DailyItem, DailyOption, DailyResult } from "@/lib/daily-question";
@@ -105,6 +106,8 @@ export function DailyQuestionCard({
           <NewBadgesBanner badges={newBadges} notes={notes} shareUrl={shareUrl} />
         </div>
       )}
+
+      {result && <ReportQuestionButton kind="quiz" itemId={item.id} />}
 
       {result ? (
         <p className="mt-3 text-sm font-medium text-brand-950">

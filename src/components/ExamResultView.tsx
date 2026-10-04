@@ -8,6 +8,7 @@ import type { ExamResultData } from "@/lib/exam-config";
 import { ShareButton } from "@/components/ShareButton";
 import { ScoreDonut } from "@/components/ScoreDonut";
 import { Celebration } from "@/components/Celebration";
+import { ReportQuestionButton } from "@/components/ReportQuestionButton";
 
 const OPTIONS = ["A", "B", "C", "D"] as const;
 
@@ -119,6 +120,7 @@ export function ExamResultView({
                   💡 {q.explanation}
                 </p>
               )}
+              <ReportQuestionButton kind="exam" itemId={q.id} />
             </li>
           );
         })}

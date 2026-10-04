@@ -51,6 +51,26 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           data: { lastLoginAt: new Date() },
         });
 
+        // Bir kullanıcı ilk kez giriş yaptığında yöneticiye e-posta gider
+        // (öğrenci/misafir ilk kez siteye girdi mi görmek için). Hata girişi engellemez.
+        if (!user.lastLoginAt && user.role !== "ADMIN") {
+          try {
+            const { sendAdminAlertEmail } = await import("@/lib/email");
+            await sendAdminAlertEmail(
+              `👋 ${user.name} ilk kez giriş yaptı`,
+              [
+                `Ad Soyad: ${user.name}`,
+                `Hesap türü: ${user.role === "STUDENT" ? "Öğrenci" : "Misafir"}`,
+                `Kullanıcı adı / e-posta: ${user.username ?? user.email ?? "-"}`,
+                `Hesap oluşturulma: ${user.createdAt.toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}`,
+                `İlk giriş: ${new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}`,
+              ].join("\n")
+            );
+          } catch (error) {
+            console.error("İlk giriş bildirimi gönderilemedi:", error);
+          }
+        }
+
         return {
           id: user.id,
           name: user.name,
