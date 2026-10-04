@@ -2,11 +2,49 @@ import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
+import { consumeLoginToken } from "@/lib/login-links";
 import {
   clearLoginFailures,
   isLoginLocked,
   recordLoginFailure,
 } from "@/lib/login-throttle";
+
+type LoginUser = {
+  id: string;
+  name: string;
+  username: string | null;
+  email: string | null;
+  role: string;
+  createdAt: Date;
+  lastLoginAt: Date | null;
+};
+
+// Her başarılı girişten sonra: son giriş zamanı güncellenir; kullanıcı ilk kez
+// giriş yapıyorsa yöneticiye e-posta gider. Hata girişi engellemez.
+async function afterLogin(user: LoginUser) {
+  await prisma.user.update({
+    where: { id: user.id },
+    data: { lastLoginAt: new Date() },
+  });
+
+  if (!user.lastLoginAt && user.role !== "ADMIN") {
+    try {
+      const { sendAdminAlertEmail } = await import("@/lib/email");
+      await sendAdminAlertEmail(
+        `👋 ${user.name} ilk kez giriş yaptı`,
+        [
+          `Ad Soyad: ${user.name}`,
+          `Hesap türü: ${user.role === "STUDENT" ? "Öğrenci" : "Misafir"}`,
+          `Kullanıcı adı / e-posta: ${user.username ?? user.email ?? "-"}`,
+          `Hesap oluşturulma: ${user.createdAt.toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}`,
+          `İlk giriş: ${new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}`,
+        ].join("\n")
+      );
+    } catch (error) {
+      console.error("İlk giriş bildirimi gönderilemedi:", error);
+    }
+  }
+}
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
@@ -46,30 +84,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         }
         await clearLoginFailures(username);
 
-        await prisma.user.update({
-          where: { id: user.id },
-          data: { lastLoginAt: new Date() },
-        });
-
-        // Bir kullanıcı ilk kez giriş yaptığında yöneticiye e-posta gider
-        // (öğrenci/misafir ilk kez siteye girdi mi görmek için). Hata girişi engellemez.
-        if (!user.lastLoginAt && user.role !== "ADMIN") {
-          try {
-            const { sendAdminAlertEmail } = await import("@/lib/email");
-            await sendAdminAlertEmail(
-              `👋 ${user.name} ilk kez giriş yaptı`,
-              [
-                `Ad Soyad: ${user.name}`,
-                `Hesap türü: ${user.role === "STUDENT" ? "Öğrenci" : "Misafir"}`,
-                `Kullanıcı adı / e-posta: ${user.username ?? user.email ?? "-"}`,
-                `Hesap oluşturulma: ${user.createdAt.toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}`,
-                `İlk giriş: ${new Date().toLocaleString("tr-TR", { timeZone: "Europe/Istanbul" })}`,
-              ].join("\n")
-            );
-          } catch (error) {
-            console.error("İlk giriş bildirimi gönderilemedi:", error);
-          }
-        }
+        await afterLogin(user);
 
         return {
           id: user.id,
@@ -77,6 +92,24 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           email: user.email,
           role: user.role,
         };
+      },
+    }),
+    // E-posta onayından hemen sonra tek kullanımlık jetonla otomatik giriş
+    // (bkz. lib/login-links.ts ve app/verify-email).
+    Credentials({
+      id: "verified-login",
+      credentials: { token: { label: "Token", type: "text" } },
+      authorize: async (credentials) => {
+        const token = credentials?.token;
+        if (typeof token !== "string") return null;
+        const userId = await consumeLoginToken(token);
+        if (!userId) return null;
+        const user = await prisma.user.findUnique({ where: { id: userId } });
+        if (!user) return null;
+        // Yalnızca e-postası onaylı kullanıcılar bu yoldan girebilir.
+        if (user.role === "GUEST" && !user.emailVerified) return null;
+        await afterLogin(user);
+        return { id: user.id, name: user.name, email: user.email, role: user.role };
       },
     }),
   ],

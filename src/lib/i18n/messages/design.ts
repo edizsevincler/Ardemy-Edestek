@@ -98,4 +98,7 @@ export const design: MessageEntry[] = [
   ["Bildirim için giriş yapmalısın.", "You need to log in to send a report.", "Чтобы отправить сообщение, нужно войти в аккаунт."],
   ["Bildirim gönderilemedi, biraz sonra tekrar dene.", "The report could not be sent, please try again shortly.", "Не удалось отправить сообщение, повторите попытку чуть позже."],
   ["Bugün çok fazla bildirim gönderdin, yarın tekrar dene.", "You've sent too many reports today, please try again tomorrow.", "Сегодня вы отправили слишком много сообщений, попробуйте завтра."],
+  // ── E-posta onayı sonrası otomatik giriş ──
+  ["Otomatik giriş yapılamadı, lütfen giriş yapın.", "Automatic sign-in failed, please log in.", "Не удалось войти автоматически, пожалуйста, войдите вручную."],
+  ["E-postanı daha önce onayladıysan doğrudan giriş yapabilirsin.", "If you've already confirmed your e-mail, you can simply log in.", "Если вы уже подтвердили e-mail, просто войдите в аккаунт."],
 ];
