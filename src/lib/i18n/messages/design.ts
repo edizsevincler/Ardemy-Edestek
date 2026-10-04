@@ -79,4 +79,9 @@ export const design: MessageEntry[] = [
   ["Günlük seri", "Day streak", "Дней подряд"],
   ["Sen de başla", "Start yours too", "Начните и вы"],
   ["{name} Ardemy'de ilerliyor 🚀", "{name} is making progress on Ardemy 🚀", "{name} делает успехи в Ardemy 🚀"],
+  // ── Eğitmen tanıtımı ve yorumlar ──
+  ["Eğitmenle tanış", "Meet your instructor", "Знакомство с преподавателем"],
+  ["Ardemy Academy eğitmeni", "Ardemy Academy instructor", "Преподаватель Ardemy Academy"],
+  ["Ardemy Academy'yi işleten eğitmen. Rusça ve İngilizce öğrenmek isteyenler için birebir ders takibini ve bu platformu yürütür; sorularınızı doğrudan ona yazabilirsiniz.", "The instructor who runs Ardemy Academy. He manages one-to-one lesson tracking and this platform for people who want to learn Russian and English; you can write your questions to him directly.", "Преподаватель, который ведёт Ardemy Academy. Он занимается индивидуальным сопровождением занятий и этой платформой для тех, кто хочет выучить русский и английский; вопросы можно писать ему напрямую."],
+  ["Öğrenciler ne diyor?", "What do students say?", "Что говорят ученики?"],
 ];

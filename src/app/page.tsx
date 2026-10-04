@@ -15,6 +15,8 @@ import { pickDemoQuestion } from "@/lib/free-test";
 import { previewBadges } from "@/lib/badges";
 import { tx } from "@/lib/i18n/translate";
 import { ttlCached } from "@/lib/ttl-cache";
+import { INSTRUCTOR, TESTIMONIALS } from "@/lib/site-content";
+import Image from "next/image";
 
 const FEATURES = [
   { emoji: "📅", title: tx("Günün Sorusu ve seri"), text: tx("Her gün yeni bir soru çöz, serini koru; hediye ödüller kazan.") },
@@ -227,6 +229,73 @@ export default async function Home() {
             </div>
           </div>
         </section>
+
+        <section className="px-4 py-12 sm:px-6">
+          <div className="mx-auto max-w-3xl">
+            <div className="flex flex-col items-center gap-6 rounded-2xl border border-brand-100 bg-white p-6 text-center shadow-sm sm:flex-row sm:text-left">
+              {INSTRUCTOR.photo ? (
+                <Image
+                  src={INSTRUCTOR.photo}
+                  alt={INSTRUCTOR.name}
+                  width={112}
+                  height={112}
+                  className="h-28 w-28 shrink-0 rounded-full object-cover ring-4 ring-brand-100"
+                />
+              ) : (
+                <div
+                  aria-hidden
+                  className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-brand-600 to-brand-400 text-3xl font-semibold text-white ring-4 ring-brand-100"
+                >
+                  {INSTRUCTOR.name
+                    .split(" ")
+                    .map((part) => part[0])
+                    .slice(0, 2)
+                    .join("")}
+                </div>
+              )}
+              <div>
+                <p className="text-xs font-medium uppercase tracking-wide text-brand-500">
+                  {t("Eğitmenle tanış")}
+                </p>
+                <h2 className="mt-1 text-xl font-semibold text-brand-950">{INSTRUCTOR.name}</h2>
+                <p className="text-sm text-slate-500">{t(INSTRUCTOR.role)}</p>
+                <p className="mt-3 text-sm text-slate-600">{t(INSTRUCTOR.bio)}</p>
+                <a
+                  href={`https://www.instagram.com/${INSTRUCTOR.instagram.replace("@", "")}/`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="mt-3 inline-block text-sm font-medium text-brand-600 hover:underline"
+                >
+                  {t("Instagram'da takip et: @edizsevincler")}
+                </a>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {TESTIMONIALS.length > 0 && (
+          <section className="px-4 pb-12 sm:px-6">
+            <div className="mx-auto max-w-5xl">
+              <h2 className="text-center text-2xl font-semibold text-brand-950">
+                {t("Öğrenciler ne diyor?")}
+              </h2>
+              <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {TESTIMONIALS.map((item) => (
+                  <figure
+                    key={item.name + item.quote}
+                    className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm"
+                  >
+                    <blockquote className="text-sm text-slate-700">“{item.quote}”</blockquote>
+                    <figcaption className="mt-3 text-sm">
+                      <span className="font-medium text-brand-950">{item.name}</span>
+                      {item.detail && <span className="text-slate-500"> · {item.detail}</span>}
+                    </figcaption>
+                  </figure>
+                ))}
+              </div>
+            </div>
+          </section>
+        )}
 
         <section className="bg-gradient-to-br from-brand-950 to-brand-800 px-4 py-12 sm:px-6">
           <div className="mx-auto max-w-5xl text-center">
