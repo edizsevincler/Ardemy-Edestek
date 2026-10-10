@@ -49,6 +49,8 @@ async function afterLogin(user: LoginUser) {
 // "Beni hatırla" işaretlenmezse oturum bu süre sonunda kapanır (ortak bilgisayar).
 // İşaretliyse varsayılan 30 günlük, kullandıkça uzayan oturum geçerlidir.
 const SHORT_SESSION_MS = 12 * 60 * 60 * 1000;
+// Oturumdaki hesabın hâlâ var olup olmadığı bu aralıkla kontrol edilir.
+const ACCOUNT_CHECK_MS = 5 * 60 * 1000;
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
@@ -145,15 +147,27 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return true;
     },
-    jwt: ({ token, user }) => {
+    jwt: async ({ token, user }) => {
       if (user) {
         token.role = user.role;
         token.remember = user.remember !== false;
         token.loginAt = Date.now();
+        token.checkedAt = Date.now();
       }
       // Hatırlanmayan oturum süresi dolunca çıkış yapılır (null = oturum çerezi silinir).
       if (token.remember === false && Date.now() - Number(token.loginAt ?? 0) > SHORT_SESSION_MS) {
         return null;
+      }
+      // Hesap silindiyse oturumu kapat (aksi halde paneller "kayıt bulunamadı" hatası verir).
+      // En fazla birkaç dakikada bir kontrol edilir; veritabanı hatasında oturum korunur.
+      if (token.sub && Date.now() - Number(token.checkedAt ?? 0) > ACCOUNT_CHECK_MS) {
+        try {
+          const exists = await prisma.user.findUnique({ where: { id: token.sub }, select: { id: true } });
+          if (!exists) return null;
+          token.checkedAt = Date.now();
+        } catch (error) {
+          console.error("Oturum hesap kontrolü yapılamadı:", error);
+        }
       }
       return token;
     },
