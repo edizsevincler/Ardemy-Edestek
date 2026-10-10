@@ -58,18 +58,23 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         password: { label: "Şifre", type: "password" },
       },
       authorize: async (credentials) => {
-        const username = credentials?.username;
+        const rawUsername = credentials?.username;
         const password = credentials?.password;
-        if (typeof username !== "string" || typeof password !== "string") {
+        if (typeof rawUsername !== "string" || typeof password !== "string") {
           return null;
         }
+        // Telefonlar ilk harfi büyütebilir, kopyalarken sonuna boşluk eklenebilir.
+        const username = rawUsername.trim().toLowerCase();
 
         // Kilitliyse şifre denemesine hiç izin verilmez (şifre tahminini zorlaştırır).
         if (await isLoginLocked(username)) return null;
 
         const user = await prisma.user.findFirst({
           where: {
-            OR: [{ username }, { email: username }],
+            OR: [
+              { username: { equals: username, mode: "insensitive" } },
+              { email: { equals: username, mode: "insensitive" } },
+            ],
           },
         });
         if (!user) {
@@ -77,7 +82,10 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           return null;
         }
 
-        const valid = await verifyPassword(password, user.passwordHash);
+        // Şifre kopyalanırken sonuna boşluk/satır sonu eklenmiş olabilir.
+        const valid =
+          (await verifyPassword(password, user.passwordHash)) ||
+          (password !== password.trim() && (await verifyPassword(password.trim(), user.passwordHash)));
         if (!valid) {
           await recordLoginFailure(username);
           return null;

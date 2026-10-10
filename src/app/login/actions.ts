@@ -8,14 +8,19 @@ import { isLoginLocked, LOGIN_LOCK_MINUTES } from "@/lib/login-throttle";
 
 export async function authenticate(_prevState: string | undefined, formData: FormData) {
   const t = await getT();
-  const username = String(formData.get("username") ?? "");
+  const username = String(formData.get("username") ?? "").trim().toLowerCase();
 
   if (await isLoginLocked(username)) {
     return t("Çok fazla hatalı deneme yapıldı. {n} dakika sonra tekrar deneyin.", { n: LOGIN_LOCK_MINUTES });
   }
 
   const existing = await prisma.user.findFirst({
-    where: { OR: [{ username }, { email: username }] },
+    where: {
+      OR: [
+        { username: { equals: username, mode: "insensitive" } },
+        { email: { equals: username, mode: "insensitive" } },
+      ],
+    },
   });
   if (existing && existing.role === "GUEST" && !existing.emailVerified) {
     return t("E-postanızı henüz onaylamadınız. Kayıt olurken gönderilen linke tıklayın.");
@@ -23,7 +28,7 @@ export async function authenticate(_prevState: string | undefined, formData: For
 
   try {
     await signIn("credentials", {
-      username: formData.get("username"),
+      username,
       password: formData.get("password"),
       redirectTo: "/",
     });
