@@ -46,6 +46,10 @@ async function afterLogin(user: LoginUser) {
   }
 }
 
+// "Beni hatırla" işaretlenmezse oturum bu süre sonunda kapanır (ortak bilgisayar).
+// İşaretliyse varsayılan 30 günlük, kullandıkça uzayan oturum geçerlidir.
+const SHORT_SESSION_MS = 12 * 60 * 60 * 1000;
+
 export const { handlers, auth, signIn, signOut } = NextAuth({
   session: { strategy: "jwt" },
   pages: {
@@ -56,6 +60,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       credentials: {
         username: { label: "Kullanıcı adı", type: "text" },
         password: { label: "Şifre", type: "password" },
+        remember: { label: "Beni hatırla", type: "text" },
       },
       authorize: async (credentials) => {
         const rawUsername = credentials?.username;
@@ -99,6 +104,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: user.name,
           email: user.email,
           role: user.role,
+          remember: credentials?.remember !== "false",
         };
       },
     }),
@@ -142,6 +148,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     jwt: ({ token, user }) => {
       if (user) {
         token.role = user.role;
+        token.remember = user.remember !== false;
+        token.loginAt = Date.now();
+      }
+      // Hatırlanmayan oturum süresi dolunca çıkış yapılır (null = oturum çerezi silinir).
+      if (token.remember === false && Date.now() - Number(token.loginAt ?? 0) > SHORT_SESSION_MS) {
+        return null;
       }
       return token;
     },

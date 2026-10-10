@@ -30,6 +30,7 @@ export async function authenticate(_prevState: string | undefined, formData: For
     await signIn("credentials", {
       username,
       password: formData.get("password"),
+      remember: formData.get("remember") === "on" ? "true" : "false",
       redirectTo: "/",
     });
   } catch (error) {

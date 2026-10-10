@@ -167,4 +167,5 @@ export const design: MessageEntry[] = [
   ["Sıralamada görün", "Show me in the ranking", "Показывать меня в рейтинге"],
   ["Sıralamada görünmek istemiyorum", "I don't want to appear in the ranking", "Не хочу отображаться в рейтинге"],
   ["Sıralamayı gör", "View ranking", "Смотреть рейтинг"],
+  ["Beni hatırla", "Remember me", "Запомнить меня"],
 ];

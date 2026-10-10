@@ -63,11 +63,15 @@ export default function LoginPage() {
           />
         </div>
 
-        <p className="-mt-3 text-right text-xs">
+        <div className="-mt-3 flex items-center justify-between gap-3 text-xs">
+          <label className="flex cursor-pointer items-center gap-2 text-sm text-slate-600">
+            <input type="checkbox" name="remember" defaultChecked className="h-4 w-4 accent-brand-600" />
+            {t("Beni hatırla")}
+          </label>
           <Link href="/forgot-password" className="font-medium text-brand-600 hover:underline">
             {t("Şifremi unuttum")}
           </Link>
-        </p>
+        </div>
 
         {errorMessage && (
           <p className="text-sm text-red-600">{errorMessage}</p>
