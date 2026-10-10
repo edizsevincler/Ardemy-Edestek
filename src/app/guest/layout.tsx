@@ -12,6 +12,7 @@ import { getT } from "@/lib/i18n/server";
 import { findTitle } from "@/lib/cosmetics";
 import { InstallPrompt } from "@/components/InstallPrompt";
 import { BottomNav } from "@/components/BottomNav";
+import { MobileMenu } from "@/components/MobileMenu";
 
 export default async function GuestLayout({
   children,
@@ -69,11 +70,30 @@ export default async function GuestLayout({
               </p>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="hidden shrink-0 items-center gap-2 sm:flex">
             <ThemeToggle />
             <LanguageSwitcher tone="dark" />
             <SignOutButton />
           </div>
+          <MobileMenu
+            items={[
+              ...(isStudent
+                ? [{ href: "/student", label: t("← Öğrenci Paneli"), exact: true }]
+                : []),
+              { href: "/guest", label: t("Panel"), exact: true },
+              { href: "/guest/questions", label: t("İçerikler") },
+              { href: "/guest/exam", label: t("Deneme Sınavı") },
+              { href: "/guest/shop", label: t("Mağaza") },
+              { href: "/guest/credits", label: t("Kredi Satın Al") },
+              { href: "/guest/history", label: t("Geçmişim") },
+            ]}
+          >
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <LanguageSwitcher tone="dark" />
+            </div>
+            <SignOutButton />
+          </MobileMenu>
         </div>
         <nav className="-mx-4 mt-3 flex items-center gap-x-4 gap-y-2 overflow-x-auto whitespace-nowrap px-4 text-sm text-brand-100 sm:mx-0 sm:flex-wrap sm:px-0">
           {isStudent && (

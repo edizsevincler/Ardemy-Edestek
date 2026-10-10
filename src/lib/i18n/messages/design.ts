@@ -118,4 +118,7 @@ export const design: MessageEntry[] = [
   ["Sadece 1 dakika: bugünün sorusunu çöz.", "Just 1 minute: answer today's question.", "Всего 1 минута: ответьте на сегодняшний вопрос."],
   ["Tarayıcı veya telefon bildirimi için izin verirseniz, cihazınıza günlük hatırlatma bildirimleri gönderilir; bu amaçla cihazınızın bildirim adresi saklanır. Bildirimleri panelinizden veya tarayıcı ayarlarından dilediğiniz zaman kapatabilirsiniz.", "If you allow browser or phone notifications, daily reminder notifications are sent to your device; your device's notification address is stored for this purpose. You can turn notifications off at any time from your dashboard or browser settings.", "Если вы разрешите уведомления в браузере или на телефоне, на ваше устройство будут приходить ежедневные напоминания; для этого сохраняется адрес уведомлений устройства. Уведомления можно отключить в любой момент в личном кабинете или в настройках браузера."],
   ["Bildirim açılıyor...", "Turning on notifications...", "Включаем уведомления..."],
+  // ── Telefon hamburger menüsü ──
+  ["Menüyü kapat", "Close menu", "Закрыть меню"],
+  ["Ücretsiz dene", "Try it free", "Попробовать бесплатно"],
 ];

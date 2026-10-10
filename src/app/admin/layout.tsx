@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { SignOutButton } from "@/components/SignOutButton";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { MobileMenu } from "@/components/MobileMenu";
 import { Logo } from "@/components/Logo";
 import { prisma } from "@/lib/prisma";
 
@@ -41,12 +42,35 @@ export default async function AdminLayout({
               </p>
             </div>
           </div>
-          <div className="flex shrink-0 items-center gap-2">
+          <div className="hidden shrink-0 items-center gap-2 sm:flex">
             <ThemeToggle />
             <SignOutButton />
           </div>
+          <MobileMenu
+            items={[
+              { href: "/admin", label: "Panel", exact: true },
+              { href: "/admin/students", label: "Öğrenciler" },
+              { href: "/admin/guests", label: "Misafirler" },
+              { href: "/admin/assignments", label: "Ödevler" },
+              { href: "/admin/lesson-files", label: "Ders Dosyaları" },
+              { href: "/admin/questions", label: "Soru Bankası" },
+              { href: "/admin/credit-packages", label: "Kredi Paketleri" },
+              { href: "/admin/pending-payments", label: "Bekleyen Ödemeler", badge: pendingPaymentsCount },
+              { href: "/admin/streak-rewards", label: "🔥 Seri Ödülleri", badge: pendingStreakRewardsCount },
+              { href: "/admin/referrals", label: "🎁 Arkadaşını Getir" },
+              { href: "/admin/visits", label: "📈 Ziyaretler" },
+              { href: "/admin/sources", label: "📊 Kaynaklar" },
+              { href: "/admin/social", label: "📣 Sosyal Medya" },
+              { href: "/admin/reports", label: "🚩 Soru Bildirimleri", badge: openReportsCount },
+              { href: "/admin/inactive-users", label: "Pasif Kullanıcılar" },
+              { href: "/admin/messages", label: "Mesajlar", badge: unreadCount },
+            ]}
+          >
+            <ThemeToggle />
+            <SignOutButton />
+          </MobileMenu>
         </div>
-        <nav className="-mx-4 mt-3 flex gap-x-4 gap-y-2 overflow-x-auto whitespace-nowrap px-4 text-sm text-brand-100 sm:mx-0 sm:flex-wrap sm:px-0">
+        <nav className="mt-3 hidden flex-wrap gap-x-4 gap-y-2 whitespace-nowrap text-sm text-brand-100 sm:flex">
           <Link href="/admin" className="shrink-0 transition hover:text-gold-400">
             Panel
           </Link>

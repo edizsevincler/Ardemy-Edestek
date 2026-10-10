@@ -7,6 +7,7 @@ import { Footer } from "@/components/Footer";
 import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { MobileMenu } from "@/components/MobileMenu";
 import { getI18n } from "@/lib/i18n/server";
 import { INTL_TAG } from "@/lib/i18n/config";
 import { FlagIcon } from "@/components/FlagIcon";
@@ -78,7 +79,20 @@ export default async function Home() {
             <Logo size={36} />
             <span className="font-semibold text-brand-950">Ardemy Academy</span>
           </div>
-          <div className="flex items-center gap-3">
+          <MobileMenu
+            tone="light"
+            items={[
+              { href: "/dene", label: t("Ücretsiz dene") },
+              { href: "/login", label: t("Giriş Yap") },
+              { href: "/register", label: t("Ücretsiz Kayıt Ol"), highlight: true },
+            ]}
+          >
+            <div className="flex items-center gap-3">
+              <ThemeToggle />
+              <LanguageSwitcher tone="dark" />
+            </div>
+          </MobileMenu>
+          <div className="hidden items-center gap-3 sm:flex">
             <ThemeToggle tone="light" />
             <LanguageSwitcher />
             <Link
