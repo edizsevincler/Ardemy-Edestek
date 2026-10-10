@@ -6,6 +6,7 @@ import { SITE_URL } from "@/lib/site";
 import { SourceCapture } from "@/components/SourceCapture";
 import { PageViewTracker } from "@/components/PageViewTracker";
 import { PwaRegister } from "@/components/PwaRegister";
+import { ThemeScript } from "@/components/ThemeScript";
 import { I18nProvider } from "@/lib/i18n/client";
 import { getDictionary } from "@/lib/i18n/dictionary";
 import { getI18n } from "@/lib/i18n/server";
@@ -30,9 +31,6 @@ export const viewport: Viewport = {
   themeColor: "#1c1147",
   viewportFit: "cover",
 };
-
-// Sayfa boyanmadan önce kayıtlı/cihaz temasını uygular (yanıp sönmeyi önler).
-const THEME_SCRIPT = `try{var t=localStorage.getItem("ardemy_theme");if(t==="dark"||(t!=="light"&&matchMedia("(prefers-color-scheme: dark)").matches))document.documentElement.classList.add("dark")}catch(e){}`;
 
 const OG_LOCALES = { tr: "tr_TR", en: "en_GB", ru: "ru_RU" } as const;
 
@@ -66,7 +64,7 @@ export default async function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: THEME_SCRIPT }} />
+        <ThemeScript />
       </head>
       <body className="min-h-full flex flex-col">
         <I18nProvider locale={locale} dict={getDictionary(locale)}>
