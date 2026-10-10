@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { verifyPassword } from "@/lib/password";
 import { consumeLoginToken } from "@/lib/login-links";
@@ -130,9 +131,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
   ],
   callbacks: {
-    authorized: ({ auth, request }) => {
+    authorized: async ({ auth, request }) => {
       const isLoggedIn = !!auth?.user;
       const { pathname } = request.nextUrl;
+
+      // Panel sayfaları çizilmeden önce: oturumdaki hesap silinmişse oturumu kapatıp
+      // girişe yönlendir (aksi halde sayfalar "kayıt bulunamadı" hatasıyla çöker).
+      if (isLoggedIn && auth.user.id) {
+        const exists = await prisma.user
+          .findUnique({ where: { id: auth.user.id }, select: { id: true } })
+          .catch(() => ({ id: auth.user.id })); // veritabanı hatasında oturumu koru
+        // Çerez burada silinemiyor (Auth.js yanıta oturum çerezini geri ekler);
+        // /logout çerezi temizleyip girişe yönlendirir.
+        if (!exists) return NextResponse.redirect(new URL("/logout", request.nextUrl));
+      }
+
       if (pathname.startsWith("/admin")) {
         return isLoggedIn && auth.user.role === "ADMIN";
       }
