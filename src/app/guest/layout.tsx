@@ -82,6 +82,7 @@ export default async function GuestLayout({
                 : []),
               { href: "/guest", label: t("Panel"), exact: true },
               { href: "/guest/questions", label: t("İçerikler") },
+              { href: "/guest/cards", label: t("🃏 Kelime Kartları") },
               { href: "/guest/exam", label: t("Deneme Sınavı") },
               { href: "/guest/shop", label: t("Mağaza") },
               { href: "/guest/credits", label: t("Kredi Satın Al") },

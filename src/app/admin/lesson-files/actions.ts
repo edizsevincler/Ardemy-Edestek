@@ -2,12 +2,25 @@
 
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile } from "@/lib/storage";
+import { addCardsForStudents, extractPairsFromDocx } from "@/lib/flashcards";
 import { revalidatePath } from "next/cache";
 
 type UploadLessonFileState =
   | { status: "idle" }
   | { status: "error"; message: string }
   | { status: "success"; count: number };
+
+// Yüklenen docx notundaki "A = B" satırlarından öğrencilerin kelime kartlarını üretir.
+// Kart üretimi başarısız olsa bile dosya yüklemesi bozulmaz.
+async function makeCards(file: File, studentIds: string[], title: string) {
+  if (!file.name.toLowerCase().endsWith(".docx")) return;
+  try {
+    const pairs = await extractPairsFromDocx(Buffer.from(await file.arrayBuffer()));
+    await addCardsForStudents(studentIds, pairs, title);
+  } catch (error) {
+    console.error("Kelime kartı üretilemedi:", error);
+  }
+}
 
 export async function uploadLessonFile(
   _prevState: UploadLessonFileState,
@@ -40,6 +53,8 @@ export async function uploadLessonFile(
       lessonDate,
     })),
   });
+
+  await makeCards(file, studentIds, title);
 
   revalidatePath("/admin/lesson-files");
 
@@ -75,6 +90,7 @@ export async function editLessonFile(
     const saved = await saveUploadedFile(file, "lesson-files");
     fileUrl = saved.fileUrl;
     fileName = saved.fileName;
+    await makeCards(file, [existing.studentId], title);
   }
 
   await prisma.lessonFile.update({

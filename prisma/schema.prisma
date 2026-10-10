@@ -117,6 +117,7 @@ model User {
   emailLogs             EmailLog[]
   questionReports       QuestionReport[]
   pushSubscriptions     PushSubscription[]
+  flashCards            FlashCard[]
 }
 
 // GUEST kaydı sırasında e-postanın gerçekten kullanıcıya ait olduğunu
@@ -490,4 +491,24 @@ model PushSubscription {
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([userId])
+}
+
+// Kaydırmalı kelime kartları: öğrencinin ders notlarındaki "TÜRKÇE = YABANCI"
+// satırlarından otomatik üretilir (lib/flashcards.ts). knownStreak, kartın art
+// arda kaç kez "biliyorum" denildiğini tutar; az bilinen kartlar önce gelir.
+model FlashCard {
+  id           String    @id @default(cuid())
+  front        String // Türkçe taraf
+  back         String // yabancı dil karşılığı
+  sourceTitle  String? // kartın geldiği ders (ör. "06.10.2026")
+  knownStreak  Int       @default(0)
+  seen         Int       @default(0)
+  lastSeenAt   DateTime?
+  createdAt    DateTime  @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, front, back])
+  @@index([userId, knownStreak])
 }
