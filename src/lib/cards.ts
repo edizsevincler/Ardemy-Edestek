@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { syncAdminCards, CARD_LANGUAGES, type CardLanguage } from "@/lib/flashcards";
+import { syncAdminCards, CARD_LANGUAGES, type CardLanguage, type CardTopic } from "@/lib/flashcards";
 import { dateKey } from "@/lib/streak";
 import { ttlCached } from "@/lib/ttl-cache";
 
@@ -64,15 +64,40 @@ export async function getLanguageCounts(userId: string): Promise<Record<CardLang
   return counts;
 }
 
-// Kullanıcının seçili dildeki kartlarından bir deste: en az bilinen ve en eski görülen kartlar
+// Seçili dilde konu başına kart ve öğrenilen kart sayısı (konu listesi için).
+export async function getTopicStats(userId: string, language: CardLanguage) {
+  const [all, mastered] = await Promise.all([
+    prisma.flashCard.groupBy({ by: ["topic"], where: { userId, language }, _count: { _all: true } }),
+    prisma.flashCard.groupBy({
+      by: ["topic"],
+      where: { userId, language, knownStreak: { gte: MASTERED_STREAK } },
+      _count: { _all: true },
+    }),
+  ]);
+  const stats = new Map<string, { total: number; mastered: number }>();
+  for (const g of all) stats.set(g.topic, { total: g._count._all, mastered: 0 });
+  for (const g of mastered) {
+    const entry = stats.get(g.topic);
+    if (entry) entry.mastered = g._count._all;
+  }
+  return stats;
+}
+
+// Kullanıcının seçili dildeki (ve varsa seçili konudaki) kartlarından bir deste: en az bilinen ve en eski görülen kartlar
 // önce gelir, aralarından rastgele seçilir.
-export async function getUserDeck(userId: string, language: CardLanguage, size = 15): Promise<Deck> {
+export async function getUserDeck(
+  userId: string,
+  language: CardLanguage,
+  topic: CardTopic | null = null,
+  size = 15
+): Promise<Deck> {
   await syncAdminCards(userId);
+  const where = { userId, language, ...(topic ? { topic } : {}) };
   const [total, mastered, pool] = await Promise.all([
-    prisma.flashCard.count({ where: { userId, language } }),
-    prisma.flashCard.count({ where: { userId, language, knownStreak: { gte: MASTERED_STREAK } } }),
+    prisma.flashCard.count({ where }),
+    prisma.flashCard.count({ where: { ...where, knownStreak: { gte: MASTERED_STREAK } } }),
     prisma.flashCard.findMany({
-      where: { userId, language },
+      where,
       orderBy: [{ knownStreak: "asc" }, { lastSeenAt: { sort: "asc", nulls: "first" } }],
       take: size * 5,
       select: { id: true, front: true, back: true },

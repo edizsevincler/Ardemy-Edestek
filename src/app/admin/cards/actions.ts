@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
-import { ADMIN_SOURCE, parseCardLanguage, parseWordLines } from "@/lib/flashcards";
+import { ADMIN_SOURCE, parseCardLanguage, parseCardTopic, parseWordLines } from "@/lib/flashcards";
 
 type AddState =
   | { status: "idle" }
@@ -24,6 +24,8 @@ export async function addCardWords(_prev: AddState, formData: FormData): Promise
   await requireAdmin();
   const language = parseCardLanguage(formData.get("language"));
   if (!language) return { status: "error", message: "Dil seçin." };
+  const topic = parseCardTopic(formData.get("topic"));
+  if (!topic) return { status: "error", message: "Konu seçin." };
   const { pairs, skipped } = parseWordLines(String(formData.get("words") ?? ""));
   if (pairs.length === 0) {
     return { status: "error", message: 'Geçerli satır yok. Her satıra "Türkçe = yabancı dil" yazın.' };
@@ -33,7 +35,7 @@ export async function addCardWords(_prev: AddState, formData: FormData): Promise
   const have = new Set(existing.map((w) => keyOf(w.front, w.back)));
   const fresh = pairs.filter((p) => !have.has(keyOf(p.front, p.back)));
   if (fresh.length > 0) {
-    await prisma.cardWord.createMany({ data: fresh.map((p) => ({ ...p, language })), skipDuplicates: true });
+    await prisma.cardWord.createMany({ data: fresh.map((p) => ({ ...p, language, topic })), skipDuplicates: true });
   }
 
   revalidatePath("/admin/cards");

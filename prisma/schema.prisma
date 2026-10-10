@@ -506,6 +506,7 @@ model FlashCard {
   back         String // yabancı dil karşılığı
   sourceTitle  String? // "admin": yöneticinin eklediği kelime
   language     String    @default("EN") // "EN" | "RU": hangi dilin kartı
+  topic        String    @default("other") // konu kimliği (lib/flashcards.ts CARD_TOPICS)
   knownStreak  Int       @default(0)
   seen         Int       @default(0)
   lastSeenAt   DateTime?
@@ -525,6 +526,7 @@ model CardWord {
   front     String // Türkçe taraf
   back      String // yabancı dil karşılığı
   language  String   @default("EN") // "EN" | "RU"
+  topic     String   @default("other") // konu kimliği (lib/flashcards.ts CARD_TOPICS)
   createdAt DateTime @default(now())
 
   // Kullanılmıyor: kelimeler artık herkese açık (eski kitle seçimi sütunları, boş bırakılır).

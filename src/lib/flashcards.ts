@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { tx } from "@/lib/i18n/translate";
 
 // Kelime kartları yöneticinin eklediği kelimelerden (CardWord, /admin/cards) gelir.
 // Her kullanıcı kendi kartlarını FlashCard'da tutar (ilerleme için); yeni/eklenen
@@ -14,6 +15,24 @@ export const CARD_LANGUAGES: { code: CardLanguage; name: "İngilizce" | "Rusça"
 ];
 export function parseCardLanguage(value: unknown): CardLanguage | null {
   return value === "EN" || value === "RU" ? value : null;
+}
+
+// Kelime konuları (sabit liste: adları arayüzde çevrilir). Sıra, sayfadaki sıradır.
+export const CARD_TOPICS = [
+  { id: "verbs", name: tx("Fiiller") },
+  { id: "adjectives", name: tx("Sıfatlar") },
+  { id: "greetings", name: tx("Selamlaşma ve kalıplar") },
+  { id: "time", name: tx("Zaman") },
+  { id: "people", name: tx("Aile ve insanlar") },
+  { id: "food", name: tx("Yiyecek ve içecek") },
+  { id: "places", name: tx("Ev, okul ve şehir") },
+  { id: "travel", name: tx("Ulaşım ve seyahat") },
+  { id: "learning", name: tx("Dil ve öğrenme") },
+  { id: "other", name: tx("Diğer") },
+] as const;
+export type CardTopic = (typeof CARD_TOPICS)[number]["id"];
+export function parseCardTopic(value: unknown): CardTopic | null {
+  return CARD_TOPICS.find((t) => t.id === value)?.id ?? null;
 }
 
 export type CardPair = { front: string; back: string };
@@ -59,14 +78,14 @@ export async function syncAdminCards(userId: string) {
   if (wordCount === 0 || cardCount >= wordCount) return;
 
   const [words, existing] = await Promise.all([
-    prisma.cardWord.findMany({ select: { front: true, back: true, language: true } }),
+    prisma.cardWord.findMany({ select: { front: true, back: true, language: true, topic: true } }),
     prisma.flashCard.findMany({ where: { userId, sourceTitle: ADMIN_SOURCE }, select: { front: true, back: true } }),
   ]);
   const have = new Set(existing.map((c) => pairKey(c.front, c.back)));
   const fresh = words.filter((w) => !have.has(pairKey(w.front, w.back)));
   if (fresh.length === 0) return;
   await prisma.flashCard.createMany({
-    data: fresh.map((w) => ({ userId, front: w.front, back: w.back, language: w.language, sourceTitle: ADMIN_SOURCE })),
+    data: fresh.map((w) => ({ userId, front: w.front, back: w.back, language: w.language, topic: w.topic, sourceTitle: ADMIN_SOURCE })),
     skipDuplicates: true,
   });
 }

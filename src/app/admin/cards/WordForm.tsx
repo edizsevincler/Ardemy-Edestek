@@ -2,6 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { addCardWords } from "./actions";
+import { CARD_TOPICS } from "@/lib/flashcards";
 
 const initialState = { status: "idle" } as const;
 
@@ -27,6 +28,23 @@ export function WordForm() {
             <input type="radio" name="language" value="RU" /> Rusça
           </label>
         </fieldset>
+        <div className="flex flex-wrap items-center gap-2">
+          <label htmlFor="topic" className="text-sm font-medium text-slate-700">
+            Konu:
+          </label>
+          <select
+            id="topic"
+            name="topic"
+            defaultValue="verbs"
+            className="rounded-md border border-slate-300 px-3 py-1.5 text-sm outline-none focus:border-slate-500"
+          >
+            {CARD_TOPICS.map((topic) => (
+              <option key={topic.id} value={topic.id}>
+                {topic.name}
+              </option>
+            ))}
+          </select>
+        </div>
         <div>
           <label htmlFor="words" className="text-sm font-medium text-slate-700">
             Kelimeler (her satıra bir tane: Türkçe = yabancı dil)
