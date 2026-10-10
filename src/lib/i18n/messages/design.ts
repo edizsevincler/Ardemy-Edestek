@@ -143,4 +143,6 @@ export const design: MessageEntry[] = [
   ["Derslerinden {n} kelime kartın hazır. Kaydırarak çalış.", "{n} flashcards from your lessons are ready. Swipe to study.", "Готово {n} карточек из ваших уроков. Свайпайте и учите."],
   ["Her gün 10 ücretsiz kelime kartı. Kaydırarak çalış.", "10 free flashcards every day. Swipe to study.", "10 бесплатных карточек каждый день. Свайпайте и учите."],
   ["Kartlara git", "Go to cards", "К карточкам"],
+  ["Şifreyi göster", "Show password", "Показать пароль"],
+  ["Şifreyi gizle", "Hide password", "Скрыть пароль"],
 ];

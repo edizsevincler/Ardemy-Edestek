@@ -7,6 +7,7 @@ import { registerGuest } from "./actions";
 import { Logo } from "@/components/Logo";
 import { AuthShell } from "@/components/AuthShell";
 import { useT } from "@/lib/i18n/client";
+import { PasswordInput } from "@/components/PasswordInput";
 import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
 
 const initialState = { status: "idle" } as const;
@@ -94,10 +95,9 @@ function RegisterForm() {
           <label htmlFor="password" className="text-sm font-medium text-slate-700">
             {t("Şifre")}
           </label>
-          <input
+          <PasswordInput
             id="password"
             name="password"
-            type="password"
             required
             autoComplete="new-password"
             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
@@ -111,10 +111,9 @@ function RegisterForm() {
           >
             {t("Şifre (tekrar)")}
           </label>
-          <input
+          <PasswordInput
             id="passwordConfirm"
             name="passwordConfirm"
-            type="password"
             required
             autoComplete="new-password"
             className="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none transition focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
