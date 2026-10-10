@@ -97,7 +97,7 @@ export default async function GuestLayout({
             <SignOutButton />
           </MobileMenu>
         </div>
-        <nav className="-mx-4 mt-3 flex items-center gap-x-4 gap-y-2 overflow-x-auto whitespace-nowrap px-4 text-sm text-brand-100 sm:mx-0 sm:flex-wrap sm:px-0">
+        <nav className="-mx-4 mt-3 flex items-center gap-x-4 gap-y-2 overflow-x-auto whitespace-nowrap px-4 text-sm text-brand-100 sm:mx-0 sm:flex-wrap sm:justify-center sm:px-0">
           {isStudent && (
             <Link
               href="/student"
