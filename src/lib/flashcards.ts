@@ -1,116 +1,72 @@
-import mammoth from "mammoth";
 import { prisma } from "@/lib/prisma";
 
-// Ders notlarındaki "TÜRKÇE = YABANCI" satırlarından kelime kartı üretir.
+// Kelime kartları yöneticinin eklediği kelimelerden (CardWord, /admin/cards) gelir.
+// Her kullanıcı kendi kartlarını FlashCard'da tutar (ilerleme için); yeni/eklenen
+// kelimeler kullanıcı kartlarına girdiğinde buraya kopyalanır.
+
+export const ADMIN_SOURCE = "admin";
+
+// Kart dilleri: kod -> soru bankasındaki konu öneki / FlagIcon dil adı.
+export type CardLanguage = "EN" | "RU";
+export const CARD_LANGUAGES: { code: CardLanguage; name: "İngilizce" | "Rusça" }[] = [
+  { code: "EN", name: "İngilizce" },
+  { code: "RU", name: "Rusça" },
+];
+export function parseCardLanguage(value: unknown): CardLanguage | null {
+  return value === "EN" || value === "RU" ? value : null;
+}
 
 export type CardPair = { front: string; back: string };
 
-// "İ" burada yok: Türkçe klavyeyle yazılan İngilizce kelimelerde de çıkıyor (DECİDE).
-const TURKISH_LETTERS = /[çğıöşüÇĞÖŞÜ]/;
-// Türkçe mastar eki (-mek/-mak) olan taraf Türkçedir.
-const INFINITIVE = /(mek|mak)$/i;
-// Almanca/İngilizce tanımlayıcıyla başlayan taraf yabancıdır ("die Tische", "to run").
-const FOREIGN_START = /^(die|der|das|ein|eine|to|the)\s/i;
-const looksTurkish = (text: string) => TURKISH_LETTERS.test(text) || INFINITIVE.test(text);
+const clean = (text: string) => text.replace(/\s+/g, " ").trim();
 
-function clean(text: string) {
-  return text
-    .replace(/[“”"]/g, "")
-    .replace(/\s+/g, " ")
-    .replace(/^[\s\-–•*]+/, "")
-    .replace(/[\s\-–•*:;,/]+$/, "")
-    .trim();
-}
-
-// Yalnızca büyük harfle yazılmış mı? (Notlar çoğunlukla BÜYÜK HARFLE yazılmış.)
-function isAllCaps(text: string) {
-  const letters = text.replace(/[^\p{L}]/gu, "");
-  return letters.length > 0 && letters === letters.toLocaleUpperCase("tr");
-}
-
-// Büyük harfli yazılmış metni küçültür; Türkçe taraf Türkçe kurallarıyla (I→ı),
-// yabancı taraf İngilizce kurallarıyla (Türkçe klavyedeki "İ" → "i", I → i).
-function lowerTurkish(text: string) {
-  return isAllCaps(text) ? text.toLocaleLowerCase("tr") : text;
-}
-function lowerForeign(text: string) {
-  if (isAllCaps(text)) return text.replace(/İ/g, "i").toLowerCase();
-  // "İnvitation" gibi İngilizce kelimede kalan "İ" harfini düzelt.
-  if (!TURKISH_LETTERS.test(text) && text.includes("İ")) {
-    return text.replace(/İ/g, (_m, offset: number) => (offset === 0 ? "I" : "i"));
-  }
-  return text;
-}
-
-// Hangi taraf Türkçe? Türkçeye özgü harfi olan taraf Türkçedir; ikisi de büyük
-// harfliyse soldaki Türkçe kabul edilir; küçük/karışık harfli satırlar
-// çoğunlukla "yabancı = Türkçe" yazılmıştır.
-function orient(a: string, b: string): [string, string] {
-  const aF = FOREIGN_START.test(a);
-  const bF = FOREIGN_START.test(b);
-  if (aF && !bF) return [b, a];
-  if (bF && !aF) return [a, b];
-  const aTr = looksTurkish(a);
-  const bTr = looksTurkish(b);
-  if (aTr && !bTr) return [a, b];
-  if (bTr && !aTr) return [b, a];
-  if (isAllCaps(a) && isAllCaps(b)) return [a, b];
-  return [b, a];
-}
-
-// Aynı çiftin iki yönü (a=b ve b=a) aynı anahtarı üretir.
-export function pairKey(front: string, back: string) {
-  return [front, back].map((t) => t.toLocaleLowerCase("tr")).sort().join("|");
-}
-
-const tooLong = (text: string) => text.length > 60 || text.split(" ").length > 5;
-const looksLikeSentence = (text: string) => /[.!?](?!\.)/.test(text.replace(/\.\.\.|…/g, ""));
-
-export function parsePairs(lines: string[]): CardPair[] {
+// Yönetici girişi: her satır "Türkçe = yabancı dil". Sol taraf kartın önü olur.
+// Boş satırlar ve "=" içermeyen satırlar `skipped` listesine girer.
+export function parseWordLines(text: string): { pairs: CardPair[]; skipped: string[] } {
   const seen = new Set<string>();
-  const out: CardPair[] = [];
-  for (const raw of lines) {
-    if (raw.length > 130 || raw.split("=").length !== 2) continue;
-    const [left, right] = raw.split("=").map(clean);
-    if (!left || !right || tooLong(left) || tooLong(right)) continue;
-    if (looksLikeSentence(left) || looksLikeSentence(right)) continue;
-    if (/^\d+$/.test(left) || /^\d+$/.test(right)) continue;
-    const [turkish, foreign] = orient(left, right);
-    const front = lowerTurkish(turkish);
-    const back = lowerForeign(foreign);
-    if (front.toLocaleLowerCase("tr") === back.toLocaleLowerCase("tr")) continue;
-    const key = pairKey(front, back);
+  const pairs: CardPair[] = [];
+  const skipped: string[] = [];
+  for (const raw of text.split(/\r?\n/)) {
+    const line = raw.trim();
+    if (!line) continue;
+    const parts = line.split("=");
+    const front = clean(parts[0] ?? "");
+    const back = clean(parts.slice(1).join("="));
+    if (parts.length < 2 || !front || !back || front.length > 80 || back.length > 80) {
+      skipped.push(line);
+      continue;
+    }
+    const key = `${front.toLocaleLowerCase("tr")}|${back.toLocaleLowerCase("tr")}`;
     if (seen.has(key)) continue;
     seen.add(key);
-    out.push({ front, back });
+    pairs.push({ front, back });
   }
-  return out;
+  return { pairs, skipped };
 }
 
-export async function extractPairsFromDocx(buffer: Buffer): Promise<CardPair[]> {
-  const { value } = await mammoth.extractRawText({ buffer });
-  return parsePairs(value.split(/\r?\n/).map((line) => line.trim()).filter(Boolean));
-}
+const pairKey = (front: string, back: string) =>
+  `${front.toLocaleLowerCase("tr")}|${back.toLocaleLowerCase("tr")}`;
 
-// Kartları öğrencilere ekler (aynı kart zaten varsa atlanır). Eklenen sayıyı döndürür.
-export async function addCardsForStudents(
-  userIds: string[],
-  pairs: CardPair[],
-  sourceTitle: string | null
-): Promise<number> {
-  if (pairs.length === 0 || userIds.length === 0) return 0;
-  let added = 0;
-  for (const userId of userIds) {
-    // Aynı kartın ters yönü zaten varsa tekrar eklenmez.
-    const existing = await prisma.flashCard.findMany({ where: { userId }, select: { front: true, back: true } });
-    const known = new Set(existing.map((c) => pairKey(c.front, c.back)));
-    const fresh = pairs.filter((pair) => !known.has(pairKey(pair.front, pair.back)));
-    if (fresh.length === 0) continue;
-    const result = await prisma.flashCard.createMany({
-      data: fresh.map((pair) => ({ userId, front: pair.front, back: pair.back, sourceTitle })),
-      skipDuplicates: true,
-    });
-    added += result.count;
-  }
-  return added;
+// Yöneticinin eklediği tüm kelimeleri kullanıcının kartlarına ekler (eksik olanları).
+// Kart sayfası ve panel açılınca çağrılır, bu yüzden sonradan eklenen kelimeler ve
+// sonradan kayıt olan kullanıcılar da kartlarını otomatik alır. Kelime silinince
+// kartları da silindiği için iki sayı eşitse eksik yoktur (ucuz kontrol).
+export async function syncAdminCards(userId: string) {
+  const [wordCount, cardCount] = await Promise.all([
+    prisma.cardWord.count(),
+    prisma.flashCard.count({ where: { userId, sourceTitle: ADMIN_SOURCE } }),
+  ]);
+  if (wordCount === 0 || cardCount >= wordCount) return;
+
+  const [words, existing] = await Promise.all([
+    prisma.cardWord.findMany({ select: { front: true, back: true, language: true } }),
+    prisma.flashCard.findMany({ where: { userId, sourceTitle: ADMIN_SOURCE }, select: { front: true, back: true } }),
+  ]);
+  const have = new Set(existing.map((c) => pairKey(c.front, c.back)));
+  const fresh = words.filter((w) => !have.has(pairKey(w.front, w.back)));
+  if (fresh.length === 0) return;
+  await prisma.flashCard.createMany({
+    data: fresh.map((w) => ({ userId, front: w.front, back: w.back, language: w.language, sourceTitle: ADMIN_SOURCE })),
+    skipDuplicates: true,
+  });
 }

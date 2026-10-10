@@ -99,6 +99,9 @@ model User {
   // günün sorusunu çözmediyse gönderilir. Cihaz kayıtları PushSubscription'da.
   reminderHour Int @default(20)
 
+  // Sıralama sayfasında adının görünmesi (kullanıcı kapatabilir).
+  showInRanking Boolean @default(true)
+
   assignments           Assignment[]
   assignmentSubmissions AssignmentSubmission[]
   lessonFiles           LessonFile[]
@@ -118,6 +121,7 @@ model User {
   questionReports       QuestionReport[]
   pushSubscriptions     PushSubscription[]
   flashCards            FlashCard[]
+  cardReviews           CardReview[]
 }
 
 // GUEST kaydı sırasında e-postanın gerçekten kullanıcıya ait olduğunu
@@ -500,7 +504,8 @@ model FlashCard {
   id           String    @id @default(cuid())
   front        String // Türkçe taraf
   back         String // yabancı dil karşılığı
-  sourceTitle  String? // kartın geldiği ders (ör. "06.10.2026")
+  sourceTitle  String? // "admin": yöneticinin eklediği kelime
+  language     String    @default("EN") // "EN" | "RU": hangi dilin kartı
   knownStreak  Int       @default(0)
   seen         Int       @default(0)
   lastSeenAt   DateTime?
@@ -511,4 +516,34 @@ model FlashCard {
 
   @@unique([userId, front, back])
   @@index([userId, knownStreak])
+}
+
+// Yöneticinin eklediği kelimeler (/admin/cards). Hepsi tüm kullanıcılara açıktır;
+// kartlar kullanıcıların FlashCard kayıtlarına (sourceTitle = "admin") kopyalanır.
+model CardWord {
+  id        String   @id @default(cuid())
+  front     String // Türkçe taraf
+  back      String // yabancı dil karşılığı
+  language  String   @default("EN") // "EN" | "RU"
+  createdAt DateTime @default(now())
+
+  // Kullanılmıyor: kelimeler artık herkese açık (eski kitle seçimi sütunları, boş bırakılır).
+  audience   String   @default("ALL")
+  studentIds String[]
+
+  @@unique([front, back])
+}
+
+// Her kart çalışması (kaydırma) bir satır: sıralama için sayılır. Günlük ücretsiz
+// destedeki kartlar da burada sayılır.
+model CardReview {
+  id        String   @id @default(cuid())
+  known     Boolean
+  createdAt DateTime @default(now())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@index([createdAt])
 }

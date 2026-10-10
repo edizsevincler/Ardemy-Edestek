@@ -13,6 +13,7 @@ import { getReferralShareUrl } from "@/lib/referral";
 import { StreakFreezeCard } from "@/components/StreakFreezeCard";
 import { StreakCard } from "@/components/StreakCard";
 import { CardsPromo } from "@/components/CardsPromo";
+import { getCardCount } from "@/lib/cards";
 import { PushReminderCard } from "@/components/PushReminderCard";
 import { ReferralCard } from "@/components/ReferralCard";
 import { DailyQuestionSection } from "@/components/DailyQuestionSection";
@@ -78,7 +79,7 @@ export default async function GuestHomePage() {
         )}
       </StreakCard>
 
-      <CardsPromo count={await prisma.flashCard.count({ where: { userId: session!.user.id } })} />
+      <CardsPromo count={await getCardCount(session!.user.id)} />
 
       <PushReminderCard initialHour={me?.reminderHour ?? 20} publicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? null} />
 

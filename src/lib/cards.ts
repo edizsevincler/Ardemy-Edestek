@@ -1,4 +1,5 @@
 import { prisma } from "@/lib/prisma";
+import { syncAdminCards, CARD_LANGUAGES, type CardLanguage } from "@/lib/flashcards";
 import { dateKey } from "@/lib/streak";
 import { ttlCached } from "@/lib/ttl-cache";
 
@@ -11,6 +12,7 @@ export type DeckCard = {
 };
 
 export type Deck = {
+  language: CardLanguage;
   cards: DeckCard[];
   source: "lessons" | "daily";
   total: number; // kullanıcının toplam kart sayısı (günlük destede 0)
@@ -45,14 +47,30 @@ function shuffle<T>(items: T[], random: () => number) {
   return list;
 }
 
-// Kullanıcının kendi ders kartlarından bir deste: en az bilinen ve en eski
-// görülen kartlar önce gelir, aralarından rastgele seçilir.
-export async function getUserDeck(userId: string, size = 15): Promise<Deck> {
+// Kullanıcının kart sayısı (önce yöneticinin eklediği yeni kelimeleri kartlarına ekler).
+export async function getCardCount(userId: string) {
+  await syncAdminCards(userId);
+  return prisma.flashCard.count({ where: { userId } });
+}
+
+// Dil başına kullanıcının kart sayısı (dil seçici için).
+export async function getLanguageCounts(userId: string): Promise<Record<CardLanguage, number>> {
+  await syncAdminCards(userId);
+  const groups = await prisma.flashCard.groupBy({ by: ["language"], where: { userId }, _count: { _all: true } });
+  const counts: Record<CardLanguage, number> = { EN: 0, RU: 0 };
+  for (const g of groups) if (g.language === "EN" || g.language === "RU") counts[g.language] = g._count._all;
+  return counts;
+}
+
+// Kullanıcının seçili dildeki kartlarından bir deste: en az bilinen ve en eski görülen kartlar
+// önce gelir, aralarından rastgele seçilir.
+export async function getUserDeck(userId: string, language: CardLanguage, size = 15): Promise<Deck> {
+  await syncAdminCards(userId);
   const [total, mastered, pool] = await Promise.all([
-    prisma.flashCard.count({ where: { userId } }),
-    prisma.flashCard.count({ where: { userId, knownStreak: { gte: MASTERED_STREAK } } }),
+    prisma.flashCard.count({ where: { userId, language } }),
+    prisma.flashCard.count({ where: { userId, language, knownStreak: { gte: MASTERED_STREAK } } }),
     prisma.flashCard.findMany({
-      where: { userId },
+      where: { userId, language },
       orderBy: [{ knownStreak: "asc" }, { lastSeenAt: { sort: "asc", nulls: "first" } }],
       take: size * 5,
       select: { id: true, front: true, back: true },
@@ -60,6 +78,7 @@ export async function getUserDeck(userId: string, size = 15): Promise<Deck> {
   ]);
   const picked = shuffle(pool, Math.random).slice(0, size);
   return {
+    language,
     cards: picked.map((c) => ({ ...c, tracked: true })),
     source: "lessons",
     total,
@@ -75,9 +94,9 @@ async function loadBankPairs() {
   return ttlCached("bank-word-pairs", 60 * 60 * 1000, async () => {
     const items = await prisma.quizItem.findMany({
       where: { question: { isPublished: true }, prompt: { startsWith: '"' } },
-      select: { id: true, prompt: true, optionA: true, optionB: true, optionC: true, optionD: true, correct: true },
+      select: { id: true, prompt: true, question: { select: { subject: true } }, optionA: true, optionB: true, optionC: true, optionD: true, correct: true },
     });
-    const pairs: { id: string; word: string; meaning: string }[] = [];
+    const pairs: { id: string; word: string; meaning: string; language: CardLanguage | null }[] = [];
     for (const item of items) {
       const match = WORD_PROMPT.exec(item.prompt.trim());
       if (!match) continue;
@@ -86,19 +105,22 @@ async function loadBankPairs() {
       const raw = match[1];
       // Bazı sorularda kelime BÜYÜK HARFLE yazılmış; kartta küçük harfle göster.
       const word = raw.length > 1 && raw === raw.toLocaleUpperCase() ? raw.toLocaleLowerCase() : raw;
-      pairs.push({ id: item.id, word, meaning });
+      const subject = item.question.subject;
+      const language = CARD_LANGUAGES.find((l) => subject.startsWith(l.name))?.code ?? null;
+      pairs.push({ id: item.id, word, meaning, language });
     }
     return pairs;
   });
 }
 
-// Dersi/kartı olmayan kullanıcılar için günlük ücretsiz deste (herkes için gün
+// Kartı olmayan kullanıcılar için günlük ücretsiz deste (herkes için gün
 // boyunca aynı 10 kart, kullanıcıya göre farklı karışım).
-export async function getDailyDeck(userId: string, size = 10): Promise<Deck> {
-  const pairs = await loadBankPairs();
-  const random = mulberry32(hash(`${dateKey(new Date())}:${userId}`));
+export async function getDailyDeck(userId: string, language: CardLanguage, size = 10): Promise<Deck> {
+  const pairs = (await loadBankPairs()).filter((p) => p.language === language);
+  const random = mulberry32(hash(`${dateKey(new Date())}:${userId}:${language}`));
   const picked = shuffle(pairs, random).slice(0, size);
   return {
+    language,
     cards: picked.map((p) => ({ id: `q:${p.id}`, front: p.word, back: p.meaning, tracked: false })),
     source: "daily",
     total: 0,

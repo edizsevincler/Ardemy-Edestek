@@ -12,7 +12,6 @@ import path from "path";
 import { PrismaClient } from "../src/generated/prisma/client";
 import { PrismaPg } from "@prisma/adapter-pg";
 import { saveUploadedFile } from "../src/lib/storage";
-import { addCardsForStudents, extractPairsFromDocx } from "../src/lib/flashcards";
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
@@ -128,7 +127,6 @@ async function main() {
     let imported = 0;
     let skipped = 0;
     let emptyFiles = 0;
-    let cardsAdded = 0;
 
     for (const fileName of files) {
       const filePath = path.join(dir, fileName);
@@ -169,21 +167,13 @@ async function main() {
         },
       });
       imported++;
-
-      // Nottaki "A = B" satırlarından öğrencinin kelime kartlarını da üret.
-      try {
-        const pairs = await extractPairsFromDocx(buffer);
-        cardsAdded += await addCardsForStudents([student.id], pairs, title);
-      } catch {
-        report.push(`⚠ Kart üretilemedi: ${studentName} / ${fileName}`);
-      }
     }
 
     if (files.length === 0) {
       report.push(`— ${studentName}: klasör boş`);
     } else {
       report.push(
-        `✓ ${studentName}: ${imported} yeni, ${skipped} zaten vardı, ${emptyFiles} boş/bozuk dosya atlandı, ${cardsAdded} yeni kart`
+        `✓ ${studentName}: ${imported} yeni, ${skipped} zaten vardı, ${emptyFiles} boş/bozuk dosya atlandı`
       );
     }
   }

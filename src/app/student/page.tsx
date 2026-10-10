@@ -13,6 +13,7 @@ import {
 import { ShareButton } from "@/components/ShareButton";
 import { StreakCard } from "@/components/StreakCard";
 import { CardsPromo } from "@/components/CardsPromo";
+import { getCardCount } from "@/lib/cards";
 import { PushReminderCard } from "@/components/PushReminderCard";
 import { getReferralShareUrl } from "@/lib/referral";
 import { StreakFreezeCard } from "@/components/StreakFreezeCard";
@@ -87,7 +88,7 @@ export default async function StudentHomePage() {
         )}
       </StreakCard>
 
-      <CardsPromo count={await prisma.flashCard.count({ where: { userId: studentId } })} />
+      <CardsPromo count={await getCardCount(studentId)} />
 
       <PushReminderCard initialHour={me?.reminderHour ?? 20} publicKey={process.env.NEXT_PUBLIC_VAPID_PUBLIC_KEY ?? null} />
 
