@@ -64,7 +64,7 @@ export default async function CardsPage({ searchParams }: { searchParams: Promis
       </div>
 
       {deck.cards.length > 0 ? (
-        <SwipeDeck key={lang} cards={deck.cards} canReload={deck.source === "lessons"} />
+        <SwipeDeck key={lang} cards={deck.cards} language={lang} canReload={deck.source === "lessons"} />
       ) : (
         <EmptyState icon="book" text={t("Kart bulunamadı.")} />
       )}

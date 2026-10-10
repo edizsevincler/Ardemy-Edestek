@@ -1,16 +1,40 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { recordCardReview } from "@/lib/cards-actions";
 import { Celebration } from "@/components/Celebration";
 import { useT } from "@/lib/i18n/client";
 import type { DeckCard } from "@/lib/cards";
 
+// Tarayıcının seslendirmesiyle (Web Speech API) kelimeyi okur; o dilde ses
+// yüklüyse onu seçer, yoksa tarayıcı varsayılanı kullanır.
+const noopSubscribe = () => () => {};
+
+function speakWord(text: string, language: "EN" | "RU") {
+  const synth = window.speechSynthesis;
+  synth.cancel();
+  const utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = language === "RU" ? "ru-RU" : "en-US";
+  const prefix = language === "RU" ? "ru" : "en";
+  const voice = synth.getVoices().find((v) => v.lang.toLowerCase().startsWith(prefix));
+  if (voice) utterance.voice = voice;
+  utterance.rate = 0.9;
+  synth.speak(utterance);
+}
+
 const THRESHOLD = 100; // bu kadar piksel kaydırılınca karar verilir
 
 // Kaydırmalı kelime kartları: sağa = biliyorum, sola = tekrar, dokun = çevir.
 // Düğmeler ve klavye okları da aynı işi yapar.
-export function SwipeDeck({ cards, canReload = true }: { cards: DeckCard[]; canReload?: boolean }) {
+export function SwipeDeck({
+  cards,
+  language,
+  canReload = true,
+}: {
+  cards: DeckCard[];
+  language: "EN" | "RU";
+  canReload?: boolean;
+}) {
   const t = useT();
   const [round, setRound] = useState<DeckCard[]>(cards);
   const [index, setIndex] = useState(0);
@@ -27,6 +51,17 @@ export function SwipeDeck({ cards, canReload = true }: { cards: DeckCard[]; canR
   // Aynı kart iki kez işlenmesin (pointerup + pointercancel birlikte gelebilir).
   const busy = useRef(false);
   const isDragging = useRef(false);
+  // Seslendirme yalnızca destekleyen tarayıcılarda gösterilir (sunucuda bilinmez).
+  const canSpeak = useSyncExternalStore(
+    noopSubscribe,
+    () => "speechSynthesis" in window,
+    () => false
+  );
+  useEffect(() => {
+    if (!canSpeak) return;
+    window.speechSynthesis.getVoices(); // bazı tarayıcılar sesleri ilk çağrıda yükler
+    return () => window.speechSynthesis.cancel();
+  }, [canSpeak]);
 
   const done = index >= round.length;
   const card = round[index];
@@ -219,6 +254,27 @@ export function SwipeDeck({ cards, canReload = true }: { cards: DeckCard[]; canR
               <p className="absolute bottom-5 text-xs text-slate-400">{t("Dokun: çevir")}</p>
             </div>
           </div>
+
+          {canSpeak && (
+            <button
+              type="button"
+              aria-label={t("Sesli oku")}
+              title={t("Sesli oku")}
+              onPointerDown={(event) => event.stopPropagation()}
+              onPointerUp={(event) => event.stopPropagation()}
+              onClick={(event) => {
+                event.stopPropagation();
+                speakWord(card.speak, language);
+              }}
+              className="absolute bottom-4 right-4 flex h-11 w-11 items-center justify-center rounded-full border border-brand-200 bg-white text-brand-600 shadow-sm transition-colors hover:bg-brand-50 active:scale-95"
+            >
+              <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                <path d="M11 5 6 9H3v6h3l5 4V5z" />
+                <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+                <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+              </svg>
+            </button>
+          )}
 
           <span
             className="pointer-events-none absolute left-5 top-5 -rotate-12 rounded-lg border-4 border-green-500 px-3 py-1 text-xl font-bold text-green-500"

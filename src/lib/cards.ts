@@ -9,6 +9,8 @@ export type DeckCard = {
   back: string;
   // true: ilerlemesi kaydedilen kendi kartı; false: günlük ücretsiz deste (kaydedilmez)
   tracked: boolean;
+  // Hoparlör düğmesiyle sesli okunan yabancı dil tarafı
+  speak: string;
 };
 
 export type Deck = {
@@ -79,7 +81,7 @@ export async function getUserDeck(userId: string, language: CardLanguage, size =
   const picked = shuffle(pool, Math.random).slice(0, size);
   return {
     language,
-    cards: picked.map((c) => ({ ...c, tracked: true })),
+    cards: picked.map((c) => ({ ...c, tracked: true, speak: c.back })),
     source: "lessons",
     total,
     mastered,
@@ -121,7 +123,7 @@ export async function getDailyDeck(userId: string, language: CardLanguage, size 
   const picked = shuffle(pairs, random).slice(0, size);
   return {
     language,
-    cards: picked.map((p) => ({ id: `q:${p.id}`, front: p.word, back: p.meaning, tracked: false })),
+    cards: picked.map((p) => ({ id: `q:${p.id}`, front: p.word, back: p.meaning, tracked: false, speak: p.word })),
     source: "daily",
     total: 0,
     mastered: 0,

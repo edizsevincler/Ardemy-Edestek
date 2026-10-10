@@ -168,4 +168,5 @@ export const design: MessageEntry[] = [
   ["Sıralamayı gör", "View ranking", "Смотреть рейтинг"],
   ["Beni hatırla", "Remember me", "Запомнить меня"],
   ["Sorular", "Questions", "Вопросы"],
+  ["Sesli oku", "Listen", "Прослушать"],
 ];
