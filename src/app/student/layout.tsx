@@ -117,6 +117,18 @@ export default async function StudentLayout({
             {t("İçerikler")}
           </Link>
           <Link
+            href="/guest/cards"
+            className="hidden shrink-0 transition hover:text-gold-400 sm:block"
+          >
+            {t("🃏 Kelime Kartları")}
+          </Link>
+          <Link
+            href="/guest/ranking"
+            className="hidden shrink-0 transition hover:text-gold-400 sm:block"
+          >
+            {t("🏆 Sıralama")}
+          </Link>
+          <Link
             href="/guest/exam"
             className="hidden shrink-0 transition hover:text-gold-400 sm:block"
           >
