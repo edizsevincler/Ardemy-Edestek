@@ -34,10 +34,10 @@ export default async function RankingPage({
   const extra = myIndex >= TOP ? list[myIndex] : null;
 
   const kinds: { id: RankingKind; label: string }[] = [
-    { id: "cards", label: t("🃏 Kart") },
-    { id: "lessons", label: t("🎓 Ders") },
-    { id: "streak", label: t("🔥 Seri") },
-    { id: "questions", label: t("✏️ Soru") },
+    { id: "cards", label: t("Kart") },
+    { id: "lessons", label: t("Ders") },
+    { id: "streak", label: t("Seri") },
+    { id: "questions", label: t("Sorular") },
   ];
   const titles: Record<RankingKind, string> = {
     cards: t("En çok kart çalışanlar"),
@@ -84,7 +84,7 @@ export default async function RankingPage({
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-semibold text-brand-950">{t("🏆 Sıralama")}</h1>
+        <h1 className="text-2xl font-semibold text-brand-950">{t("Sıralama")}</h1>
         <p className="mt-1 text-sm text-slate-500">{titles[kind]}</p>
       </div>
 

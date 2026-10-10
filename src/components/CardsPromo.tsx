@@ -8,7 +8,7 @@ export async function CardsPromo({ count }: { count: number }) {
     <div className="rounded-xl border border-brand-100 bg-white p-5 shadow-sm transition-shadow duration-200 hover:shadow-md">
       <Link href="/guest/cards" className="flex items-center justify-between gap-4">
         <div className="min-w-0">
-          <h2 className="font-medium text-brand-950">{t("🃏 Kelime Kartları")}</h2>
+          <h2 className="font-medium text-brand-950">{t("Kelime Kartları")}</h2>
           <p className="mt-1 text-sm text-slate-500">
             {count > 0
               ? t("{n} kelime kartın hazır. Kaydırarak çalış.", { n: count })
@@ -20,7 +20,7 @@ export async function CardsPromo({ count }: { count: number }) {
         </span>
       </Link>
       <Link href="/guest/ranking" className="mt-3 inline-block text-sm font-medium text-brand-600 hover:underline">
-        🏆 {t("Sıralamayı gör")}
+        {t("Sıralamayı gör")}
       </Link>
     </div>
   );

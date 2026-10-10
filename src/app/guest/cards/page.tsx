@@ -33,7 +33,7 @@ export default async function CardsPage({ searchParams }: { searchParams: Promis
   return (
     <div className="space-y-5">
       <div>
-        <h1 className="text-2xl font-semibold text-brand-950">{t("🃏 Kelime Kartları")}</h1>
+        <h1 className="text-2xl font-semibold text-brand-950">{t("Kelime Kartları")}</h1>
         <p className="mt-1 text-sm text-slate-500">
           {deck.source === "lessons"
             ? t("{n} kartın var, {m} tanesini öğrendin.", { n: deck.total, m: deck.mastered })

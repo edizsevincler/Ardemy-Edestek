@@ -80,8 +80,8 @@ export default async function StudentLayout({
               { href: "/student", label: t("Panel"), exact: true },
               { href: "/student/messages", label: t("Mesajlar"), badge: unreadCount },
               { href: "/guest/questions", label: t("İçerikler") },
-              { href: "/guest/cards", label: t("🃏 Kelime Kartları") },
-              { href: "/guest/ranking", label: t("🏆 Sıralama") },
+              { href: "/guest/cards", label: t("Kelime Kartları") },
+              { href: "/guest/ranking", label: t("Sıralama") },
               { href: "/guest/exam", label: t("Deneme Sınavı") },
               { href: "/guest/shop", label: t("Mağaza") },
               { href: "/guest/credits", label: t("Kredi Satın Al") },
@@ -120,13 +120,13 @@ export default async function StudentLayout({
             href="/guest/cards"
             className="hidden shrink-0 transition hover:text-gold-400 sm:block"
           >
-            {t("🃏 Kelime Kartları")}
+            {t("Kelime Kartları")}
           </Link>
           <Link
             href="/guest/ranking"
             className="hidden shrink-0 transition hover:text-gold-400 sm:block"
           >
-            {t("🏆 Sıralama")}
+            {t("Sıralama")}
           </Link>
           <Link
             href="/guest/exam"

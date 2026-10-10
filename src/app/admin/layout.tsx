@@ -54,7 +54,7 @@ export default async function AdminLayout({
               { href: "/admin/assignments", label: "Ödevler" },
               { href: "/admin/lesson-files", label: "Ders Dosyaları" },
               { href: "/admin/questions", label: "Soru Bankası" },
-              { href: "/admin/cards", label: "🃏 Kelime Kartları" },
+              { href: "/admin/cards", label: "Kelime Kartları" },
               { href: "/admin/credit-packages", label: "Kredi Paketleri" },
               { href: "/admin/pending-payments", label: "Bekleyen Ödemeler", badge: pendingPaymentsCount },
               { href: "/admin/streak-rewards", label: "🔥 Seri Ödülleri", badge: pendingStreakRewardsCount },
@@ -91,7 +91,7 @@ export default async function AdminLayout({
             Soru Bankası
           </Link>
           <Link href="/admin/cards" className="shrink-0 transition hover:text-gold-400">
-            🃏 Kelime Kartları
+            Kelime Kartları
           </Link>
           <Link href="/admin/credit-packages" className="shrink-0 transition hover:text-gold-400">
             Kredi Paketleri
