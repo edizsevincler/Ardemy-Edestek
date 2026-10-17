@@ -1,6 +1,6 @@
 // Kullanım: npx tsx scripts/import-lesson-files.ts "<klasör-yolu>"
 //
-// Beklenen yapı: <klasör-yolu>/<Öğrenci Adı Soyadı>/<tarih> ... .docx
+// Beklenen yapı: <klasör-yolu>/<Öğrenci Adı Soyadı>/<tarih> ... .docx (veya .pdf)
 // Klasör adı, veritabanındaki öğrenci adıyla birebir eşleşmeli.
 // Dosya adındaki tarih iki biçimde olabilir: "13.06.2025 ..." veya
 // "10 Temmuz 2024 ...". Tekrar çalıştırmak güvenlidir: aynı öğrenci + aynı
@@ -17,6 +17,9 @@ const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL });
 const prisma = new PrismaClient({ adapter });
 
 const sourceDir = process.argv[2];
+
+// Yüklenen ders dosyası türleri.
+const LESSON_EXT = /\.(docx|pdf)$/i;
 
 const MONTHS: Record<string, number> = {
   ocak: 0,
@@ -55,7 +58,7 @@ function cleanNote(text: string, studentName: string) {
 // sonra yazılmış (örn. "Çağatay Bey 24.07.2024.docx"). Bu yüzden tarihi
 // dizginin herhangi bir yerinde arıyoruz, başında olmasını şart koşmuyoruz.
 function parseFileName(fileName: string, studentName: string) {
-  const base = fileName.replace(/\.docx$/i, "").trim();
+  const base = fileName.replace(LESSON_EXT, "").trim();
 
   const numeric = base.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
   if (numeric) {
@@ -121,7 +124,7 @@ async function main() {
 
     const dir = path.join(sourceDir, folder.name);
     const files = (await readdir(dir)).filter((f) =>
-      f.toLowerCase().endsWith(".docx")
+      LESSON_EXT.test(f)
     );
 
     let imported = 0;
@@ -137,7 +140,7 @@ async function main() {
       }
 
       const parsed = parseFileName(fileName, studentName);
-      const title = parsed ? parsed.title : fileName.replace(/\.docx$/i, "");
+      const title = parsed ? parsed.title : fileName.replace(LESSON_EXT, "");
       const lessonDate = parsed ? parsed.lessonDate : null;
       if (!lessonDate) {
         undated.push(`${studentName}: ${fileName}`);
@@ -153,7 +156,9 @@ async function main() {
 
       const buffer = await readFile(filePath);
       const file = new File([buffer], fileName, {
-        type: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        type: fileName.toLowerCase().endsWith(".pdf")
+          ? "application/pdf"
+          : "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
       });
       const saved = await saveUploadedFile(file, "lesson-files");
 
