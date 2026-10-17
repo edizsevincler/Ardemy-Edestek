@@ -143,7 +143,7 @@ export default async function GuestQuestionDetailPage({
     const items = await prisma.writtenItem.findMany({
       where: { questionId: id },
       orderBy: { order: "asc" },
-      select: { id: true, order: true, prompt: true, answer: true },
+      select: { id: true, order: true, prompt: true, answer: true, page: true },
     });
 
     if (!unlock) {
@@ -151,10 +151,21 @@ export default async function GuestQuestionDetailPage({
         <div className="space-y-4">
           {backLink}
           {header}
-          {items[0] && (
-            <div className="rounded-xl border border-brand-100 bg-white p-4 shadow-sm">
-              <p className="whitespace-pre-wrap font-medium text-brand-950">1. {items[0].prompt}</p>
-            </div>
+          {question.pageImages.length > 0 ? (
+            <ProtectedContent watermarkText={watermarkText}>
+              {/* eslint-disable-next-line @next/next/no-img-element -- korumalı API'den gelen sayfa görseli */}
+              <img
+                src={`/api/questions/${question.id}/page/1`}
+                alt={t("Sayfa {n}", { n: 1 })}
+                className="w-full rounded-xl border border-slate-200 bg-white shadow-sm"
+              />
+            </ProtectedContent>
+          ) : (
+            items[0] && (
+              <div className="rounded-xl border border-brand-100 bg-white p-4 shadow-sm">
+                <p className="whitespace-pre-wrap font-medium text-brand-950">1. {items[0].prompt}</p>
+              </div>
+            )
           )}
           <div className="rounded-xl border border-gold-200 bg-gold-50 p-4 text-center">
             <p className="text-sm text-brand-900">
@@ -186,7 +197,9 @@ export default async function GuestQuestionDetailPage({
         {question.body && <p className="whitespace-pre-wrap text-slate-700">{question.body}</p>}
         <WrittenForm
           questionId={question.id}
-          items={items.map(({ id: itemId, order, prompt }) => ({ id: itemId, order, prompt }))}
+          items={items.map(({ id: itemId, order, prompt, page }) => ({ id: itemId, order, prompt, page }))}
+          pageCount={question.pageImages.length}
+          watermarkText={watermarkText}
           submitted={
             submittedAnswers
               ? { answers: submittedAnswers, submittedAt: submission!.submittedAt.toISOString() }

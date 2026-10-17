@@ -205,6 +205,8 @@ model Question {
   fileUrl     String?
   fileName    String?
   pageCount   Int?
+  // Yazılı test sayfa görselleri (taranmış sınav sayfaları), sırayla. Bkz. /api/questions/[id]/page/[n]
+  pageImages  String[]
   creditCost  Int      @default(1)
   isPublished Boolean  @default(false)
   createdAt   DateTime @default(now())
@@ -562,6 +564,8 @@ model WrittenItem {
   order  Int
   prompt String
   answer String?
+  // Cevap kutusunun gösterileceği sayfa görseli (1'den başlar); boşsa sayfalardan sonra
+  page   Int?
 
   questionId String
   question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)

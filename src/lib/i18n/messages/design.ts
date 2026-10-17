@@ -195,4 +195,5 @@ export const design: MessageEntry[] = [
   ["Cevaplarımı düzenle", "Edit my answers", "Изменить ответы"],
   ["Yeniden gönderirsen eğitmenin önceki geri bildirimi silinir.", "If you resend, your teacher's previous feedback will be removed.", "При повторной отправке прежний отзыв преподавателя будет удалён."],
   ["En az bir soruyu cevaplayın.", "Answer at least one question.", "Ответьте хотя бы на один вопрос."],
+  ["Sayfa {n}", "Page {n}", "Страница {n}"],
 ];

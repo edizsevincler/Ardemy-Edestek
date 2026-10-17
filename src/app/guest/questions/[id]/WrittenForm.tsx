@@ -4,8 +4,9 @@ import { useEffect, useState, useSyncExternalStore, useTransition } from "react"
 import { useRouter } from "next/navigation";
 import { submitWrittenTest } from "./actions";
 import { useT } from "@/lib/i18n/client";
+import { ProtectedContent } from "@/components/ProtectedContent";
 
-type Item = { id: string; order: number; prompt: string };
+type Item = { id: string; order: number; prompt: string; page: number | null };
 
 const noopSubscribe = () => () => {};
 
@@ -27,9 +28,13 @@ export function WrittenForm({
   submitted,
   modelAnswers,
   feedback,
+  pageCount = 0,
+  watermarkText = "",
 }: {
   questionId: string;
   items: Item[];
+  pageCount?: number;
+  watermarkText?: string;
   submitted: { answers: Record<string, string>; submittedAt: string } | null;
   modelAnswers: Record<string, string>;
   feedback: string | null;
@@ -86,6 +91,41 @@ export function WrittenForm({
     });
   }
 
+  const renderItem = (item: Item) => {
+    const model = modelAnswers[item.id];
+    return (
+      <li key={item.id} className="rounded-xl border border-brand-100 bg-white p-4 shadow-sm">
+        <label htmlFor={`w-${item.id}`} className="block whitespace-pre-wrap font-medium text-brand-950">
+          {item.order}. {item.prompt}
+        </label>
+        {editing ? (
+          <textarea
+            id={`w-${item.id}`}
+            rows={3}
+            maxLength={5000}
+            value={answers[item.id] ?? ""}
+            onChange={(e) => setAnswers((prev) => ({ ...prev, [item.id]: e.target.value }))}
+            placeholder={t("Cevabını buraya yaz...")}
+            className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
+          />
+        ) : (
+          <p className={`mt-2 whitespace-pre-wrap text-sm ${answers[item.id]?.trim() ? "text-slate-800" : "italic text-slate-400"}`}>
+            {answers[item.id]?.trim() || t("Boş bıraktın")}
+          </p>
+        )}
+        {!editing && model && (
+          <p className="mt-2 whitespace-pre-wrap rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
+            <span className="font-medium">{t("Örnek cevap:")}</span> {model}
+          </p>
+        )}
+      </li>
+    );
+  };
+
+  // Sayfa görselleri sırayla; her sayfanın altında o sayfadaki görevlerin cevap kutuları.
+  const pages = Array.from({ length: pageCount }, (_, i) => i + 1);
+  const loose = items.filter((item) => !item.page || item.page > pageCount);
+
   const answeredCount = items.filter((item) => answers[item.id]?.trim()).length;
 
   return (
@@ -106,38 +146,22 @@ export function WrittenForm({
         </div>
       )}
 
-      <ol className="space-y-4">
-        {items.map((item) => {
-          const model = modelAnswers[item.id];
-          return (
-            <li key={item.id} className="rounded-xl border border-brand-100 bg-white p-4 shadow-sm">
-              <label htmlFor={`w-${item.id}`} className="block whitespace-pre-wrap font-medium text-brand-950">
-                {item.order}. {item.prompt}
-              </label>
-              {editing ? (
-                <textarea
-                  id={`w-${item.id}`}
-                  rows={3}
-                  maxLength={5000}
-                  value={answers[item.id] ?? ""}
-                  onChange={(e) => setAnswers((prev) => ({ ...prev, [item.id]: e.target.value }))}
-                  placeholder={t("Cevabını buraya yaz...")}
-                  className="mt-2 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
-                />
-              ) : (
-                <p className={`mt-2 whitespace-pre-wrap text-sm ${answers[item.id]?.trim() ? "text-slate-800" : "italic text-slate-400"}`}>
-                  {answers[item.id]?.trim() || t("Boş bıraktın")}
-                </p>
-              )}
-              {!editing && model && (
-                <p className="mt-2 whitespace-pre-wrap rounded-lg bg-emerald-50 px-3 py-2 text-sm text-emerald-800">
-                  <span className="font-medium">{t("Örnek cevap:")}</span> {model}
-                </p>
-              )}
-            </li>
-          );
-        })}
-      </ol>
+      {pages.map((page) => (
+        <section key={page} className="space-y-4">
+          <ProtectedContent watermarkText={watermarkText}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- korumalı API'den gelen sayfa görseli */}
+            <img
+              src={`/api/questions/${questionId}/page/${page}`}
+              alt={t("Sayfa {n}", { n: page })}
+              loading={page === 1 ? "eager" : "lazy"}
+              className="w-full rounded-xl border border-slate-200 bg-white shadow-sm"
+            />
+          </ProtectedContent>
+          <ol className="space-y-4">{items.filter((item) => item.page === page).map(renderItem)}</ol>
+        </section>
+      ))}
+
+      {loose.length > 0 && <ol className="space-y-4">{loose.map(renderItem)}</ol>}
 
       {error && <p className="text-sm text-red-600">{error}</p>}
 

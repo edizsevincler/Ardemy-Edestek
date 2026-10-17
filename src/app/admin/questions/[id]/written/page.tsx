@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { AddWrittenItemForm, EditWrittenItemForm } from "./WrittenItemForms";
+import { AddWrittenItemForm, EditWrittenItemForm, WrittenPagesManager } from "./WrittenItemForms";
 
 export default async function WrittenItemsPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -30,15 +30,19 @@ export default async function WrittenItemsPage({ params }: { params: Promise<{ i
         </p>
       </div>
 
+      <WrittenPagesManager questionId={id} pageCount={question.pageImages.length} />
+
       <div className="space-y-3">
         {question.writtenItems.length === 0 ? (
           <p className="text-sm text-slate-500">Henüz soru eklenmedi.</p>
         ) : (
-          question.writtenItems.map((item) => <EditWrittenItemForm key={item.id} item={item} />)
+          question.writtenItems.map((item) => (
+            <EditWrittenItemForm key={item.id} item={item} pageCount={question.pageImages.length} />
+          ))
         )}
       </div>
 
-      <AddWrittenItemForm questionId={id} />
+      <AddWrittenItemForm questionId={id} pageCount={question.pageImages.length} />
     </div>
   );
 }
