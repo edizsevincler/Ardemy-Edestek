@@ -17,7 +17,7 @@ export default async function AdminLayout({
     redirect("/login");
   }
 
-  const [unreadCount, pendingPaymentsCount, pendingStreakRewardsCount, openReportsCount] =
+  const [unreadCount, pendingPaymentsCount, pendingStreakRewardsCount, openReportsCount, pendingWrittenCount] =
     await Promise.all([
       prisma.message.count({
         where: { senderRole: "STUDENT", read: false },
@@ -25,6 +25,7 @@ export default async function AdminLayout({
       prisma.creditPurchase.count({ where: { status: "PENDING" } }),
       prisma.streakReward.count({ where: { fulfilled: false } }),
       prisma.questionReport.count({ where: { status: "OPEN" } }),
+      prisma.writtenSubmission.count({ where: { feedback: null } }),
     ]);
 
   return (
@@ -55,6 +56,7 @@ export default async function AdminLayout({
               { href: "/admin/lesson-files", label: "Ders Dosyaları" },
               { href: "/admin/questions", label: "Soru Bankası" },
               { href: "/admin/cards", label: "Kelime Kartları" },
+              { href: "/admin/written-answers", label: "Yazılı Cevaplar", badge: pendingWrittenCount },
               { href: "/admin/credit-packages", label: "Kredi Paketleri" },
               { href: "/admin/pending-payments", label: "Bekleyen Ödemeler", badge: pendingPaymentsCount },
               { href: "/admin/streak-rewards", label: "🔥 Seri Ödülleri", badge: pendingStreakRewardsCount },
@@ -92,6 +94,17 @@ export default async function AdminLayout({
           </Link>
           <Link href="/admin/cards" className="shrink-0 transition hover:text-gold-400">
             Kelime Kartları
+          </Link>
+          <Link
+            href="/admin/written-answers"
+            className="flex shrink-0 items-center gap-1.5 transition hover:text-gold-400"
+          >
+            Yazılı Cevaplar
+            {pendingWrittenCount > 0 && (
+              <span className="rounded-full bg-red-500 px-1.5 py-0.5 text-[11px] font-medium text-white">
+                {pendingWrittenCount}
+              </span>
+            )}
           </Link>
           <Link href="/admin/credit-packages" className="shrink-0 transition hover:text-gold-400">
             Kredi Paketleri

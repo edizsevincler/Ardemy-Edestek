@@ -161,3 +161,51 @@ export async function submitQuiz(
     streakNotes: streakNotes(activity, t),
   };
 }
+
+const MAX_WRITTEN_ANSWER = 5000;
+
+type SubmitWrittenResult = { status: "error"; message: string } | { status: "success"; streakNotes: string[] };
+
+// Yazılı test (ör. Biyoloji) cevaplarını kaydeder. Yeniden gönderim eski cevabın
+// yerine geçer ve önceki geri bildirimi siler (eğitmen yeni cevabı tekrar okur).
+export async function submitWrittenTest(
+  questionId: string,
+  answers: Record<string, string>
+): Promise<SubmitWrittenResult> {
+  const t = await getT();
+  const session = await auth();
+  if (!session?.user || (session.user.role !== "GUEST" && session.user.role !== "STUDENT")) {
+    return { status: "error", message: t("Oturum bulunamadı.") };
+  }
+  const userId = session.user.id;
+
+  const unlock = await prisma.questionUnlock.findUnique({
+    where: { userId_questionId: { userId, questionId } },
+  });
+  if (!unlock) return { status: "error", message: t("Bu testi henüz açmadınız.") };
+
+  const items = await prisma.writtenItem.findMany({ where: { questionId }, orderBy: { order: "asc" } });
+  if (items.length === 0) return { status: "error", message: t("Bu test için soru bulunamadı.") };
+
+  const cleaned = items.map((item) => ({
+    itemId: item.id,
+    text: String(answers?.[item.id] ?? "").trim().slice(0, MAX_WRITTEN_ANSWER),
+  }));
+  if (cleaned.every((a) => !a.text)) {
+    return { status: "error", message: t("En az bir soruyu cevaplayın.") };
+  }
+
+  await prisma.writtenSubmission.upsert({
+    where: { userId_questionId: { userId, questionId } },
+    update: { answers: cleaned, submittedAt: new Date(), feedback: null, gradedAt: null },
+    create: { userId, questionId, answers: cleaned },
+  });
+
+  const activity = await recordStreakActivity(userId);
+
+  revalidatePath(`/guest/questions/${questionId}`);
+  revalidatePath(`/admin/questions/${questionId}/answers`);
+  revalidatePath("/admin/written-answers");
+
+  return { status: "success", streakNotes: streakNotes(activity, t) };
+}

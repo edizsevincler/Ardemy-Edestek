@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ProtectedContent } from "@/components/ProtectedContent";
 import { AnswerForm } from "./AnswerForm";
 import { QuizForm } from "./QuizForm";
+import { WrittenForm } from "./WrittenForm";
 import { UnlockButton } from "../UnlockButton";
 import { slugify } from "@/lib/slugify";
 import { getI18n } from "@/lib/i18n/server";
@@ -134,6 +135,66 @@ export default async function GuestQuestionDetailPage({
         <p className="text-xs text-slate-400">
           {t("🔒 Bu içerik yalnızca kişisel kullanımınız içindir; izinsiz paylaşım, çoğaltım veya satış telif hakkı ihlalidir.")}
         </p>
+      </div>
+    );
+  }
+
+  if (question.type === "WRITTEN") {
+    const items = await prisma.writtenItem.findMany({
+      where: { questionId: id },
+      orderBy: { order: "asc" },
+      select: { id: true, order: true, prompt: true, answer: true },
+    });
+
+    if (!unlock) {
+      return (
+        <div className="space-y-4">
+          {backLink}
+          {header}
+          {items[0] && (
+            <div className="rounded-xl border border-brand-100 bg-white p-4 shadow-sm">
+              <p className="whitespace-pre-wrap font-medium text-brand-950">1. {items[0].prompt}</p>
+            </div>
+          )}
+          <div className="rounded-xl border border-gold-200 bg-gold-50 p-4 text-center">
+            <p className="text-sm text-brand-900">
+              {t("Bu yazılı testte {n} soru var. Cevaplarını yazmak için testi aç.", { n: items.length })}
+            </p>
+            <div className="mt-3 flex justify-center">
+              <UnlockButton questionId={question.id} creditCost={question.creditCost} />
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const submission = await prisma.writtenSubmission.findUnique({
+      where: { userId_questionId: { userId, questionId: id } },
+    });
+    const submittedAnswers = submission
+      ? Object.fromEntries((submission.answers as { itemId: string; text: string }[]).map((a) => [a.itemId, a.text]))
+      : null;
+    // Örnek cevaplar yalnızca test gönderildikten sonra tarayıcıya gider.
+    const modelAnswers = submission
+      ? Object.fromEntries(items.filter((i) => i.answer).map((i) => [i.id, i.answer as string]))
+      : {};
+
+    return (
+      <div className="space-y-4">
+        {backLink}
+        {header}
+        {question.body && <p className="whitespace-pre-wrap text-slate-700">{question.body}</p>}
+        <WrittenForm
+          questionId={question.id}
+          items={items.map(({ id: itemId, order, prompt }) => ({ id: itemId, order, prompt }))}
+          submitted={
+            submittedAnswers
+              ? { answers: submittedAnswers, submittedAt: submission!.submittedAt.toISOString() }
+              : null
+          }
+          modelAnswers={modelAnswers}
+          feedback={submission?.feedback ?? null}
+        />
       </div>
     );
   }

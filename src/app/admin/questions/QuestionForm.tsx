@@ -32,6 +32,7 @@ export function QuestionForm() {
             <option value="QUESTION">Soru</option>
             <option value="TOPIC">Konu Anlatımı</option>
             <option value="QUIZ">Test (çoktan seçmeli)</option>
+            <option value="WRITTEN">Yazılı Test (cevaplar yazılarak, ör. Biyoloji)</option>
           </select>
         </div>
 
@@ -52,7 +53,7 @@ export function QuestionForm() {
               name="subject"
               type="text"
               required
-              placeholder="Örn: İngilizce, Rusça"
+              placeholder="Örn: İngilizce - Zamanlar, Biyoloji - Hücre"
               className="mt-1 w-full rounded-lg border border-slate-300 px-3 py-2 text-sm outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100"
             />
           </div>

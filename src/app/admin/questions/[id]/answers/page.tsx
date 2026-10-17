@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { FeedbackForm } from "./FeedbackForm";
+import { SubmissionCard, type WrittenAnswer } from "@/app/admin/written-answers/SubmissionCard";
 
 export default async function QuestionAnswersPage({
   params,
@@ -13,6 +14,43 @@ export default async function QuestionAnswersPage({
   const question = await prisma.question.findUnique({ where: { id } });
   if (!question) {
     notFound();
+  }
+
+  if (question.type === "WRITTEN") {
+    const [items, submissions] = await Promise.all([
+      prisma.writtenItem.findMany({
+        where: { questionId: id },
+        orderBy: { order: "asc" },
+        select: { id: true, order: true, prompt: true, answer: true },
+      }),
+      prisma.writtenSubmission.findMany({
+        where: { questionId: id },
+        orderBy: { submittedAt: "desc" },
+        include: { user: { select: { name: true, email: true, username: true, role: true } } },
+      }),
+    ]);
+    return (
+      <div className="space-y-6">
+        <div>
+          <Link href="/admin/questions" className="text-sm text-slate-500 hover:text-brand-700">
+            ← Soru Bankası
+          </Link>
+          <h1 className="text-2xl font-semibold text-brand-950">{question.title} — Cevaplar</h1>
+          <p className="text-sm text-slate-500">
+            {question.subject} · {items.length} soru · {submissions.length} öğrenci cevapladı
+          </p>
+        </div>
+        {submissions.length === 0 ? (
+          <p className="text-sm text-slate-500">Henüz cevap gönderilmedi.</p>
+        ) : (
+          <div className="space-y-4">
+            {submissions.map((s) => (
+              <SubmissionCard key={s.id} items={items} submission={{ ...s, answers: s.answers as WrittenAnswer[] }} />
+            ))}
+          </div>
+        )}
+      </div>
+    );
   }
 
   const answers = await prisma.questionAnswer.findMany({

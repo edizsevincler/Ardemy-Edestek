@@ -138,7 +138,7 @@ export default async function GuestQuestionsByLanguagePage({
   const session = await auth();
   const userId = session!.user.id;
 
-  const [allQuestions, unlocks, submissions] = await Promise.all([
+  const [allQuestions, unlocks, submissions, writtenSubmissions] = await Promise.all([
     prisma.question.findMany({
       where: { isPublished: true },
       orderBy: [{ subject: "asc" }, { createdAt: "desc" }],
@@ -151,8 +151,12 @@ export default async function GuestQuestionsByLanguagePage({
       where: { userId },
       select: { questionId: true },
     }),
+    prisma.writtenSubmission.findMany({
+      where: { userId },
+      select: { questionId: true },
+    }),
   ]);
-  const completedIds = new Set(submissions.map((s) => s.questionId));
+  const completedIds = new Set([...submissions, ...writtenSubmissions].map((s) => s.questionId));
 
   const questions = allQuestions.filter(
     (q) => slugify(q.subject.split(" - ")[0].trim()) === slug
@@ -168,6 +172,7 @@ export default async function GuestQuestionsByLanguagePage({
   const topics = questions.filter((q) => q.type === "TOPIC");
   const quizzes = questions.filter((q) => q.type === "QUIZ");
   const exercises = questions.filter((q) => q.type === "QUESTION");
+  const writtenTests = questions.filter((q) => q.type === "WRITTEN");
 
   return (
     <div className="space-y-8">
@@ -193,6 +198,13 @@ export default async function GuestQuestionsByLanguagePage({
       <QuestionSection
         title={t("🧠 Testler")}
         items={quizzes}
+        unlockedIds={unlockedIds}
+        completedIds={completedIds}
+        t={t}
+      />
+      <QuestionSection
+        title={t("Yazılı Testler")}
+        items={writtenTests}
         unlockedIds={unlockedIds}
         completedIds={completedIds}
         t={t}

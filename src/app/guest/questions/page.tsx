@@ -19,6 +19,7 @@ export default async function GuestQuestionsLandingPage() {
   const topicCounts = new Map<string, number>();
   const quizQuestionIds = new Map<string, string[]>();
   const openQuestionCounts = new Map<string, number>();
+  const writtenQuestionIds = new Map<string, string[]>();
 
   for (const q of questions) {
     const language = languageOf(q.subject);
@@ -28,6 +29,10 @@ export default async function GuestQuestionsLandingPage() {
       const ids = quizQuestionIds.get(language) ?? [];
       ids.push(q.id);
       quizQuestionIds.set(language, ids);
+    } else if (q.type === "WRITTEN") {
+      const ids = writtenQuestionIds.get(language) ?? [];
+      ids.push(q.id);
+      writtenQuestionIds.set(language, ids);
     } else {
       openQuestionCounts.set(language, (openQuestionCounts.get(language) ?? 0) + 1);
     }
@@ -40,6 +45,11 @@ export default async function GuestQuestionsLandingPage() {
       where: { questionId: { in: ids } },
     });
     soruCounts.set(language, count + (openQuestionCounts.get(language) ?? 0));
+  }
+  // Yazılı testlerin (ör. Biyoloji) soruları da sayılır.
+  for (const [language, ids] of writtenQuestionIds) {
+    const count = await prisma.writtenItem.count({ where: { questionId: { in: ids } } });
+    soruCounts.set(language, (soruCounts.get(language) ?? openQuestionCounts.get(language) ?? 0) + count);
   }
 
   const allLanguages = new Set([

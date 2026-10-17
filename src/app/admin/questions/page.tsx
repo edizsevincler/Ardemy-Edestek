@@ -6,7 +6,7 @@ import { DeleteButton } from "./DeleteButton";
 export default async function AdminQuestionsPage() {
   const questions = await prisma.question.findMany({
     orderBy: { createdAt: "desc" },
-    include: { _count: { select: { unlocks: true, answers: true } } },
+    include: { _count: { select: { unlocks: true, answers: true, writtenSubmissions: true } } },
   });
 
   return (
@@ -44,7 +44,9 @@ export default async function AdminQuestionsPage() {
                     ? "Konu Anlatımı"
                     : q.type === "QUIZ"
                       ? "Test"
-                      : "Soru"}
+                      : q.type === "WRITTEN"
+                        ? "Yazılı Test"
+                        : "Soru"}
                 </td>
                 <td className="px-4 py-2 text-slate-900">{q.title}</td>
                 <td className="px-4 py-2 text-slate-600">{q.subject}</td>
@@ -64,7 +66,7 @@ export default async function AdminQuestionsPage() {
                     href={`/admin/questions/${q.id}/answers`}
                     className="text-brand-600 underline hover:text-brand-800"
                   >
-                    {q._count.answers} cevap
+                    {q.type === "WRITTEN" ? q._count.writtenSubmissions : q._count.answers} cevap
                   </Link>
                 </td>
                 <td className="px-4 py-2 space-x-3">
@@ -74,6 +76,14 @@ export default async function AdminQuestionsPage() {
                   >
                     Düzenle
                   </Link>
+                  {q.type === "WRITTEN" && (
+                    <Link
+                      href={`/admin/questions/${q.id}/written`}
+                      className="text-brand-600 underline hover:text-brand-800"
+                    >
+                      Yazılı Sorular
+                    </Link>
+                  )}
                   {q.type === "QUIZ" && (
                     <Link
                       href={`/admin/questions/${q.id}/quiz`}

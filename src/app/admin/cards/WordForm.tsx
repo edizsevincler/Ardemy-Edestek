@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { addCardWords } from "./actions";
-import { CARD_TOPICS } from "@/lib/flashcards";
+import { CARD_TOPICS } from "@/lib/card-meta";
 
 const initialState = { status: "idle" } as const;
 

@@ -33,6 +33,16 @@ export function FlagIcon({
     );
   }
 
+  if (language === "Biyoloji") {
+    return (
+      <svg viewBox="0 0 60 40" className={`${className} rounded shadow-sm ring-1 ring-black/10`} aria-hidden>
+        <rect width="60" height="40" fill="#15803d" />
+        <path d="M22 32c0-12 8-20 20-22-1 12-8 20-20 22z" fill="#bbf7d0" />
+        <path d="M22 32c5-6 10-11 17-18" stroke="#15803d" strokeWidth="2" fill="none" strokeLinecap="round" />
+      </svg>
+    );
+  }
+
   return (
     <span
       className={`${className} flex items-center justify-center rounded bg-slate-100 text-lg`}

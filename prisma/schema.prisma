@@ -26,6 +26,7 @@ enum QuestionType {
   TOPIC    // Konu anlatımı
   QUESTION // Soru (açık uçlu)
   QUIZ     // Çoktan seçmeli test (20 soruluk)
+  WRITTEN  // Yazılı test: cevaplar klavyeyle yazılır, eğitmen okur (ör. Biyoloji)
 }
 
 enum QuizOption {
@@ -122,6 +123,7 @@ model User {
   pushSubscriptions     PushSubscription[]
   flashCards            FlashCard[]
   cardReviews           CardReview[]
+  writtenSubmissions    WrittenSubmission[]
 }
 
 // GUEST kaydı sırasında e-postanın gerçekten kullanıcıya ait olduğunu
@@ -211,6 +213,9 @@ model Question {
   answers         QuestionAnswer[]
   quizItems       QuizItem[]
   quizSubmissions QuizSubmission[]
+
+  writtenItems       WrittenItem[]
+  writtenSubmissions WrittenSubmission[]
 }
 
 // Bir QUIZ tipi Question'a bağlı tek bir çoktan seçmeli soru.
@@ -548,4 +553,37 @@ model CardReview {
 
   @@index([userId, createdAt])
   @@index([createdAt])
+}
+
+// Yazılı testin bir sorusu. `answer`: örnek/doğru cevap (isteğe bağlı); öğrenci
+// testi gönderdikten sonra kendi cevabıyla karşılaştırması için gösterilir.
+model WrittenItem {
+  id     String  @id @default(cuid())
+  order  Int
+  prompt String
+  answer String?
+
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([questionId, order])
+}
+
+// Öğrencinin yazılı teste verdiği cevaplar: answers = [{ itemId, text }].
+// Eğitmen (admin) tüm gönderimleri görür ve isteğe bağlı geri bildirim yazar.
+model WrittenSubmission {
+  id          String    @id @default(cuid())
+  answers     Json
+  submittedAt DateTime  @default(now())
+  feedback    String?
+  gradedAt    DateTime?
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  questionId String
+  question   Question @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, questionId])
+  @@index([submittedAt])
 }

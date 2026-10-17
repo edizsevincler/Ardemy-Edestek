@@ -54,6 +54,7 @@ export function EditQuestionForm({
           <option value="QUESTION">Soru</option>
           <option value="TOPIC">Konu Anlatımı</option>
           <option value="QUIZ">Test (çoktan seçmeli)</option>
+          <option value="WRITTEN">Yazılı Test (cevaplar yazılarak, ör. Biyoloji)</option>
         </select>
       </div>
 

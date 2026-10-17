@@ -6,6 +6,7 @@ import { tx, type TFunction } from "./translate";
 export const KNOWN_SUBJECT_PARTS = [
   tx("Rusça"),
   tx("İngilizce"),
+  tx("Biyoloji"),
   tx("Kelime ve Kalıplar"),
   tx("Zamanlar"),
   tx("Padejler"),

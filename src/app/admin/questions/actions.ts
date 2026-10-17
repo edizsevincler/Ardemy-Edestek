@@ -6,7 +6,7 @@ import { revalidatePath } from "next/cache";
 import type { QuestionType } from "@/generated/prisma/client";
 
 function parseQuestionType(value: FormDataEntryValue | null): QuestionType {
-  if (value === "TOPIC" || value === "QUIZ") return value;
+  if (value === "TOPIC" || value === "QUIZ" || value === "WRITTEN") return value;
   return "QUESTION";
 }
 
