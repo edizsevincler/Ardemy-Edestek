@@ -64,7 +64,8 @@ function parseFileName(fileName: string, studentName: string) {
   if (numeric) {
     const [full, aStr, bStr, yStr] = numeric;
     const { day, month } = resolveDayMonth(Number(aStr), Number(bStr));
-    const lessonDate = new Date(Number(yStr), month - 1, day);
+    // UTC gece yarısı: yerel saatle kurulursa (Türkiye UTC+3) bir önceki güne kayar.
+    const lessonDate = new Date(Date.UTC(Number(yStr), month - 1, day));
     const note = cleanNote(base.replace(full, ""), studentName);
     const dateLabel = `${pad(day)}.${pad(month)}.${yStr}`;
     return { lessonDate, title: note ? `${dateLabel} ${note}` : dateLabel };
@@ -84,7 +85,7 @@ function parseFileName(fileName: string, studentName: string) {
     const yStr = yStrInline ?? noteWithoutMatch.match(/\b(19|20)\d{2}\b/)?.[0];
     if (yStr) {
       const note = cleanNote(noteWithoutMatch.replace(yStr, ""), studentName);
-      const lessonDate = new Date(Number(yStr), month, day);
+      const lessonDate = new Date(Date.UTC(Number(yStr), month, day));
       const dateLabel = `${pad(day)}.${pad(month + 1)}.${yStr}`;
       return { lessonDate, title: note ? `${dateLabel} ${note}` : dateLabel };
     }

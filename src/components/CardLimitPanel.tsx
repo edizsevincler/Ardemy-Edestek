@@ -22,7 +22,8 @@ export function CardLimitPanel({ quota, onUnlocked }: { quota: CardQuota; onUnlo
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
 
-  const left = nowSec === null ? null : Math.max(0, Math.floor(Date.parse(quota.resetAt) / 1000) - nowSec);
+  const resetSec = quota.resetAt ? Math.floor(Date.parse(quota.resetAt) / 1000) : null;
+  const left = nowSec === null || resetSec === null ? null : Math.max(0, resetSec - nowSec);
   const parts =
     left === null
       ? ["--", "--", "--"]
@@ -42,7 +43,7 @@ export function CardLimitPanel({ quota, onUnlocked }: { quota: CardQuota; onUnlo
   if (left === 0) {
     return (
       <div className="space-y-3 rounded-2xl border border-brand-100 bg-white p-6 text-center shadow-sm">
-        <p className="font-semibold text-brand-950">{t("Yeni günün kelime hakkı hazır!")}</p>
+        <p className="font-semibold text-brand-950">{t("Yeni kelime hakkın hazır!")}</p>
         <button
           type="button"
           onClick={() => window.location.reload()}
@@ -87,7 +88,7 @@ export function CardLimitPanel({ quota, onUnlocked }: { quota: CardQuota; onUnlo
       </div>
 
       <div className="space-y-2 border-t border-brand-100 pt-4">
-        <p className="text-sm text-slate-600">{t("Ya da yarını bekle: ücretsiz {n} kelime hakkın 1 gün içinde yenilenecek.", { n: DAILY_CARD_LIMIT })}</p>
+        <p className="text-sm text-slate-600">{t("Ya da bekle: ücretsiz {n} kelime hakkın, ilk kartından 1 gün sonra yenilenecek.", { n: DAILY_CARD_LIMIT })}</p>
         <p className="text-xs font-medium uppercase tracking-wide text-slate-400">{t("Yenilenmesine kalan süre")}</p>
         <div className="flex justify-center gap-2" role="timer" aria-live="off">
           {parts.map((value, i) => (

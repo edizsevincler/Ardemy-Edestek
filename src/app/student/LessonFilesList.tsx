@@ -12,6 +12,14 @@ type LessonFile = {
   uploadedAt: Date;
 };
 
+// Ders tarihi UTC gece yarısı olarak saklanır (saatsiz takvim günü); sunucu ve
+// tarayıcı farklı saat dilimlerinde olsa da aynı günü göstermek için UTC'de biçimlenir.
+function fileDate(f: LessonFile, tag: string) {
+  return f.lessonDate
+    ? f.lessonDate.toLocaleDateString(tag, { timeZone: "UTC" })
+    : f.uploadedAt.toLocaleDateString(tag, { timeZone: "Europe/Istanbul" });
+}
+
 export function LessonFilesList({ lessonFiles }: { lessonFiles: LessonFile[] }) {
   const t = useT();
   const locale = useLocale();
@@ -21,8 +29,7 @@ export function LessonFilesList({ lessonFiles }: { lessonFiles: LessonFile[] }) 
     const q = query.trim().toLowerCase();
     if (!q) return lessonFiles;
     return lessonFiles.filter((f) => {
-      const dateStr = (f.lessonDate ?? f.uploadedAt).toLocaleDateString(INTL_TAG[locale]);
-      const haystack = `${f.title} ${dateStr}`.toLowerCase();
+      const haystack = `${f.title} ${fileDate(f, INTL_TAG[locale])}`.toLowerCase();
       return haystack.includes(q);
     });
   }, [query, lessonFiles, locale]);
@@ -49,7 +56,7 @@ export function LessonFilesList({ lessonFiles }: { lessonFiles: LessonFile[] }) 
               <div>
                 <p className="font-medium text-slate-900">{f.title}</p>
                 <p className="text-xs text-slate-500">
-                  {(f.lessonDate ?? f.uploadedAt).toLocaleDateString(INTL_TAG[locale])}
+                  {fileDate(f, INTL_TAG[locale])}
                 </p>
               </div>
               <a

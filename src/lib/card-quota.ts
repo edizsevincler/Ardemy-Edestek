@@ -1,37 +1,38 @@
 import { prisma } from "@/lib/prisma";
-import { dateKey } from "@/lib/streak";
 import { DAILY_CARD_LIMIT } from "@/lib/card-meta";
 
-// Kelime kartlarında günlük sınır: her kullanıcı günde DAILY_CARD_LIMIT kart çalışır;
-// CARD_BONUS_PRICE kredi ile o gün için CARD_BONUS kart daha açar (sabitler
-// lib/card-meta.ts'te). Gün İstanbul saatine göre gece yarısı yenilenir
-// (Türkiye'de yaz saati yok, UTC+3 sabit).
+// Kelime kartı sınırı: 24 saatlik dönemde DAILY_CARD_LIMIT kart. Dönem, önceki dönem
+// bittikten sonra çalışılan ilk kartla başlar; böylece gece yarısı gibi sabit bir
+// sıfırlama anı yoktur (23:59'da başlayıp 00:01'de yeni hak alınamaz).
+// CARD_BONUS_PRICE kredi ile o döneme CARD_BONUS kart eklenir (sabitler lib/card-meta.ts'te).
 export { DAILY_CARD_LIMIT, CARD_BONUS, CARD_BONUS_PRICE } from "@/lib/card-meta";
+export const CARD_PERIOD_MS = 24 * 60 * 60 * 1000;
 
 export type CardQuota = {
   used: number;
   limit: number;
   credits: number;
-  resetAt: string; // bir sonraki gece yarısı (ISO)
+  resetAt: string | null; // dönemin bittiği an (ISO); dönem başlamadıysa null
 };
 
-export function todayStart(now = new Date()) {
-  return new Date(`${dateKey(now)}T00:00:00+03:00`);
+// Süresi dolmamış dönemin başlangıcı (yoksa null).
+export function activePeriodStart(start: Date | null | undefined, now = Date.now()) {
+  return start && now - start.getTime() < CARD_PERIOD_MS ? start : null;
 }
 
 // Yöneticiler sınırsızdır (null).
 export async function getCardQuota(userId: string, role: string): Promise<CardQuota | null> {
   if (role === "ADMIN") return null;
-  const start = todayStart();
-  const [used, user] = await Promise.all([
-    prisma.cardReview.count({ where: { userId, createdAt: { gte: start } } }),
-    prisma.user.findUnique({ where: { id: userId }, select: { credits: true, cardBonusDay: true, cardBonus: true } }),
-  ]);
-  const bonus = user?.cardBonusDay === dateKey(start) ? user.cardBonus : 0;
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { credits: true, cardPeriodStart: true, cardBonus: true },
+  });
+  const start = activePeriodStart(user?.cardPeriodStart);
+  const used = start ? await prisma.cardReview.count({ where: { userId, createdAt: { gte: start } } }) : 0;
   return {
     used,
-    limit: DAILY_CARD_LIMIT + bonus,
+    limit: DAILY_CARD_LIMIT + (start ? (user?.cardBonus ?? 0) : 0),
     credits: user?.credits ?? 0,
-    resetAt: new Date(start.getTime() + 86_400_000).toISOString(),
+    resetAt: start ? new Date(start.getTime() + CARD_PERIOD_MS).toISOString() : null,
   };
 }

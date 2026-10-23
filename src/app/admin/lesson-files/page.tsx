@@ -77,7 +77,7 @@ export default async function LessonFilesPage() {
                         <td className="px-4 py-2 text-slate-900">{f.title}</td>
                         <td className="px-4 py-2 text-slate-500">
                           {f.lessonDate
-                            ? f.lessonDate.toLocaleDateString("tr-TR")
+                            ? f.lessonDate.toLocaleDateString("tr-TR", { timeZone: "UTC" })
                             : "—"}
                         </td>
                         <td className="px-4 py-2">
