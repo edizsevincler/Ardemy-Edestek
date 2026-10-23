@@ -13,6 +13,12 @@ export function parseCardLanguage(value: unknown): CardLanguage | null {
   return value === "EN" || value === "RU" ? value : null;
 }
 
+// Günlük kart sınırı: günde DAILY_CARD_LIMIT kart; CARD_BONUS_PRICE kredi ile o gün
+// için CARD_BONUS kart daha (sunucu tarafı: lib/card-quota.ts).
+export const DAILY_CARD_LIMIT = 100;
+export const CARD_BONUS = 100;
+export const CARD_BONUS_PRICE = 1;
+
 // Avrupa Ortak Çerçevesi (CEFR) seviyeleri. Sıra, sayfadaki sıradır.
 export const CARD_LEVELS = [
   { id: "A1", name: tx("Başlangıç") },

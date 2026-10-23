@@ -3,6 +3,7 @@ import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getT } from "@/lib/i18n/server";
 import { getDailyDeck, getLanguageCounts, getLevelStats, getTopicStats, getUserDeck } from "@/lib/cards";
+import { getCardQuota } from "@/lib/card-quota";
 import {
   CARD_LANGUAGES,
   CARD_LEVELS,
@@ -29,9 +30,10 @@ export default async function CardsPage({
   const userId = session!.user.id;
   const sp = await searchParams;
 
-  const [counts, me] = await Promise.all([
+  const [counts, me, quota] = await Promise.all([
     getLanguageCounts(userId),
     prisma.user.findUnique({ where: { id: userId }, select: { dailyLanguage: true } }),
+    getCardQuota(userId, session!.user.role),
   ]);
 
   // Dil: adresteki seçim; yoksa kullanıcının tercih ettiği dil; yoksa kartı olan dil.
@@ -150,6 +152,7 @@ export default async function CardsPage({
           cards={deck.cards}
           language={lang}
           canReload={deck.source === "lessons"}
+          quota={quota}
         />
       ) : (
         <EmptyState icon="book" text={t("Kart bulunamadı.")} />

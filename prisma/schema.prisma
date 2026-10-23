@@ -66,6 +66,11 @@ model User {
   // Seri koruma: kaçırılan bir günde seriyi otomatik kurtarır (bkz. lib/streak.ts).
   streakFreezes Int @default(0)
 
+  // Kelime kartı günlük sınırı: kredi ile o güne eklenen fazladan kart hakkı
+  // (bkz. lib/card-quota.ts). cardBonusDay "YYYY-MM-DD" (İstanbul), başka günse geçersiz.
+  cardBonusDay String?
+  cardBonus    Int     @default(0)
+
   // Mağaza: satın alınan unvan/çerçeveler (UserCosmetic) ve şu an takılı
   // olanlar. Tanımlar kodda (lib/cosmetics.ts), burada yalnızca id tutulur.
   // Kayıt anında siteye hangi kanaldan gelindiği (ör. "instagram", "tiktok").

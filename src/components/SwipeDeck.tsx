@@ -3,8 +3,10 @@
 import { useCallback, useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { recordCardReview } from "@/lib/cards-actions";
 import { Celebration } from "@/components/Celebration";
+import { CardLimitPanel } from "@/components/CardLimitPanel";
 import { useT } from "@/lib/i18n/client";
 import type { DeckCard } from "@/lib/cards";
+import type { CardQuota } from "@/lib/card-quota";
 
 // Tarayıcının seslendirmesiyle (Web Speech API) kelimeyi okur; o dilde ses
 // yüklüyse onu seçer, yoksa tarayıcı varsayılanı kullanır.
@@ -25,17 +27,22 @@ function speakWord(text: string, language: "EN" | "RU") {
 const THRESHOLD = 100; // bu kadar piksel kaydırılınca karar verilir
 
 // Kaydırmalı kelime kartları: sağa = biliyorum, sola = tekrar, dokun = çevir.
-// Düğmeler ve klavye okları da aynı işi yapar.
+// Düğmeler ve klavye okları da aynı işi yapar. `quota` günlük kart sınırıdır
+// (null: sınırsız); dolunca kartların yerine CardLimitPanel gösterilir.
 export function SwipeDeck({
   cards,
   language,
   canReload = true,
+  quota: initialQuota = null,
 }: {
   cards: DeckCard[];
   language: "EN" | "RU";
   canReload?: boolean;
+  quota?: CardQuota | null;
 }) {
   const t = useT();
+  const [quota, setQuota] = useState<CardQuota | null>(initialQuota);
+  const limitReached = quota !== null && quota.used >= quota.limit;
   const [round, setRound] = useState<DeckCard[]>(cards);
   const [index, setIndex] = useState(0);
   const [known, setKnown] = useState<DeckCard[]>([]);
@@ -72,10 +79,13 @@ export function SwipeDeck({
 
   const commit = useCallback(
     (verdict: "known" | "again") => {
-      if (busy.current || !card) return;
+      if (busy.current || !card || limitReached) return;
       busy.current = true;
       setLeaving(verdict);
-      void recordCardReview(card.id, verdict === "known");
+      setQuota((q) => q && { ...q, used: q.used + 1 });
+      void recordCardReview(card.id, verdict === "known").then((result) => {
+        if (result.quota) setQuota(result.quota);
+      });
       const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
       timer.current = setTimeout(() => {
         if (verdict === "known") setKnown((list) => [...list, card]);
@@ -87,12 +97,12 @@ export function SwipeDeck({
         busy.current = false;
       }, reduce ? 0 : 230);
     },
-    [card]
+    [card, limitReached]
   );
 
   // Klavye: → biliyorum, ← tekrar, boşluk/yukarı/aşağı çevir
   useEffect(() => {
-    if (done) return;
+    if (done || limitReached) return;
     const onKey = (event: KeyboardEvent) => {
       if (event.target instanceof HTMLElement && ["INPUT", "SELECT", "TEXTAREA"].includes(event.target.tagName)) return;
       if (event.key === "ArrowRight") commit("known");
@@ -104,7 +114,7 @@ export function SwipeDeck({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [done, commit]);
+  }, [done, limitReached, commit]);
 
   function onPointerDown(event: React.PointerEvent<HTMLDivElement>) {
     if (busy.current) return;
@@ -139,6 +149,11 @@ export function SwipeDeck({
     setAgain([]);
     setFlipped(false);
     setDx(0);
+  }
+
+  // Kart çıkış animasyonu bitince panel gelsin (leaving sırasında kart görünür kalır).
+  if (limitReached && !leaving) {
+    return <CardLimitPanel quota={quota} onUnlocked={setQuota} />;
   }
 
   if (done) {
@@ -195,6 +210,11 @@ export function SwipeDeck({
       <div className="flex items-center justify-between gap-3 text-sm">
         <span className="font-medium text-slate-600">
           {index + 1} / {round.length}
+          {quota && (
+            <span className="ml-2 text-xs font-normal text-slate-400">
+              {t("Bugün {a}/{b}", { a: Math.min(quota.used, quota.limit), b: quota.limit })}
+            </span>
+          )}
         </span>
         <label className="flex cursor-pointer items-center gap-2 text-slate-600">
           <input
