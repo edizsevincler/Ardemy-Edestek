@@ -2,13 +2,16 @@ import Link from "next/link";
 import { auth } from "@/auth";
 import { prisma } from "@/lib/prisma";
 import { getT } from "@/lib/i18n/server";
-import { getDailyDeck, getLanguageCounts, getTopicStats, getUserDeck } from "@/lib/cards";
+import { getDailyDeck, getLanguageCounts, getLevelStats, getTopicStats, getUserDeck } from "@/lib/cards";
 import {
   CARD_LANGUAGES,
+  CARD_LEVELS,
   CARD_TOPICS,
   parseCardLanguage,
+  parseCardLevel,
   parseCardTopic,
   type CardLanguage,
+  type CardLevel,
   type CardTopic,
 } from "@/lib/flashcards";
 import { tx } from "@/lib/i18n/translate";
@@ -19,7 +22,7 @@ import { FlagIcon } from "@/components/FlagIcon";
 export default async function CardsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ lang?: string; topic?: string }>;
+  searchParams: Promise<{ lang?: string; level?: string; topic?: string }>;
 }) {
   const t = await getT();
   const session = await auth();
@@ -38,14 +41,30 @@ export default async function CardsPage({
     preferred ??
     (counts.EN === 0 && counts.RU > 0 ? "RU" : "EN");
 
-  // Konu: adresteki seçim (o dilde bu konuda kart varsa); yoksa tüm kelimeler.
-  const stats = await getTopicStats(userId, lang);
+  // Seviye: adresteki seçim (o dilde bu seviyede kart varsa); yoksa tüm seviyeler.
+  const levelStats = await getLevelStats(userId, lang);
+  const requestedLevel = parseCardLevel(sp.level?.toUpperCase());
+  const level: CardLevel | null = requestedLevel && levelStats.has(requestedLevel) ? requestedLevel : null;
+
+  // Konu: adresteki seçim (o dilde ve seviyede bu konuda kart varsa); yoksa tüm kelimeler.
+  const stats = await getTopicStats(userId, lang, level);
   const requested = parseCardTopic(sp.topic);
   const topic: CardTopic | null = requested && stats.has(requested) ? requested : null;
 
   // Önce kullanıcının kartları (yöneticinin eklediği kelimeler); yoksa günlük ücretsiz deste.
-  let deck = await getUserDeck(userId, lang, topic);
+  let deck = await getUserDeck(userId, lang, topic, level);
   if (deck.total === 0) deck = await getDailyDeck(userId, lang);
+
+  const href = (params: { level?: CardLevel | null; topic?: CardTopic | null }) =>
+    `/guest/cards?lang=${lang}${params.level ? `&level=${params.level}` : ""}${params.topic ? `&topic=${params.topic}` : ""}`;
+  const levelItems: { id: CardLevel | null; name: string; total: number }[] = [
+    { id: null, name: tx("Tüm seviyeler"), total: [...levelStats.values()].reduce((acc, s) => acc + s.total, 0) },
+    ...CARD_LEVELS.filter((x) => levelStats.has(x.id)).map((x) => ({
+      id: x.id,
+      name: x.name,
+      total: levelStats.get(x.id)!.total,
+    })),
+  ];
 
   const sum = (key: "total" | "mastered") => [...stats.values()].reduce((acc, s) => acc + s[key], 0);
   const topicItems: { id: CardTopic | null; name: string; total: number; mastered: number }[] = [
@@ -58,18 +77,20 @@ export default async function CardsPage({
     })),
   ];
   const activeName = topic ? CARD_TOPICS.find((x) => x.id === topic)?.name : null;
+  const levelLabel = (item: { id: CardLevel | null; name: string }) => (item.id ? `${item.id} · ${t(item.name)}` : t(item.name));
 
   return (
     <div className="space-y-5">
       <div>
         <h1 className="text-2xl font-semibold text-brand-950">
           {t("Kelime Kartları")}
+          {level && <span className="text-brand-600"> · {level}</span>}
           {activeName && <span className="text-brand-600"> · {t(activeName)}</span>}
         </h1>
         <p className="mt-1 text-sm text-slate-500">
           {deck.source === "lessons"
-            ? topic
-              ? t("Bu konuda {n} kartın var, {m} tanesini öğrendin.", { n: deck.total, m: deck.mastered })
+            ? topic || level
+              ? t("Bu seçimde {n} kartın var, {m} tanesini öğrendin.", { n: deck.total, m: deck.mastered })
               : t("{n} kartın var, {m} tanesini öğrendin.", { n: deck.total, m: deck.mastered })
             : t("Günün kelimeleri: günde 10 ücretsiz kart. Eğitmenin kelime ekleyince burada kartların görünür.")}
         </p>
@@ -97,9 +118,35 @@ export default async function CardsPage({
         })}
       </div>
 
+      {levelItems.length > 2 && (
+        <nav aria-label={t("Seviye")} className="grid grid-cols-4 gap-2 sm:grid-cols-7">
+          {levelItems.map((item) => {
+            const active = item.id === level;
+            return (
+              <Link
+                key={item.id ?? "all"}
+                href={href({ level: item.id })}
+                aria-current={active ? "page" : undefined}
+                title={`${levelLabel(item)} (${item.total})`}
+                className={`min-w-0 rounded-lg border px-2 py-1.5 text-center transition-colors ${
+                  active
+                    ? "border-brand-500 bg-brand-50 text-brand-800 ring-1 ring-brand-500"
+                    : "border-brand-100 bg-white text-slate-700 hover:bg-brand-50"
+                }`}
+              >
+                <span className="block text-sm font-semibold">{item.id ?? t("Tümü")}</span>
+                <span className="block truncate text-[11px] text-slate-500">
+                  {item.id ? t(item.name) : item.total}
+                </span>
+              </Link>
+            );
+          })}
+        </nav>
+      )}
+
       {deck.cards.length > 0 ? (
         <SwipeDeck
-          key={`${lang}:${topic ?? "all"}`}
+          key={`${lang}:${level ?? "all"}:${topic ?? "all"}`}
           cards={deck.cards}
           language={lang}
           canReload={deck.source === "lessons"}
@@ -118,7 +165,7 @@ export default async function CardsPage({
               return (
                 <Link
                   key={item.id ?? "all"}
-                  href={`/guest/cards?lang=${lang}${item.id ? `&topic=${item.id}` : ""}`}
+                  href={href({ level, topic: item.id })}
                   aria-current={active ? "page" : undefined}
                   className={`block rounded-xl border p-3 transition-shadow duration-200 hover:shadow-md sm:p-4 ${
                     active ? "border-brand-500 bg-brand-50 ring-1 ring-brand-500" : "border-brand-100 bg-white"

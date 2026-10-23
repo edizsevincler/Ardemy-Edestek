@@ -9,10 +9,13 @@ export const ADMIN_SOURCE = "admin";
 // Diller ve konular veritabanından bağımsız modülde (istemci bileşenleri de kullanır).
 export {
   CARD_LANGUAGES,
+  CARD_LEVELS,
   CARD_TOPICS,
   parseCardLanguage,
+  parseCardLevel,
   parseCardTopic,
   type CardLanguage,
+  type CardLevel,
   type CardTopic,
 } from "@/lib/card-meta";
 
@@ -59,14 +62,22 @@ export async function syncAdminCards(userId: string) {
   if (wordCount === 0 || cardCount >= wordCount) return;
 
   const [words, existing] = await Promise.all([
-    prisma.cardWord.findMany({ select: { front: true, back: true, language: true, topic: true } }),
+    prisma.cardWord.findMany({ select: { front: true, back: true, language: true, topic: true, level: true } }),
     prisma.flashCard.findMany({ where: { userId, sourceTitle: ADMIN_SOURCE }, select: { front: true, back: true } }),
   ]);
   const have = new Set(existing.map((c) => pairKey(c.front, c.back)));
   const fresh = words.filter((w) => !have.has(pairKey(w.front, w.back)));
   if (fresh.length === 0) return;
   await prisma.flashCard.createMany({
-    data: fresh.map((w) => ({ userId, front: w.front, back: w.back, language: w.language, topic: w.topic, sourceTitle: ADMIN_SOURCE })),
+    data: fresh.map((w) => ({
+      userId,
+      front: w.front,
+      back: w.back,
+      language: w.language,
+      topic: w.topic,
+      level: w.level,
+      sourceTitle: ADMIN_SOURCE,
+    })),
     skipDuplicates: true,
   });
 }

@@ -13,6 +13,20 @@ export function parseCardLanguage(value: unknown): CardLanguage | null {
   return value === "EN" || value === "RU" ? value : null;
 }
 
+// Avrupa Ortak Çerçevesi (CEFR) seviyeleri. Sıra, sayfadaki sıradır.
+export const CARD_LEVELS = [
+  { id: "A1", name: tx("Başlangıç") },
+  { id: "A2", name: tx("Temel") },
+  { id: "B1", name: tx("Orta") },
+  { id: "B2", name: tx("Orta üstü") },
+  { id: "C1", name: tx("İleri") },
+  { id: "C2", name: tx("Uzman") },
+] as const;
+export type CardLevel = (typeof CARD_LEVELS)[number]["id"];
+export function parseCardLevel(value: unknown): CardLevel | null {
+  return CARD_LEVELS.find((l) => l.id === value)?.id ?? null;
+}
+
 // Kelime konuları (sabit liste: adları arayüzde çevrilir). Sıra, sayfadaki sıradır.
 export const CARD_TOPICS = [
   { id: "verbs", name: tx("Fiiller") },
@@ -24,6 +38,11 @@ export const CARD_TOPICS = [
   { id: "places", name: tx("Ev, okul ve şehir") },
   { id: "travel", name: tx("Ulaşım ve seyahat") },
   { id: "learning", name: tx("Dil ve öğrenme") },
+  { id: "work", name: tx("İş ve para") },
+  { id: "health", name: tx("Sağlık ve vücut") },
+  { id: "feelings", name: tx("Duygular ve karakter") },
+  { id: "nature", name: tx("Doğa ve hava") },
+  { id: "society", name: tx("Toplum ve dünya") },
   { id: "other", name: tx("Diğer") },
 ] as const;
 export type CardTopic = (typeof CARD_TOPICS)[number]["id"];

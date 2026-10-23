@@ -514,6 +514,7 @@ model FlashCard {
   sourceTitle  String? // "admin": yöneticinin eklediği kelime
   language     String    @default("EN") // "EN" | "RU": hangi dilin kartı
   topic        String    @default("other") // konu kimliği (lib/flashcards.ts CARD_TOPICS)
+  level        String    @default("A1") // CEFR seviyesi (lib/card-meta.ts CARD_LEVELS)
   knownStreak  Int       @default(0)
   seen         Int       @default(0)
   lastSeenAt   DateTime?
@@ -534,6 +535,7 @@ model CardWord {
   back      String // yabancı dil karşılığı
   language  String   @default("EN") // "EN" | "RU"
   topic     String   @default("other") // konu kimliği (lib/flashcards.ts CARD_TOPICS)
+  level     String   @default("A1") // CEFR seviyesi (lib/card-meta.ts CARD_LEVELS)
   createdAt DateTime @default(now())
 
   // Kullanılmıyor: kelimeler artık herkese açık (eski kitle seçimi sütunları, boş bırakılır).

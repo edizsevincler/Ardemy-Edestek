@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { addCardWords } from "./actions";
-import { CARD_TOPICS } from "@/lib/card-meta";
+import { CARD_LEVELS, CARD_TOPICS } from "@/lib/card-meta";
 
 const initialState = { status: "idle" } as const;
 
@@ -27,6 +27,15 @@ export function WordForm() {
           <label className="flex items-center gap-2 text-sm text-slate-700">
             <input type="radio" name="language" value="RU" /> Rusça
           </label>
+        </fieldset>
+        <fieldset className="flex flex-wrap items-center gap-4">
+          <legend className="sr-only">Seviye</legend>
+          <span className="text-sm font-medium text-slate-700">Seviye:</span>
+          {CARD_LEVELS.map((level) => (
+            <label key={level.id} className="flex items-center gap-2 text-sm text-slate-700">
+              <input type="radio" name="level" value={level.id} defaultChecked={level.id === "A1"} /> {level.id}
+            </label>
+          ))}
         </fieldset>
         <div className="flex flex-wrap items-center gap-2">
           <label htmlFor="topic" className="text-sm font-medium text-slate-700">
@@ -58,7 +67,7 @@ export function WordForm() {
             className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 font-mono text-sm outline-none focus:border-slate-500"
           />
           <p className="mt-1 text-xs text-slate-500">
-            Soldaki taraf kartın önü, sağdaki arkası olur. Seçtiğin dilin kartlarına eklenir ve tüm kullanıcılara (öğrenci + misafir) açılır. Aynı kelime zaten varsa tekrar eklenmez.
+            Soldaki taraf kartın önü, sağdaki arkası olur. Seçtiğin dilin ve seviyenin kartlarına eklenir ve tüm kullanıcılara (öğrenci + misafir) açılır. Aynı kelime zaten varsa tekrar eklenmez.
           </p>
         </div>
 

@@ -68,6 +68,7 @@ export default async function AdminCardsPage({
                   <th className="py-2 pr-4">Ön (Türkçe)</th>
                   <th className="py-2 pr-4">Arka (yabancı)</th>
                   <th className="py-2 pr-4">Dil</th>
+                  <th className="py-2 pr-4">Seviye</th>
                   <th className="py-2 pr-4">Konu</th>
                   <th className="py-2 pr-4">Tarih</th>
                   <th className="py-2" />
@@ -79,6 +80,7 @@ export default async function AdminCardsPage({
                     <td className="py-2 pr-4 font-medium text-slate-900">{w.front}</td>
                     <td className="py-2 pr-4 text-slate-700">{w.back}</td>
                     <td className="py-2 pr-4 text-slate-500">{w.language === "RU" ? "Rusça" : "İngilizce"}</td>
+                    <td className="py-2 pr-4 text-slate-500">{w.level}</td>
                     <td className="py-2 pr-4 text-slate-500">{CARD_TOPICS.find((t) => t.id === w.topic)?.name ?? "Diğer"}</td>
                     <td className="py-2 pr-4 text-slate-500">{w.createdAt.toLocaleDateString("tr-TR")}</td>
                     <td className="py-2 text-right">

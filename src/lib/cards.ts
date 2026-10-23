@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/prisma";
-import { syncAdminCards, CARD_LANGUAGES, type CardLanguage, type CardTopic } from "@/lib/flashcards";
+import { syncAdminCards, CARD_LANGUAGES, type CardLanguage, type CardLevel, type CardTopic } from "@/lib/flashcards";
 import { dateKey } from "@/lib/streak";
 import { ttlCached } from "@/lib/ttl-cache";
 
@@ -64,35 +64,46 @@ export async function getLanguageCounts(userId: string): Promise<Record<CardLang
   return counts;
 }
 
-// Seçili dilde konu başına kart ve öğrenilen kart sayısı (konu listesi için).
-export async function getTopicStats(userId: string, language: CardLanguage) {
+// Seçili dilde (ve varsa seçili seviyede) konu ya da seviye başına kart ve öğrenilen
+// kart sayısı (konu ve seviye listeleri için).
+async function groupStats(userId: string, language: CardLanguage, by: "topic" | "level", level: CardLevel | null) {
+  const where = { userId, language, ...(level ? { level } : {}) };
   const [all, mastered] = await Promise.all([
-    prisma.flashCard.groupBy({ by: ["topic"], where: { userId, language }, _count: { _all: true } }),
+    prisma.flashCard.groupBy({ by: [by], where, _count: { _all: true } }),
     prisma.flashCard.groupBy({
-      by: ["topic"],
-      where: { userId, language, knownStreak: { gte: MASTERED_STREAK } },
+      by: [by],
+      where: { ...where, knownStreak: { gte: MASTERED_STREAK } },
       _count: { _all: true },
     }),
   ]);
   const stats = new Map<string, { total: number; mastered: number }>();
-  for (const g of all) stats.set(g.topic, { total: g._count._all, mastered: 0 });
+  for (const g of all) stats.set(g[by], { total: g._count._all, mastered: 0 });
   for (const g of mastered) {
-    const entry = stats.get(g.topic);
+    const entry = stats.get(g[by]);
     if (entry) entry.mastered = g._count._all;
   }
   return stats;
 }
 
-// Kullanıcının seçili dildeki (ve varsa seçili konudaki) kartlarından bir deste: en az bilinen ve en eski görülen kartlar
-// önce gelir, aralarından rastgele seçilir.
+export function getTopicStats(userId: string, language: CardLanguage, level: CardLevel | null = null) {
+  return groupStats(userId, language, "topic", level);
+}
+
+export function getLevelStats(userId: string, language: CardLanguage) {
+  return groupStats(userId, language, "level", null);
+}
+
+// Kullanıcının seçili dildeki (ve varsa seçili seviye/konudaki) kartlarından bir deste: en az bilinen ve en eski
+// görülen kartlar önce gelir, aralarından rastgele seçilir.
 export async function getUserDeck(
   userId: string,
   language: CardLanguage,
   topic: CardTopic | null = null,
+  level: CardLevel | null = null,
   size = 15
 ): Promise<Deck> {
   await syncAdminCards(userId);
-  const where = { userId, language, ...(topic ? { topic } : {}) };
+  const where = { userId, language, ...(topic ? { topic } : {}), ...(level ? { level } : {}) };
   const [total, mastered, pool] = await Promise.all([
     prisma.flashCard.count({ where }),
     prisma.flashCard.count({ where: { ...where, knownStreak: { gte: MASTERED_STREAK } } }),
