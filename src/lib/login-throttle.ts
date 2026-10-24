@@ -41,3 +41,21 @@ export async function clearLoginFailures(identifier: string) {
     where: { key: throttleKey(identifier) },
   });
 }
+
+// Genel amaçlı sayaç (aynı tabloyu kullanır): pencere içinde `max` denemeyi aşan
+// istek için true döner ve denemeyi sayar. Örn. IP başına kayıt sınırı.
+export async function hitRateLimit(key: string, max: number, windowMs: number) {
+  const k = throttleKey(key);
+  const row = await prisma.loginThrottle.findUnique({ where: { key: k } });
+  if (!row || Date.now() - row.windowStart.getTime() > windowMs) {
+    await prisma.loginThrottle.upsert({
+      where: { key: k },
+      create: { key: k, failures: 1, windowStart: new Date() },
+      update: { failures: 1, windowStart: new Date() },
+    });
+    return false;
+  }
+  if (row.failures >= max) return true;
+  await prisma.loginThrottle.update({ where: { key: k }, data: { failures: { increment: 1 } } });
+  return false;
+}

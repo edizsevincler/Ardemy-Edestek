@@ -9,11 +9,10 @@ import { runPushTick } from "@/lib/push-tick";
 // (bkz. vercel.json). Serisi olan ama bugün henüz aktivite yapmamış her
 // kullanıcıya (e-postası varsa ve serisi hâlâ canlıysa) hatırlatma gönderir.
 export async function GET(request: Request) {
-  const authHeader = request.headers.get("authorization");
-  if (
-    process.env.CRON_SECRET &&
-    authHeader !== `Bearer ${process.env.CRON_SECRET}`
-  ) {
+  // Diğer cron'lar gibi: gizli anahtar tanımlı değilse de kapalı kalır.
+  const secret = process.env.CRON_SECRET;
+  if (!secret) return new Response("CRON_SECRET tanımlı değil", { status: 503 });
+  if (request.headers.get("authorization") !== `Bearer ${secret}`) {
     return new Response("Unauthorized", { status: 401 });
   }
 

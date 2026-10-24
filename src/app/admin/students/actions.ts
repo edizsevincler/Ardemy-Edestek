@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/lib/admin-guard";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
 import { slugifyName, generatePassword } from "@/lib/generate";
@@ -18,6 +19,7 @@ export async function createStudents(
   _prevState: CreateStudentsState,
   formData: FormData
 ): Promise<CreateStudentsState> {
+  await requireAdmin();
   const raw = String(formData.get("names") ?? "");
   const names = raw
     .split("\n")
@@ -62,6 +64,7 @@ export async function createStudents(
 // Ders sonrası hızlı ayarlama için — sınırın altına inmeyecek şekilde
 // artırır/azaltır (paket modunda anlamlı, diğer modlarda kullanılmaz).
 export async function adjustSessions(studentId: string, delta: number) {
+  await requireAdmin();
   const student = await prisma.user.findUnique({ where: { id: studentId } });
   if (!student) return;
 
@@ -84,6 +87,7 @@ export async function setSessionInfo(
   _prevState: SetSessionInfoState,
   formData: FormData
 ): Promise<SetSessionInfoState> {
+  await requireAdmin();
   const studentId = String(formData.get("studentId") ?? "");
   const sessionType = String(formData.get("sessionType") ?? "PACKAGE") as
     | "PACKAGE"
@@ -114,6 +118,7 @@ export async function setSessionInfo(
 // Şifremi unuttum akışı henüz yok (e-posta servisi gerektirir) — bu yüzden
 // öğrenci şifresini unutursa admin bu butonla yeni bir şifre üretip verir.
 export async function resetStudentPassword(studentId: string) {
+  await requireAdmin();
   const password = generatePassword();
   const passwordHash = await hashPassword(password);
 
@@ -130,6 +135,7 @@ export async function resetStudentPassword(studentId: string) {
 // Öğrenciler de kredi biriktirip soru bankasını kullanabilir — admin bu
 // butonla ödül/hediye olarak kredi ekleyebilir.
 export async function giftCredits(studentId: string, amount: number) {
+  await requireAdmin();
   if (!Number.isFinite(amount) || amount <= 0) return;
 
   const updated = await prisma.user.update({

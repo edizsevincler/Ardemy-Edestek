@@ -202,6 +202,7 @@ export const design: MessageEntry[] = [
   ["Yeni kelime hakkın hazır!", "Your new words are ready!", "Новые слова готовы!"],
   ["Kartlara devam et", "Continue with the cards", "Продолжить карточки"],
   ["Bugün {a}/{b}", "Today {a}/{b}", "Сегодня {a}/{b}"],
+  ["Çok fazla kayıt denemesi yapıldı. Lütfen bir saat sonra tekrar deneyin.", "Too many sign-up attempts. Please try again in an hour.", "Слишком много попыток регистрации. Попробуйте снова через час."],
   ["Başlangıç", "Beginner", "Начальный"],
   ["Temel", "Elementary", "Элементарный"],
   ["Orta", "Intermediate", "Средний"],

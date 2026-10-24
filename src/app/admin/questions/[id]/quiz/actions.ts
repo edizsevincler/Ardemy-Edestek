@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/lib/admin-guard";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -12,6 +13,7 @@ export async function updateQuizItem(
   _prevState: UpdateQuizItemState,
   formData: FormData
 ): Promise<UpdateQuizItemState> {
+  await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const questionId = String(formData.get("questionId") ?? "");
   const prompt = String(formData.get("prompt") ?? "").trim();

@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/lib/admin-guard";
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile, getPdfPageCount } from "@/lib/storage";
 import { revalidatePath } from "next/cache";
@@ -19,6 +20,7 @@ export async function createQuestion(
   _prevState: CreateQuestionState,
   formData: FormData
 ): Promise<CreateQuestionState> {
+  await requireAdmin();
   const type = parseQuestionType(formData.get("type"));
   const title = String(formData.get("title") ?? "").trim();
   const subject = String(formData.get("subject") ?? "").trim();
@@ -72,6 +74,7 @@ export async function editQuestion(
   _prevState: EditQuestionState,
   formData: FormData
 ): Promise<EditQuestionState> {
+  await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const type = parseQuestionType(formData.get("type"));
   const title = String(formData.get("title") ?? "").trim();
@@ -123,6 +126,7 @@ export async function editQuestion(
 // Krediyle açılmış (satılmış) bir soru sessizce silinmez — kilidini açmış
 // kullanıcılar mağdur olmasın diye sadece yayından kaldırılır.
 export async function deleteQuestion(id: string) {
+  await requireAdmin();
   const unlockCount = await prisma.questionUnlock.count({
     where: { questionId: id },
   });

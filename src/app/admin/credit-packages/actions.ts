@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/lib/admin-guard";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -12,6 +13,7 @@ export async function createCreditPackage(
   _prevState: CreatePackageState,
   formData: FormData
 ): Promise<CreatePackageState> {
+  await requireAdmin();
   const name = String(formData.get("name") ?? "").trim();
   const credits = Number(formData.get("credits") ?? 0);
   const priceTRY = Number(formData.get("priceTRY") ?? 0);
@@ -36,6 +38,7 @@ export async function createCreditPackage(
 }
 
 export async function toggleCreditPackageActive(id: string, isActive: boolean) {
+  await requireAdmin();
   await prisma.creditPackage.update({
     where: { id },
     data: { isActive },
@@ -53,6 +56,7 @@ export async function editCreditPackage(
   _prevState: EditPackageState,
   formData: FormData
 ): Promise<EditPackageState> {
+  await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const name = String(formData.get("name") ?? "").trim();
   const credits = Number(formData.get("credits") ?? 0);

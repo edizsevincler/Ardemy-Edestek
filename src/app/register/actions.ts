@@ -1,13 +1,16 @@
 "use server";
 
 import { randomBytes } from "crypto";
-import { cookies } from "next/headers";
+import { cookies, headers } from "next/headers";
+import { hitRateLimit } from "@/lib/login-throttle";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
 import { sendAdminAlertEmail, sendVerificationEmail } from "@/lib/email";
 import { SIGNUP_BONUS_CREDITS } from "@/lib/credits";
 import { sanitizeSource, SOURCE_COOKIE } from "@/lib/source";
 import { getI18n } from "@/lib/i18n/server";
+
+const REGISTER_MAX = 5;
 
 type RegisterState =
   | { status: "idle" }
@@ -44,6 +47,13 @@ export async function registerGuest(
   }
   if (password !== passwordConfirm) {
     return { status: "error", message: t("Şifreler eşleşmiyor.") };
+  }
+
+  // IP başına saatte REGISTER_MAX kayıt: toplu sahte kayıtla başkalarına onay
+  // e-postası yağdırılmasını ve e-posta kotasının tükenmesini önler.
+  const ip = (await headers()).get("x-forwarded-for")?.split(",")[0]?.trim();
+  if (ip && (await hitRateLimit(`register:${ip}`, REGISTER_MAX, 60 * 60 * 1000))) {
+    return { status: "error", message: t("Çok fazla kayıt denemesi yapıldı. Lütfen bir saat sonra tekrar deneyin.") };
   }
 
   const existing = await prisma.user.findUnique({ where: { email } });

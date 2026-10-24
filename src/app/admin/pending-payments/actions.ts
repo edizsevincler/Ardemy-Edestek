@@ -1,10 +1,12 @@
 "use server";
 
+import { requireAdmin } from "@/lib/admin-guard";
 import { prisma } from "@/lib/prisma";
 import { grantReferralRewardIfEligible } from "@/lib/referral";
 import { revalidatePath } from "next/cache";
 
 export async function approvePayment(purchaseId: string) {
+  await requireAdmin();
   const purchase = await prisma.creditPurchase.findUnique({
     where: { id: purchaseId },
   });
@@ -31,6 +33,7 @@ export async function approvePayment(purchaseId: string) {
 }
 
 export async function rejectPayment(purchaseId: string) {
+  await requireAdmin();
   const purchase = await prisma.creditPurchase.findUnique({
     where: { id: purchaseId },
   });

@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/lib/admin-guard";
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/password";
 import { generatePassword } from "@/lib/generate";
@@ -10,6 +11,7 @@ import { sendVerificationEmail } from "@/lib/email";
 import { isLocale } from "@/lib/i18n/config";
 
 export async function resetGuestPassword(userId: string) {
+  await requireAdmin();
   const password = generatePassword();
   const passwordHash = await hashPassword(password);
 

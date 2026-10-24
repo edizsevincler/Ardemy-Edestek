@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/lib/admin-guard";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -12,6 +13,7 @@ export async function sendAdminMessage(
   _prevState: SendMessageState,
   formData: FormData
 ): Promise<SendMessageState> {
+  await requireAdmin();
   const studentId = String(formData.get("studentId") ?? "");
   const body = String(formData.get("body") ?? "").trim();
 
@@ -37,6 +39,7 @@ export async function sendAdminMessage(
 // okunmamış mesaj rozeti de hemen güncellenir (layout, sayfalar arası
 // geçişte normalde yeniden render edilmez).
 export async function markThreadRead(studentId: string) {
+  await requireAdmin();
   await prisma.message.updateMany({
     where: { studentId, senderRole: "STUDENT", read: false },
     data: { read: true },

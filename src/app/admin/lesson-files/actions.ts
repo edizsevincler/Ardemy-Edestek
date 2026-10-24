@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/lib/admin-guard";
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile } from "@/lib/storage";
 import { revalidatePath } from "next/cache";
@@ -13,6 +14,7 @@ export async function uploadLessonFile(
   _prevState: UploadLessonFileState,
   formData: FormData
 ): Promise<UploadLessonFileState> {
+  await requireAdmin();
   const title = String(formData.get("title") ?? "").trim();
   const lessonDateRaw = String(formData.get("lessonDate") ?? "");
   const studentIds = formData.getAll("studentIds").map(String);
@@ -55,6 +57,7 @@ export async function editLessonFile(
   _prevState: EditLessonFileState,
   formData: FormData
 ): Promise<EditLessonFileState> {
+  await requireAdmin();
   const id = String(formData.get("id") ?? "");
   const title = String(formData.get("title") ?? "").trim();
   const lessonDateRaw = String(formData.get("lessonDate") ?? "");
@@ -95,6 +98,7 @@ export async function editLessonFile(
 // Only the DB row is removed — the underlying file on disk is left in place
 // because the same fileUrl can be shared by several students (bulk upload).
 export async function deleteLessonFile(id: string) {
+  await requireAdmin();
   await prisma.lessonFile.delete({ where: { id } });
   revalidatePath("/admin/lesson-files");
 }

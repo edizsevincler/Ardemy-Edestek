@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/lib/admin-guard";
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
@@ -12,6 +13,7 @@ export async function gradeAnswer(
   _prevState: GradeState,
   formData: FormData
 ): Promise<GradeState> {
+  await requireAdmin();
   const answerId = String(formData.get("answerId") ?? "");
   const questionId = String(formData.get("questionId") ?? "");
   const feedback = String(formData.get("feedback") ?? "").trim();

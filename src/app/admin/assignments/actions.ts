@@ -1,5 +1,6 @@
 "use server";
 
+import { requireAdmin } from "@/lib/admin-guard";
 import { prisma } from "@/lib/prisma";
 import { saveUploadedFile } from "@/lib/storage";
 import { revalidatePath } from "next/cache";
@@ -13,6 +14,7 @@ export async function createAssignment(
   _prevState: CreateAssignmentState,
   formData: FormData
 ): Promise<CreateAssignmentState> {
+  await requireAdmin();
   const title = String(formData.get("title") ?? "").trim();
   const description = String(formData.get("description") ?? "").trim();
   const dueDateRaw = String(formData.get("dueDate") ?? "");
