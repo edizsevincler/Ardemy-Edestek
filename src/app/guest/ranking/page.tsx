@@ -6,7 +6,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { getRanking, maskName, RANKING_KINDS, type RankingKind, type RankingPeriod } from "@/lib/ranking";
 import { setShowInRanking } from "./actions";
 
-const TOP = 20;
+const TOP = 3;
 const MEDALS = ["🥇", "🥈", "🥉"];
 
 export default async function RankingPage({
